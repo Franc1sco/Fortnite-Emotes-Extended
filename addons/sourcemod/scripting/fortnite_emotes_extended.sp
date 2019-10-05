@@ -32,6 +32,7 @@ char g_sPrimaryWeapon[MAXPLAYERS + 1][32];
 char g_sSecondaryWeapon[MAXPLAYERS + 1][32];
 char g_sKnife[MAXPLAYERS + 1][32];
 char g_sGrenades[MAXPLAYERS + 1][4][32];
+bool g_bTaGrenade[MAXPLAYERS + 1];
 bool g_bTaser[MAXPLAYERS + 1];
 
 int g_iPrimaryWeaponClip[MAXPLAYERS+1];
@@ -53,7 +54,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.0.3",
+	version = "1.0.4",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -667,7 +668,8 @@ void DisarmPlayer(int client)
 
 	//Knife & Taser & Nades
 	g_iFlashbangAmmo[client] = GetEntProp(client, Prop_Send, "m_iAmmo", _, FlashbangOffset);
-
+	
+	g_bTaGrenade[client] = false;
 	g_bTaser[client] = false;
 	Format(g_sKnife[client], sizeof(g_sKnife[]), "empty");
 
@@ -687,6 +689,13 @@ void DisarmPlayer(int client)
 
 				g_iTaserClip[client] = Weapon_GetPrimaryClip(iWeapon);
 				g_iTaserAmmo[client] = GetEntProp(iWeapon, Prop_Send, "m_iPrimaryReserveAmmoCount");
+
+				RemovePlayerItem(client, iWeapon);
+				AcceptEntityInput(iWeapon, "Kill");
+			}
+			if (StrEqual(sWeapon, "weapon_tagrenade"))
+			{
+				g_bTaGrenade[client] = true;
 
 				RemovePlayerItem(client, iWeapon);
 				AcceptEntityInput(iWeapon, "Kill");
@@ -732,6 +741,10 @@ void RearmPlayerWithAmmo(int client)
 	//Knife
 	if (!StrEqual(g_sKnife[client], "empty"))
 		GivePlayerItem(client, g_sKnife[client]);
+		
+	//TaGrenade
+	if (g_bTaGrenade[client])
+		GivePlayerItem(client, "weapon_tagrenade");
 
 	//Taser
 	if (g_bTaser[client])
@@ -834,6 +847,10 @@ void RearmPlayer(int client)
 	int iKnife = GetPlayerWeaponSlot(client, CS_SLOT_KNIFE);
 	if (iKnife == -1 && !StrEqual(g_sKnife[client], "empty"))
 		GivePlayerItem(client, g_sKnife[client]);
+
+	//TaGrenade
+	if (g_bTaGrenade[client])
+		GivePlayerItem(client, "weapon_tagrenade");
 
 	//Taser
 	if (g_bTaser[client])
