@@ -506,7 +506,7 @@ public Action OnPlayerRunCmd(int client, int &iButtons, int &iImpulse, float fVe
 	if (g_bClientDancing[client] && !(GetEntityFlags(client) & FL_ONGROUND))
 		StopEmote(client);
 
-	static int iAllowedButtons = IN_BACK | IN_FORWARD | IN_MOVELEFT | IN_MOVERIGHT | IN_JUMP | IN_WALK | IN_SPEED | IN_SCORE;
+	static int iAllowedButtons = IN_BACK | IN_FORWARD | IN_MOVELEFT | IN_MOVERIGHT | IN_WALK | IN_SPEED | IN_SCORE;
 
 	if (iButtons == 0)
 		return Plugin_Continue;
