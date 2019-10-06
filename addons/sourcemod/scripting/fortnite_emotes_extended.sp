@@ -1,22 +1,17 @@
 #pragma semicolon 1
-#include <sourcemod>
-#include <sdktools>
-#include <cstrike>
+#include sdktools
+#include sdkhooks
+#include cstrike
 // #include <fnemotes> // usable in others plugins but not needed here (that i know)
 
 #pragma newdecls required
 
-#define     FlashbangOffset         15
+ConVar g_cvThirdperson;
 
-Handle g_cvThirdperson;
-
-Handle g_cvSaveWeaponsRoundEnd;
-Handle g_cvCooldown;
-Handle g_cvEmotesSounds;
-Handle g_cvAllowClientMenu;
-
-bool g_bHalfTime;
-bool g_bWarmUp;
+ConVar g_cvCooldown;
+ConVar g_cvEmotesSounds;
+ConVar g_cvAllowClientMenu;
+ConVar g_cvHideWeapons;
 
 bool g_bPlayerHurtHooked;
 
@@ -30,28 +25,10 @@ bool g_bClientDancing[MAXPLAYERS+1];
 float g_fLastAngles[MAXPLAYERS+1][3];
 float g_fLastPosition[MAXPLAYERS+1][3];
 
-char g_sPrimaryWeapon[MAXPLAYERS + 1][32];
-char g_sSecondaryWeapon[MAXPLAYERS + 1][32];
-char g_sKnife[MAXPLAYERS + 1][32];
-char g_sGrenades[MAXPLAYERS + 1][4][32];
-bool g_bTaGrenade[MAXPLAYERS + 1];
-bool g_bTaser[MAXPLAYERS + 1];
-
-int g_iPrimaryWeaponClip[MAXPLAYERS+1];
-int g_iPrimaryWeaponAmmo[MAXPLAYERS+1];
-
-int g_iSecondaryWeaponClip[MAXPLAYERS+1];
-int g_iSecondaryWeaponAmmo[MAXPLAYERS+1];
-
-int g_iTaserClip[MAXPLAYERS+1];
-int g_iTaserAmmo[MAXPLAYERS+1];
-
-int g_iFlashbangAmmo[MAXPLAYERS+1];
-
 Handle CooldownTimers[MAXPLAYERS+1];
-bool g_bEmoteCooldown[MAXPLAYERS+1];
 
-bool g_bClientEmoting[MAXPLAYERS + 1];
+int g_iWeaponHandEnt[MAXPLAYERS+1];
+
 
 public Plugin myinfo =
 {
@@ -74,29 +51,23 @@ public void OnPluginStart()
 	RegAdminCmd("sm_setdance", Command_Admin_Emotes, ADMFLAG_SLAY, "");
 
 	HookEvent("player_death", 	Event_PlayerDeath, 	EventHookMode_Pre);
+	HookEvent("player_spawn",  Event_PlayerSpawn, 	EventHookMode_Pre);
 
 	HookEvent("bomb_planted", 	Event_BombPlanted);
 
 	HookEvent("round_start", 	Event_RoundStart, 	EventHookMode_PostNoCopy);
 
-	HookEvent("announce_phase_end", 	Event_HalfTime, 	EventHookMode_PostNoCopy);
-
-	HookEvent("round_announce_warmup", 	Event_WarmUp, 	EventHookMode_PostNoCopy);//warmup START
-	HookEvent("round_announce_match_start", 	Event_MatchStart, 	EventHookMode_PostNoCopy);//warmup END
-
-	g_cvSaveWeaponsRoundEnd = CreateConVar("sm_emotes_save_weapons_round_end", "1", "Save players' weapons after round end (only for dancing players). Set it to 0 if you're running jail, retake, etc.", _, true, 0.0, true, 1.0);
 	g_cvEmotesSounds = CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
 	g_cvCooldown = CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
 	g_cvAllowClientMenu = CreateConVar("sm_emotes_allow_clients_menu", "1", "Enable/Disable clients emote menu (!emotes)", _, true, 0.0, true, 1.0);
+	g_cvHideWeapons = CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
 
 	g_cvThirdperson = FindConVar("sv_allow_thirdperson");
-	if (g_cvThirdperson == INVALID_HANDLE)
-		SetFailState("sv_allow_thirdperson not found!");
-
-	SetConVarInt(g_cvThirdperson, 1);
-
-	HookConVarChange(g_cvThirdperson, OnConVarChanged);
-
+	if (!g_cvThirdperson) SetFailState("sv_allow_thirdperson not found!");
+	
+	g_cvThirdperson.AddChangeHook(OnConVarChanged);
+	g_cvThirdperson.BoolValue = true;
+	
 	AutoExecConfig(true, "fortnite_emotes_extended");
 }
 
@@ -104,21 +75,21 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 {
 	RegPluginLibrary("fnemotes");
 	CreateNative("fnemotes_IsClientEmoting", Native_IsClientEmoting);
+	
 	return APLRes_Success;
 }
 
-public void OnConVarChanged(Handle cvar, const char[] oldVal, const char[] newVal)
+void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 {
-	if (cvar == g_cvThirdperson)
+	if (convar == g_cvThirdperson)
 	{
-		if (StringToInt(newVal) != 1)
-			SetConVarInt(g_cvThirdperson, 1);
+		if(newValue[0] != '1') convar.BoolValue = true;
 	}
 }
 
-public int Native_IsClientEmoting(Handle plugin, int numParams)
+int Native_IsClientEmoting(Handle plugin, int numParams)
 {
-	return g_bClientEmoting[GetNativeCell(1)];
+	return g_bClientDancing[GetNativeCell(1)];
 }
 
 public void OnMapStart()
@@ -264,10 +235,10 @@ public void OnClientPutInServer(int client)
 {
 	if (IsValidClient(client))
 	{	
+		g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
+		
 		ResetCam(client);
 		TerminateEmote(client);
-		g_bEmoteCooldown[client] = false;
-
 		if (CooldownTimers[client] != null)
 		{
 			KillTimer(CooldownTimers[client]);
@@ -287,12 +258,11 @@ public void OnClientDisconnect(int client)
 		{
 			KillTimer(CooldownTimers[client]);
 			CooldownTimers[client] = null;
-			g_bEmoteCooldown[client] = false;
 		}
 	}
 }
 
-public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) 
+void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) 
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	
@@ -303,13 +273,14 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 	}
 }
 
-public void Event_BombPlanted(Event event, const char[] name, bool dontBroadcast) 
+void Event_BombPlanted(Event event, const char[] name, bool dontBroadcast) 
 {
 	HookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);
+	
 	g_bPlayerHurtHooked = true;
 }
 
-public void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast) 
+void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast) 
 {
 	int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
@@ -322,9 +293,8 @@ public void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast)
 	}
 }
 
-public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) 
+void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) 
 {
-	RearmAllDancers();
 	if (g_bPlayerHurtHooked)
 	{
 		UnhookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);
@@ -332,27 +302,21 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	}
 }
 
-public void Event_HalfTime(Event event, const char[] name, bool dontBroadcast) 
+void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
-	g_bHalfTime = true;
+	int client = GetClientOfUserId(event.GetInt("userid"));
+	
+	ResetCam(client);
+	StopEmote(client);
 }
 
-public void Event_MatchStart(Event event, const char[] name, bool dontBroadcast) 
-{
-	g_bWarmUp = false;
-}
 
-public void Event_WarmUp(Event event, const char[] name, bool dontBroadcast)
-{
-	g_bWarmUp = true;
-}
-
-public Action Command_Menu(int client, int args)
+Action Command_Menu(int client, int args)
 {
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 		
-	if (!GetConVarBool(g_cvAllowClientMenu))
+	if (!g_cvAllowClientMenu.BoolValue)
 		return Plugin_Handled;
 
 	if (!IsPlayerAlive(client))
@@ -366,7 +330,7 @@ public Action Command_Menu(int client, int args)
 	return Plugin_Handled;
 }
 
-public Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped)
+Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped)
 {
 	if (!IsValidClient(client))
 		return Plugin_Handled;
@@ -383,7 +347,7 @@ public Action CreateEmote(int client, const char[] anim1, const char[] anim2, co
 		return Plugin_Handled;
 	}
 
-	if (g_bEmoteCooldown[client])
+	if (CooldownTimers[client])
 	{
 		ReplyToCommand(client, "\x0E[Emotes]\x07 It is on cooldown!");
 		return Plugin_Handled;
@@ -408,14 +372,14 @@ public Action CreateEmote(int client, const char[] anim1, const char[] anim2, co
 	if (IsValidEntity(EmoteEnt))
 	{
 		SetEntityMoveType(client, MOVETYPE_NONE);
-		DisarmPlayer(client);
+		WeaponBlock(client);
 
 		float vec[3], ang[3];
 		GetClientAbsOrigin(client, vec);
 		GetClientAbsAngles(client, ang);
 
-		Array_Copy(vec, g_fLastPosition[client], 3);
-		Array_Copy(ang, g_fLastAngles[client], 3);
+		g_fLastPosition[client] = vec;
+		g_fLastAngles[client] = ang;
 
 		char emoteEntName[16];
 		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
@@ -445,7 +409,7 @@ public Action CreateEmote(int client, const char[] anim1, const char[] anim2, co
 
 		//Sound
 
-		if (GetConVarBool(g_cvEmotesSounds) && !StrEqual(soundName, ""))
+		if (g_cvEmotesSounds.BoolValue && !StrEqual(soundName, ""))
 		{
 			int EmoteSoundEnt = CreateEntityByName("info_target");
 			if (IsValidEntity(EmoteSoundEnt))
@@ -515,14 +479,11 @@ public Action CreateEmote(int client, const char[] anim1, const char[] anim2, co
 
 		g_bClientDancing[client] = true;
 
-		if (GetConVarFloat(g_cvCooldown) > 0.0)
+		if (g_cvCooldown.FloatValue > 0.0)
 		{
-			g_bEmoteCooldown[client] = true;
-			CooldownTimers[client] = CreateTimer(GetConVarFloat(g_cvCooldown), ResetCooldown, client);
+			CooldownTimers[client] = CreateTimer(g_cvCooldown.FloatValue, ResetCooldown, client);
 		}
 	}
-	
-	g_bClientEmoting[client] = true;
 	
 	return Plugin_Handled;
 }
@@ -548,7 +509,7 @@ public Action OnPlayerRunCmd(int client, int &iButtons, int &iImpulse, float fVe
 	return Plugin_Continue;
 }
 
-public void EndAnimation(const char[] output, int caller, int activator, float delay) 
+void EndAnimation(const char[] output, int caller, int activator, float delay) 
 {
 	if (caller > 0)
 	{
@@ -585,7 +546,7 @@ void StopEmote(int client)
 
 		TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
 		ResetCam(client);
-		RearmPlayerWithAmmo(client);
+		WeaponUnblock(client);
 		SetEntityMoveType(client, MOVETYPE_WALK);
 
 		g_iEmoteEnt[client] = 0;
@@ -610,8 +571,6 @@ void StopEmote(int client)
 			g_iEmoteSoundEnt[client] = 0;
 		}
 	}
-
-	g_bClientEmoting[client] = false;
 }
 
 void TerminateEmote(int client)
@@ -647,251 +606,53 @@ void TerminateEmote(int client)
 			g_iEmoteSoundEnt[client] = 0;
 		}
 	}
-	g_bClientEmoting[client] = false;
 }
 
-void DisarmPlayer(int client)
+void WeaponBlock(int client)
 {
-	//Primary weapon
-	int iPrimary = GetPlayerWeaponSlot(client, CS_SLOT_PRIMARY);
-	if (IsValidEntity(iPrimary) && iPrimary != INVALID_ENT_REFERENCE && iPrimary != -1)
-	{
-		switch(GetEntProp(iPrimary, Prop_Send, "m_iItemDefinitionIndex"))
-		{
-			case 23: Format(g_sPrimaryWeapon[client], sizeof(g_sPrimaryWeapon[]), "weapon_mp5sd");
-			case 60: Format(g_sPrimaryWeapon[client], sizeof(g_sPrimaryWeapon[]), "weapon_m4a1_silencer");
-			default: GetEntityClassname(iPrimary, g_sPrimaryWeapon[client], sizeof(g_sPrimaryWeapon[]));
-		}
-
-		g_iPrimaryWeaponClip[client] = Weapon_GetPrimaryClip(iPrimary);
-		g_iPrimaryWeaponAmmo[client] = GetEntProp(iPrimary, Prop_Send, "m_iPrimaryReserveAmmoCount");
-
-		RemovePlayerItem(client, iPrimary);
-		AcceptEntityInput(iPrimary, "Kill");
-	} else
-	{
-		Format(g_sPrimaryWeapon[client], sizeof(g_sPrimaryWeapon[]), "empty");
-	}
-
-	//Secondary weapon
-	int iSecondary = GetPlayerWeaponSlot(client, CS_SLOT_SECONDARY);
-	if (IsValidEntity(iSecondary) && iSecondary != INVALID_ENT_REFERENCE && iSecondary != -1)
-	{
-		switch(GetEntProp(iSecondary, Prop_Send, "m_iItemDefinitionIndex")) 
-		{
-			case 61: Format(g_sSecondaryWeapon[client], sizeof(g_sSecondaryWeapon[]), "weapon_usp_silencer");
-			case 63: Format(g_sSecondaryWeapon[client], sizeof(g_sSecondaryWeapon[]), "weapon_cz75a");
-			case 64: Format(g_sSecondaryWeapon[client], sizeof(g_sSecondaryWeapon[]), "weapon_revolver");
-			default: GetEntityClassname(iSecondary, g_sSecondaryWeapon[client], sizeof(g_sSecondaryWeapon[]));
-		}
-
-		g_iSecondaryWeaponClip[client] = Weapon_GetPrimaryClip(iSecondary);
-		g_iSecondaryWeaponAmmo[client] = GetEntProp(iSecondary, Prop_Send, "m_iPrimaryReserveAmmoCount");
-
-		RemovePlayerItem(client, iSecondary);
-		AcceptEntityInput(iSecondary, "Kill");
-	} else
-	{
-		Format(g_sSecondaryWeapon[client], sizeof(g_sSecondaryWeapon[]), "empty");
-	}
-
-	//Knife & Taser & Nades
-	g_iFlashbangAmmo[client] = GetEntProp(client, Prop_Send, "m_iAmmo", _, FlashbangOffset);
+	SDKHook(client, SDKHook_WeaponCanUse, WeaponCanUseSwitch);
+	SDKHook(client, SDKHook_WeaponSwitch, WeaponCanUseSwitch);
 	
-	g_bTaGrenade[client] = false;
-	g_bTaser[client] = false;
-	Format(g_sKnife[client], sizeof(g_sKnife[]), "empty");
-
-	for (int i = 0; i <= 3; i++) Format(g_sGrenades[client][i], sizeof(g_sGrenades[][]), "empty");
- 
-	int iWeapon, iGrenade, iWeaponArraySize = GetEntPropArraySize(client, Prop_Send, "m_hMyWeapons");
-	for (int iIndex = 0; iIndex < iWeaponArraySize; iIndex++)
-	{
-		iWeapon = GetEntPropEnt(client, Prop_Send, "m_hMyWeapons", iIndex);
-		if (IsValidEntity(iWeapon))
-		{
-			char sWeapon[32];
-			GetEntityClassname(iWeapon, sWeapon, sizeof(sWeapon));
-			if (StrEqual(sWeapon, "weapon_taser"))
-			{
-				g_bTaser[client] = true;
-
-				g_iTaserClip[client] = Weapon_GetPrimaryClip(iWeapon);
-				g_iTaserAmmo[client] = GetEntProp(iWeapon, Prop_Send, "m_iPrimaryReserveAmmoCount");
-
-				RemovePlayerItem(client, iWeapon);
-				AcceptEntityInput(iWeapon, "Kill");
-			}
-			if (StrEqual(sWeapon, "weapon_tagrenade"))
-			{
-				g_bTaGrenade[client] = true;
-
-				RemovePlayerItem(client, iWeapon);
-				AcceptEntityInput(iWeapon, "Kill");
-			}
-			else if (GetPlayerWeaponSlot(client, 2) == iWeapon)
-			{
-				GetEntityClassname(iWeapon, g_sKnife[client], sizeof(g_sKnife[]));
-				RemovePlayerItem(client, iWeapon);
-				AcceptEntityInput(iWeapon, "Kill");
-			}
-			else if (GetPlayerWeaponSlot(client, 3) == iWeapon)
-			{
-				if (SafeRemoveWeapon(client, iWeapon, 3))
-				{
-					GetEntityClassname(iWeapon, g_sGrenades[client][iGrenade], 32);
-					iGrenade++;
-				}
-			}
-		}
-	}
-}
-
-void RearmAllDancers()
-{
-	for (int i = 1; i <= MaxClients; i++)
-	{
-		if (IsValidClient(i))
-		{
-			if (g_bClientDancing[i] == true)
-			{
-				ResetCam(i);
-				if (GetConVarBool(g_cvSaveWeaponsRoundEnd) && !g_bWarmUp && !g_bHalfTime)
-					RearmPlayer(i);
-				g_bClientDancing[i] = false;
-			}
-		}	
-	}
-	g_bHalfTime = false;
-}
-
-void RearmPlayerWithAmmo(int client)
-{
-	//Knife
-	if (!StrEqual(g_sKnife[client], "empty"))
-		GivePlayerItem(client, g_sKnife[client]);
+	if(g_cvHideWeapons.BoolValue)
+		SDKHook(client, SDKHook_PostThinkPost, OnPostThinkPost);
 		
-	//TaGrenade
-	if (g_bTaGrenade[client])
-		GivePlayerItem(client, "weapon_tagrenade");
-
-	//Taser
-	if (g_bTaser[client])
+	int iEnt = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+	if(iEnt != -1)
 	{
-		GivePlayerItem(client, "weapon_taser");
-
-		int iTaser, iWeaponArraySize = GetEntPropArraySize(client, Prop_Send, "m_hMyWeapons");
-		for (int iIndex = 0; iIndex < iWeaponArraySize; iIndex++)
-		{
-			iTaser = GetEntPropEnt(client, Prop_Send, "m_hMyWeapons", iIndex);
-			if (IsValidEntity(iTaser))
-			{
-				char sWeapon[32];
-				GetEntityClassname(iTaser, sWeapon, sizeof(sWeapon));
-				if (StrEqual(sWeapon, "weapon_taser"))
-				{
-					SetEntProp(iTaser, Prop_Data, "m_iClip1", g_iTaserClip[client]);
-					SetEntProp(iTaser, Prop_Send, "m_iPrimaryReserveAmmoCount", g_iTaserAmmo[client]);
-				}
-			}
-		}
+		g_iWeaponHandEnt[client] = EntIndexToEntRef(iEnt);
+		
+		SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1);
 	}
-
-	//Primary weapon
-	if (!StrEqual(g_sPrimaryWeapon[client], "empty"))
-	{
-		GivePlayerItem(client, g_sPrimaryWeapon[client]);
-
-		int iPrimary = GetPlayerWeaponSlot(client, CS_SLOT_PRIMARY);
-		if (IsValidEntity(iPrimary) && iPrimary != INVALID_ENT_REFERENCE && iPrimary != -1)
-		{
-			char sWeapon[32];
-			switch(GetEntProp(iPrimary, Prop_Send, "m_iItemDefinitionIndex"))
-			{
-				case 23: Format(sWeapon, sizeof(sWeapon), "weapon_mp5sd");
-				case 60: Format(sWeapon, sizeof(sWeapon), "weapon_m4a1_silencer");
-				default: GetEntityClassname(iPrimary, sWeapon, sizeof(sWeapon));
-			}
-			if (StrEqual(sWeapon, g_sPrimaryWeapon[client]))
-			{
-				SetEntProp(iPrimary, Prop_Data, "m_iClip1", g_iPrimaryWeaponClip[client]);
-				SetEntProp(iPrimary, Prop_Send, "m_iPrimaryReserveAmmoCount", g_iPrimaryWeaponAmmo[client]);
-			}
-		}
-	}
-
-	//Secondary weapon
-	if (!StrEqual(g_sSecondaryWeapon[client], "empty"))
-	{
-		GivePlayerItem(client, g_sSecondaryWeapon[client]);
-
-		int iSecondary = GetPlayerWeaponSlot(client, CS_SLOT_SECONDARY);
-		if (IsValidEntity(iSecondary) && iSecondary != INVALID_ENT_REFERENCE && iSecondary != -1)
-		{
-			char sWeapon[32];
-			switch(GetEntProp(iSecondary, Prop_Send, "m_iItemDefinitionIndex")) 
-			{
-				case 61: Format(sWeapon, sizeof(sWeapon), "weapon_usp_silencer");
-				case 63: Format(sWeapon, sizeof(sWeapon), "weapon_cz75a");
-				case 64: Format(sWeapon, sizeof(sWeapon), "weapon_revolver");
-				default: GetEntityClassname(iSecondary, sWeapon, sizeof(sWeapon));
-			}
-			if (StrEqual(sWeapon, g_sSecondaryWeapon[client]))
-			{
-				SetEntProp(iSecondary, Prop_Data, "m_iClip1", g_iSecondaryWeaponClip[client]);
-				SetEntProp(iSecondary, Prop_Send, "m_iPrimaryReserveAmmoCount", g_iSecondaryWeaponAmmo[client]);
-			}
-		}
-	}
-
-	//Grenades
-	for (int i = 0; i <= 3; i++)
-	{
-		if (StrEqual(g_sGrenades[client][i], "empty")) break;
-		GivePlayerItem(client, g_sGrenades[client][i]);
-	}
-	SetEntProp(client, Prop_Send, "m_iAmmo", g_iFlashbangAmmo[client], _, FlashbangOffset);
 }
 
-void RearmPlayer(int client)
+void WeaponUnblock(int client)
 {
-	//Primary weapon
-	if (!StrEqual(g_sPrimaryWeapon[client], "empty"))
-		GivePlayerItem(client, g_sPrimaryWeapon[client]);
-
-	//Secondary weapon
-	int iSecondary = GetPlayerWeaponSlot(client, CS_SLOT_SECONDARY);
-	if (IsValidEntity(iSecondary) && iSecondary != INVALID_ENT_REFERENCE && iSecondary != -1 && !StrEqual(g_sSecondaryWeapon[client], "empty"))
+	SDKUnhook(client, SDKHook_WeaponCanUse, WeaponCanUseSwitch);
+	SDKUnhook(client, SDKHook_WeaponSwitch, WeaponCanUseSwitch);
+	
+	//Even if are not activated, there will be no errors
+	SDKUnhook(client, SDKHook_PostThinkPost, OnPostThinkPost);
+	
+	if(IsPlayerAlive(client) && g_iWeaponHandEnt[client] != INVALID_ENT_REFERENCE)
 	{
-		RemovePlayerItem(client, iSecondary);
-		AcceptEntityInput(iSecondary, "Kill");
-		GivePlayerItem(client, g_sSecondaryWeapon[client]);
-	} else
-	{
-		if (!StrEqual(g_sSecondaryWeapon[client], "empty"))
-			GivePlayerItem(client, g_sSecondaryWeapon[client]);
+		int iEnt = EntRefToEntIndex(g_iWeaponHandEnt[client]);
+		if(iEnt != INVALID_ENT_REFERENCE)
+		{
+			SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", iEnt);
+		}
 	}
+	
+	g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
+}
 
-	//Knife
-	int iKnife = GetPlayerWeaponSlot(client, CS_SLOT_KNIFE);
-	if (iKnife == -1 && !StrEqual(g_sKnife[client], "empty"))
-		GivePlayerItem(client, g_sKnife[client]);
+Action WeaponCanUseSwitch(int client, int weapon)
+{
+	return Plugin_Stop;
+}
 
-	//TaGrenade
-	if (g_bTaGrenade[client])
-		GivePlayerItem(client, "weapon_tagrenade");
-
-	//Taser
-	if (g_bTaser[client])
-		GivePlayerItem(client, "weapon_taser");
-
-	//Grenades
-	for (int i = 0; i <= 3; i++)
-	{
-		if(StrEqual(g_sGrenades[client][i], "empty")) break;
-		GivePlayerItem(client, g_sGrenades[client][i]);
-	}
-	SetEntProp(client, Prop_Send, "m_iAmmo", g_iFlashbangAmmo[client], _, FlashbangOffset);
+void OnPostThinkPost(int client)
+{
+	SetEntProp(client, Prop_Send, "m_iAddonBits", 0);
 }
 
 void SetCam(int client)
@@ -910,13 +671,12 @@ void ResetCam(int client)
 	ClientCommand(client, "cam_idealdist 150");
 }
 
-public Action ResetCooldown(Handle timer, any client)
+Action ResetCooldown(Handle timer, any client)
 {
-	g_bEmoteCooldown[client] = false;
 	CooldownTimers[client] = null;
 }
 
-public Action Menu_Dance(int client)
+Action Menu_Dance(int client)
 {
 	Menu menu = new Menu(MenuHandler1);
 	menu.SetTitle("Dances and Emotes:");
@@ -935,7 +695,7 @@ public Action Menu_Dance(int client)
 	return Plugin_Handled;
 }
 
-public int MenuHandler1(Menu menu, MenuAction action, int param1, int param2)
+int MenuHandler1(Menu menu, MenuAction action, int param1, int param2)
 {
 	switch (action)
 	{		
@@ -963,7 +723,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int param1, int param2)
 }
 
 
-public Action EmotesMenu(int client)
+Action EmotesMenu(int client)
 {
 	Menu menu = new Menu(MenuHandlerEmotes);
 	menu.SetTitle("Emotes:\n");
@@ -1015,7 +775,7 @@ public Action EmotesMenu(int client)
 	return Plugin_Handled;
 }
 
-public int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
+int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 {
 	switch (action)
 	{		
@@ -1119,7 +879,7 @@ public int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param
 	}
 }
 
-public Action DancesMenu(int client)
+Action DancesMenu(int client)
 {
 	Menu menu = new Menu(MenuHandlerDances);
 	menu.SetTitle("Dances:\n");
@@ -1180,7 +940,7 @@ public Action DancesMenu(int client)
 	return Plugin_Handled;
 }
 
-public int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
+int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 {
 	switch (action)
 	{		
@@ -1301,7 +1061,7 @@ public int MenuHandlerDances(Menu menu, MenuAction action, int client, int param
 	}
 }
 
-public Action RandomEmote(int i)
+Action RandomEmote(int i)
 {
 	int number = GetRandomInt(0, 37);
 	
@@ -1386,7 +1146,7 @@ public Action RandomEmote(int i)
 	}
 }
 
-public Action RandomDance(int i)
+Action RandomDance(int i)
 {
 	int number = GetRandomInt(0, 46);
 	
@@ -1489,7 +1249,7 @@ public Action RandomDance(int i)
 	}	
 }
 
-public Action Command_Admin_Emotes(int client, int args)
+Action Command_Admin_Emotes(int client, int args)
 {
 	if (args < 1)
 	{
@@ -1728,88 +1488,4 @@ stock bool IsValidClient(int client, bool nobots = true)
 		return false;
 	}
 	return IsClientInGame(client);
-}
-
-stock bool SafeRemoveWeapon(int client, int weapon, int slot)
-{
-    if (HasEntProp(weapon, Prop_Send, "m_iItemDefinitionIndex"))
-    {
-        int iDefIndex = GetEntProp(weapon, Prop_Send, "m_iItemDefinitionIndex");
-       
-        if (iDefIndex < 0 || iDefIndex > 700)
-        {
-            return false;
-        }
-    }
-   
-    if (HasEntProp(weapon, Prop_Send, "m_bInitialized"))
-    {
-        if (GetEntProp(weapon, Prop_Send, "m_bInitialized") == 0)
-        {
-            return false;
-        }
-    }
-   
-    if (HasEntProp(weapon, Prop_Send, "m_bStartedArming"))
-    {
-        if (GetEntSendPropOffs(weapon, "m_bStartedArming") > -1)
-        {
-            return false;
-        }
-    }
-   
-    if (GetPlayerWeaponSlot(client, slot) != weapon)
-    {
-        return false;
-    }
-   
-    if (!RemovePlayerItem(client, weapon))
-    {
-        return false;
-    }
-   
-    int iWorldModel = GetEntPropEnt(weapon, Prop_Send, "m_hWeaponWorldModel");
-   
-    if (IsValidEdict(iWorldModel) && IsValidEntity(iWorldModel))
-    {
-        if (!AcceptEntityInput(iWorldModel, "Kill"))
-        {
-            return false;
-        }
-    }
-   
-    if (weapon == GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon"))
-    {
-        SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1);
-    }
-   
-    AcceptEntityInput(weapon, "Kill");
-   
-    return true;
-}
-
-/**
- * Copies a 1 dimensional static array.
- *
- * @param array			Static Array to copy from.
- * @param newArray		New Array to copy to.
- * @param size			Size of the array (or number of cells to copy)
- * @noreturn
- */
-stock void Array_Copy(const any[] array, any[] newArray, int size)
-{
-	for (int i=0; i < size; i++) {
-		newArray[i] = array[i];
-	}
-}
-
-/*
- * Gets the primary clip count of a weapon.
- *
- * @param weapon		Weapon Entity.
- * @return				Primary Clip count.
- */
-stock int Weapon_GetPrimaryClip(int weapon)
-{
-	return GetEntProp(weapon, Prop_Data, "m_iClip1");
 }
