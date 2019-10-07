@@ -1,0 +1,506 @@
+"Phrases"
+{
+	"MUST_BE_ALIVE"
+	{
+		"en"			"\x02[Emotes]\x07 You must be alive to use this!"
+	}
+
+	"STAY_ON_GROUND"
+	{
+		"en"			"\x02[Emotes]\x07 You must stay on the ground to use this!"
+	}
+
+	"COOLDOWN_EMOTES"
+	{
+		"en"			"\x02[Emotes]\x07 It is on cooldown!"
+	}
+
+	"AMIN_1_INVALID"
+	{
+		"en"			"\x02[Emotes]\x07 Argument 1 is invalid!!!"
+	}
+	
+	"CANNOT_USE_NOW"
+	{
+		"en"			"\x02[Emotes]\x07 You can't use it right now!"
+	}
+
+	"INVALID_EMOTE_ID"
+	{
+		"en"			"\x02[Emotes]\x07 Invalid Emote ID, Should be between (1-86)"
+	}
+
+	"RANDOM_EMOTE"
+	{
+		"en"			"Random Emote"
+	}
+
+	"RANDOM_DANCE"
+	{
+		"en"			"Random Dance"
+	}	
+
+	"EMOTES_LIST"
+	{
+		"en"			"Emotes List"
+	}
+
+	"DANCES_LIST"
+	{
+		"en"			"Dances List"
+	}		
+
+	"EMOTE_PLAYER"
+	{
+		"en"			"Emote player"
+	}	
+
+	"SELECT_EMOTE"
+	{
+		"en"			"Select Emote"
+	}
+	
+	"TITLE_MAIM_MENU"
+	{
+		"en"			"Emotes and Dances"
+	}
+	
+	"TITLE_EMOTES_MENU"
+	{
+		"en"			"Emotes"
+	}	
+	
+	"TITLE_DANCES_MENU"
+	{
+		"en"			"Dances"
+	}	
+
+	"Emote_Fonzie_Pistol"
+	{
+		"en"			"Finger Guns"
+	}
+
+	"Emote_Bring_It_On"
+	{
+		"en"			"Come To Me"
+	}
+
+	"Emote_ThumbsDown"
+	{
+		"en"			"Thumbs Down"
+	}
+
+	"Emote_ThumbsUp"
+	{
+		"en"			"Thumbs Up"
+	}
+	
+	"Emote_Celebration_Loop"
+	{
+		"en"			"Celebration"
+	}
+
+	"Emote_BlowKiss"
+	{
+		"en"			"Blow kiss"
+	}
+
+	"Emote_Calculated"
+	{
+		"en"			"Calculated"
+	}
+
+	"Emote_Confused"
+	{
+		"en"			"Confused"
+	}
+	
+	"Emote_Chug"
+	{
+		"en"			"Chug"
+	}
+
+	"Emote_Cry"
+	{
+		"en"			"Cry"
+	}
+
+	"Emote_DustingOffHands"
+	{
+		"en"			"Band of the fort"
+	}
+
+	"Emote_DustOffShoulders"
+	{
+		"en"			"Shake It Up 2"
+	}
+	
+	"Emote_Facepalm"
+	{
+		"en"			"Facepalm"
+	}
+
+	"Emote_Fishing"
+	{
+		"en"			"On the Hook"
+	}
+
+	"Emote_Flex"
+	{
+		"en"			"Flex"
+	}
+
+	"Emote_golfclap"
+	{
+		"en"			"Golf Clap"
+	}
+	
+	"Emote_HandSignals"
+	{
+		"en"			"Hand Signals"
+	}
+
+	"Emote_HeelClick"
+	{
+		"en"			"Click!"
+	}
+
+	"Emote_Hotstuff"
+	{
+		"en"			"Hot Stuff"
+	}
+
+	"Emote_IBreakYou"
+	{
+		"en"			"Breaking Point"
+	}
+	
+	"Emote_IHeartYou"
+	{
+		"en"			"True Love"
+	}
+
+	"Emote_Kung-Fu_Salute"
+	{
+		"en"			"Kung-Fu Salute"
+	}
+
+	"Emote_Laugh"
+	{
+		"en"			"Laugh"
+	}
+
+	"Emote_Luchador"
+	{
+		"en"			"Luchador"
+	}
+	
+	"Emote_Make_It_Rain"
+	{
+		"en"			"Make it Rain"
+	}
+
+	"Emote_NotToday"
+	{
+		"en"			"No hoy"
+	}
+
+	"Emote_RockPaperScissor_Paper"
+	{
+		"en"			"Paper"
+	}
+
+	"Emote_RockPaperScissor_Rock"
+	{
+		"en"			"Rock"
+	}
+	
+	"Emote_RockPaperScissor_Scissor"
+	{
+		"en"			"Scissors"
+	}
+
+	"Emote_Salt"
+	{
+		"en"			"Salt"
+	}
+
+	"Emote_Salute"
+	{
+		"en"			"Salute"
+	}
+
+	"Emote_SmoothDrive"
+	{
+		"en"			"Drive Car"
+	}
+	"Emote_Snap"
+	{
+		"en"			"Snap"
+	}
+
+	"Emote_StageBow"
+	{
+		"en"			"Stage Bow"
+	}
+
+	"Emote_ThumbsDown"
+	{
+		"en"			"Thumbs Down"
+	}
+
+	"Emote_ThumbsUp"
+	{
+		"en"			"Thumbs Up"
+	}
+	"Emote_Wave2"
+	{
+		"en"			"Salute 2"
+	}
+
+	"Emote_Yeet"
+	{
+		"en"			"Yeet"
+	}
+
+	"DanceMoves"
+	{
+		"en"			"Dance Moves"
+	}
+
+	"Emote_Mask_Off_Intro"
+	{
+		"en"			"Orange Justice"
+	}
+	
+	"Emote_Zippy_Dance"
+	{
+		"en"			"Rambunctious"
+	}
+
+	"ElectroShuffle"
+	{
+		"en"			"Electro Shuffle"
+	}
+
+	"Emote_AerobicChamp"
+	{
+		"en"			"Aerobic"
+	}
+
+	"Emote_Bendy"
+	{
+		"en"			"Bendy"
+	}
+	
+	"Emote_BandOfTheFort"
+	{
+		"en"			"Best Mates"
+	}
+
+	"Emote_Boogie_Down_Intro"
+	{
+		"en"			"Boogie"
+	}
+
+	"Emote_Capoeira"
+	{
+		"en"			"Capoeira"
+	}
+
+	"Emote_Charleston"
+	{
+		"en"			"Flapper"
+	}
+	
+	"Emote_Chicken"
+	{
+		"en"			"Chicken"
+	}
+
+	"Emote_Dance_NoBones"
+	{
+		"en"			"Boneless"
+	}
+
+	"Emote_Dance_Shoot"
+	{
+		"en"			"Hype"
+	}
+
+	"Emote_Dance_SwipeIt"
+	{
+		"en"			"Shake It Up"
+	}
+	
+	"Emote_Dance_Disco_T3"
+	{
+		"en"			"Disco Fever"
+	}
+
+	"Emote_DG_Disco"
+	{
+		"en"			"Disco Fever 2"
+	}
+
+	"Emote_Dance_Worm"
+	{
+		"en"			"The Worm"
+	}
+
+	"Emote_Dance_Loser"
+	{
+		"en"			"Take The L"
+	}
+	
+	"Emote_Dance_Breakdance"
+	{
+		"en"			"BreakDance"
+	}
+
+	"Emote_Dance_Pump"
+	{
+		"en"			"Pump"
+	}
+
+	"Emote_Dance_RideThePony"
+	{
+		"en"			"Ride The Pony"
+	}
+
+	"Emote_Dab"
+	{
+		"en"			"Dab"
+	}
+
+	"Emote_EasternBloc_Start"
+	{
+		"en"			"Eanster Bloc"
+	}
+
+	"Emote_FancyFeet"
+	{
+		"en"			"Dream Feet"
+	}
+
+	"Emote_FlossDance"
+	{
+		"en"			"Floss"
+	}
+
+	"Emote_FlippnSexy"
+	{
+		"en"			"Flippn"
+	}
+
+	"Emote_Fresh"
+	{
+		"en"			"Fresh"
+	}
+
+	"Emote_GrooveJam"
+	{
+		"en"			"Grefg"
+	}
+
+	"Emote_guitar"
+	{
+		"en"			"Guitar"
+	}
+
+	"Emote_Hillbilly_Shuffle_Intro"
+	{
+		"en"			"Shuffle"
+	}
+
+	"Emote_Hiphop_01"
+	{
+		"en"			"Hip Hop"
+	}
+
+	"Emote_Hula_Start"
+	{
+		"en"			"Hula Hop"
+	}
+
+	"Emote_InfiniDab_Intro"
+	{
+		"en"			"Infinite Dab"
+	}
+
+	"Emote_Intensity_Start"
+	{
+		"en"			"Intensity"
+	}
+
+	"Emote_IrishJig_Start"
+	{
+		"en"			"Turkish Dabke"
+	}
+
+	"Emote_KoreanEagle"
+	{
+		"en"			"Eagle"
+	}
+
+	"Emote_Kpop_02"
+	{
+		"en"			"True Heart"
+	}
+
+	"Emote_LivingLarge"
+	{
+		"en"			"Living Large"
+	}
+
+	"Emote_Maracas"
+	{
+		"en"			"Maracas"
+	}
+
+	"Emote_PopLock"
+	{
+		"en"			"Pop Lock"
+	}
+
+	"Emote_PopRock"
+	{
+		"en"			"Star Power"
+	}
+
+	"Emote_RobotDance"
+	{
+		"en"			"Robot"
+	}
+
+	"Emote_T-Rex"
+	{
+		"en"			"T-Rex"
+	}
+
+	"Emote_TechnoZombie"
+	{
+		"en"			"Reanimated"
+	}
+
+	"Emote_Twist"
+	{
+		"en"			"Twist"
+	}
+
+	"Emote_WarehouseDance_Start"
+	{
+		"en"			"Ware House"
+	}
+
+	"Emote_Wiggle"
+	{
+		"en"			"Wiggle"
+	}
+
+	"Emote_Youre_Awesome"
+	{
+		"en"			"You're Awesome"
+	}
+
+}	
