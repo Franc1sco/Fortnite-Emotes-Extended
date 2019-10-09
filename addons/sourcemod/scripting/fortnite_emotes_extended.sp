@@ -2,10 +2,10 @@
 #include <sourcemod>
 #include <sdktools>
 #include <cstrike>
+#include <csgocolors>
 //#include <fnemotes> // usable in others plugins but not needed here (that i know)
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
-
 
 #pragma newdecls required
 
@@ -18,7 +18,7 @@ Handle g_cvThirdperson;
 Handle g_cvSaveWeaponsRoundEnd;
 Handle g_cvCooldown;
 Handle g_cvEmotesSounds;
-Handle g_cvAllowClientMenu;
+ConVar g_cvFlagEmotesMenu;
 
 bool g_bHalfTime;
 bool g_bWarmUp;
@@ -66,7 +66,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.0.6",
+	version = "1.0.7",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -75,10 +75,10 @@ public void OnPluginStart()
 	LoadTranslations("common.phrases");
 	LoadTranslations("fnemotes.phrases");
 	
-	RegConsoleCmd("sm_emotes", Command_Menu);
-	RegConsoleCmd("sm_emote", Command_Menu);
-	RegConsoleCmd("sm_dances", Command_Menu);	
-	RegConsoleCmd("sm_dance", Command_Menu);
+	RegConsoleCmd("emotes", Command_Menu);
+	RegConsoleCmd("emote", Command_Menu);
+	RegConsoleCmd("dances", Command_Menu);	
+	RegConsoleCmd("dance", Command_Menu);
 	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setdances", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
@@ -98,7 +98,7 @@ public void OnPluginStart()
 	g_cvSaveWeaponsRoundEnd = CreateConVar("sm_emotes_save_weapons_round_end", "1", "Save players' weapons after round end (only for dancing players). Set it to 0 if you're running jail, retake, etc.", _, true, 0.0, true, 1.0);
 	g_cvEmotesSounds = CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
 	g_cvCooldown = CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
-	g_cvAllowClientMenu = CreateConVar("sm_emotes_allow_clients_menu", "1", "Enable/Disable clients emote menu (!emotes)", _, true, 0.0, true, 1.0);
+	g_cvFlagEmotesMenu = CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for !emotes command (empty for all players)");
 
 	g_cvThirdperson = FindConVar("sv_allow_thirdperson");
 	if (g_cvThirdperson == INVALID_HANDLE)
@@ -370,10 +370,15 @@ public Action Command_Menu(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 
-	if (!GetConVarBool(g_cvAllowClientMenu))
-		return Plugin_Handled;
 
-	Menu_Dance(client);
+	char sBuffer[32];
+	g_cvFlagEmotesMenu.GetString(sBuffer, sizeof(sBuffer));
+
+	if (CheckAdminFlags(client, ReadFlagString(sBuffer)))
+	{
+		Menu_Dance(client);
+	}
+	else CPrintToChat(client, "%t", "NO_ACCESS_FLAG");	
 
 	return Plugin_Handled;
 }
@@ -385,25 +390,25 @@ public Action CreateEmote(int client, const char[] anim1, const char[] anim2, co
 
 	if (!IsPlayerAlive(client))
 	{
-		ReplyToCommand(client, "%t", "MUST_BE_ALIVE");
+		CReplyToCommand(client, "%t", "MUST_BE_ALIVE");
 		return Plugin_Handled;
 	}
 
 	if (!(GetEntityFlags(client) & FL_ONGROUND))
 	{
-		ReplyToCommand(client, "%t", "STAY_ON_GROUND");
+		CReplyToCommand(client, "%t", "STAY_ON_GROUND");
 		return Plugin_Handled;
 	}
 
 	if (g_bEmoteCooldown[client])
 	{
-		ReplyToCommand(client, "%t", "COOLDOWN_EMOTES");
+		CReplyToCommand(client, "%t", "COOLDOWN_EMOTES");
 		return Plugin_Handled;
 	}
 
 	if (StrEqual(anim1, ""))
 	{
-		ReplyToCommand(client, "%t", "AMIN_1_INVALID");
+		CReplyToCommand(client, "%t", "AMIN_1_INVALID");
 		return Plugin_Handled;
 	}
 
@@ -412,7 +417,7 @@ public Action CreateEmote(int client, const char[] anim1, const char[] anim2, co
 
 	if (GetEntityMoveType(client) == MOVETYPE_NONE)
 	{
-		ReplyToCommand(client, "%t", "CANNOT_USE_NOW");
+		CReplyToCommand(client, "%t", "CANNOT_USE_NOW");
 		return Plugin_Handled;
 	}
 
@@ -601,7 +606,7 @@ void StopEmote(int client)
 		SetEntityMoveType(client, MOVETYPE_WALK);
 
 		g_iEmoteEnt[client] = 0;
-		g_bClientDancing[client] = false;
+		g_bClientDancing[client] = false;		
 	} 
 	else
 	{
@@ -1019,10 +1024,8 @@ public Action EmotesMenu(int client)
 	AddTranslatedMenuItem(menu, "32", "Emote_SmoothDrive", client);	
 	AddTranslatedMenuItem(menu, "33", "Emote_Snap", client);
 	AddTranslatedMenuItem(menu, "34", "Emote_StageBow", client);
-	AddTranslatedMenuItem(menu, "35", "Emote_ThumbsDown", client);
-	AddTranslatedMenuItem(menu, "36", "Emote_ThumbsUp", client);	
-	AddTranslatedMenuItem(menu, "37", "Emote_Wave2", client);
-	AddTranslatedMenuItem(menu, "38", "Emote_Yeet", client);
+	AddTranslatedMenuItem(menu, "35", "Emote_Wave2", client);
+	AddTranslatedMenuItem(menu, "36", "Emote_Yeet", client);
 
 	menu.ExitButton = true;
 	menu.ExitBackButton = true;
@@ -1111,14 +1114,10 @@ public int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param
 					case 33:
 					CreateEmote(client, "Emote_Snap", "none", "Emote_Snap1", false);
 					case 34:
-					CreateEmote(client, "Emote_StageBow", "none", "emote_stagebow", false);	
+					CreateEmote(client, "Emote_StageBow", "none", "emote_stagebow", false);		
 					case 35:
-					CreateEmote(client, "Emote_ThumbsDown", "none", "", false);
-					case 36:
-					CreateEmote(client, "Emote_ThumbsUp", "none", "", false);		
-					case 37:
 					CreateEmote(client, "Emote_Wave2", "none", "", false);
-					case 38:
+					case 36:
 					CreateEmote(client, "Emote_Yeet", "none", "Emote_Yeet", false);				
 					
 				}
@@ -1325,7 +1324,7 @@ public int MenuHandlerDances(Menu menu, MenuAction action, int client, int param
 public Action RandomEmote(int i)
 {
 
-					int number = GetRandomInt(1, 38);
+					int number = GetRandomInt(1, 36);
 					
 					switch (number)
 					{
@@ -1396,14 +1395,10 @@ public Action RandomEmote(int i)
 						case 33:
 						CreateEmote(i, "Emote_Snap", "none", "Emote_Snap1", false);
 						case 34:
-						CreateEmote(i, "Emote_StageBow", "none", "emote_stagebow", false);	
+						CreateEmote(i, "Emote_StageBow", "none", "emote_stagebow", false);		
 						case 35:
-						CreateEmote(i, "Emote_ThumbsDown", "none", "", false);
-						case 36:
-						CreateEmote(i, "Emote_ThumbsUp", "none", "", false);		
-						case 37:
 						CreateEmote(i, "Emote_Wave2", "none", "", false);
-						case 38:
+						case 36:
 						CreateEmote(i, "Emote_Yeet", "none", "Emote_Yeet", false);	
 					}	
 
@@ -1519,7 +1514,7 @@ public Action Command_Admin_Emotes(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
+		CReplyToCommand(client, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 		return Plugin_Handled;
 	}
 	
@@ -1533,7 +1528,7 @@ public Action Command_Admin_Emotes(int client, int args)
 		GetCmdArg(2, arg2, sizeof(arg2));
 		if (StringToIntEx(arg2, amount) < 1 || StringToIntEx(arg2, amount) > 86)
 		{
-			ReplyToCommand(client, "%t", "INVALID_EMOTE_ID");
+			CReplyToCommand(client, "%t", "INVALID_EMOTE_ID");
 			return Plugin_Handled;
 		}
 	}
@@ -1636,113 +1631,109 @@ void PerformEmote(int client, int target, int amount)
 					case 33:
 					CreateEmote(target, "Emote_Snap", "none", "Emote_Snap1", false);
 					case 34:
-					CreateEmote(target, "Emote_StageBow", "none", "emote_stagebow", false);	
+					CreateEmote(target, "Emote_StageBow", "none", "emote_stagebow", false);			
 					case 35:
-					CreateEmote(target, "Emote_ThumbsDown", "none", "", false);
-					case 36:
-					CreateEmote(target, "Emote_ThumbsUp", "none", "", false);		
-					case 37:
 					CreateEmote(target, "Emote_Wave2", "none", "", false);
-					case 38:
+					case 36:
 					CreateEmote(target, "Emote_Yeet", "none", "Emote_Yeet", false);	
-					case 39:
+					case 37:
 					CreateEmote(target, "DanceMoves", "none", "ninja_dance_01", false);
-					case 40:
+					case 38:
 					CreateEmote(target, "Emote_Mask_Off_Intro", "Emote_Mask_Off_Loop", "Hip_Hop_Good_Vibes_Mix_01_Loop", true);						
-					case 41:
+					case 39:
 					CreateEmote(target, "Emote_Zippy_Dance", "none", "emote_zippy_A", true);
-					case 42:
+					case 40:
 					CreateEmote(target, "ElectroShuffle", "none", "athena_emote_electroshuffle_music", true);
-					case 43:
+					case 41:
 					CreateEmote(target, "Emote_AerobicChamp", "none", "emote_aerobics_01", true);
-					case 44:
+					case 42:
 					CreateEmote(target, "Emote_Bendy", "none", "athena_music_emotes_bendy", true);
-					case 45:
+					case 43:
 					CreateEmote(target, "Emote_BandOfTheFort", "none", "athena_emote_bandofthefort_music", true);	
-					case 46:
+					case 44:
 					CreateEmote(target, "Emote_Boogie_Down_Intro", "Emote_Boogie_Down", "emote_boogiedown", true);	
-					case 47:
+					case 45:
 					CreateEmote(target, "Emote_Capoeira", "none", "emote_capoeira", false);
-					case 48:
+					case 46:
 					CreateEmote(target, "Emote_Charleston", "none", "athena_emote_flapper_music", true);
-					case 49:
+					case 47:
 					CreateEmote(target, "Emote_Chicken", "none", "athena_emote_chicken_foley_01", true);
-					case 50:
+					case 48:
 					CreateEmote(target, "Emote_Dance_NoBones", "none", "athena_emote_music_boneless", true);
-					case 51:
+					case 49:
 					CreateEmote(target, "Emote_Dance_Shoot", "none", "athena_emotes_music_shoot_v7", true);
-					case 52:
+					case 50:
 					CreateEmote(target, "Emote_Dance_SwipeIt", "none", "Emote_Dance_SwipeIt", true);
-					case 53:
+					case 51:
 					CreateEmote(target, "Emote_Dance_Disco_T3", "none", "athena_emote_disco", true);
-					case 54:
+					case 52:
 					CreateEmote(target, "Emote_DG_Disco", "none", "athena_emote_disco", true); 					
-					case 55:
+					case 53:
 					CreateEmote(target, "Emote_Dance_Worm", "none", "athena_emote_worm_music", false);
-					case 56:
+					case 54:
 					CreateEmote(target, "Emote_Dance_Loser", "Emote_Dance_Loser_CT", "athena_music_emotes_takethel", true);
-					case 57:
+					case 55:
 					CreateEmote(target, "Emote_Dance_Breakdance", "none", "athena_emote_breakdance_music", false);
-					case 58:
+					case 56:
 					CreateEmote(target, "Emote_Dance_Pump", "none", "Emote_Dance_Pump.wav", true);
-					case 59:
+					case 57:
 					CreateEmote(target, "Emote_Dance_RideThePony", "none", "athena_emote_ridethepony_music_01", false);
-					case 60:
+					case 58:
 					CreateEmote(target, "Emote_Dab", "none", "", false);
-					case 61:
+					case 59:
 					CreateEmote(target, "Emote_EasternBloc_Start", "Emote_EasternBloc", "eastern_bloc_musc_setup_d", true);
-					case 62:
+					case 60:
 					CreateEmote(target, "Emote_FancyFeet", "Emote_FancyFeet_CT", "athena_emotes_lankylegs_loop_02", true); 
-					case 63:
+					case 61:
 					CreateEmote(target, "Emote_FlossDance", "none", "athena_emote_floss_music", true);
-					case 64:
+					case 62:
 					CreateEmote(target, "Emote_FlippnSexy", "none", "Emote_FlippnSexy", false);
-					case 65:
+					case 63:
 					CreateEmote(target, "Emote_Fresh", "none", "athena_emote_fresh_music", true);
-					case 66:
+					case 64:
 					CreateEmote(target, "Emote_GrooveJam", "none", "emote_groove_jam_a", true);	
-					case 67:
+					case 65:
 					CreateEmote(target, "Emote_guitar", "none", "br_emote_shred_guitar_mix_03_loop", true);	
-					case 68:
+					case 66:
 					CreateEmote(target, "Emote_Hillbilly_Shuffle_Intro", "Emote_Hillbilly_Shuffle", "Emote_Hillbilly_Shuffle", true); 
-					case 69:
+					case 67:
 					CreateEmote(target, "Emote_Hiphop_01", "Emote_Hip_Hop", "s5_hiphop_breakin_132bmp_loop", true);	
-					case 70:
+					case 68:
 					CreateEmote(target, "Emote_Hula_Start", "Emote_Hula", "emote_hula_01", true);
-					case 71:
+					case 69:
 					CreateEmote(target, "Emote_InfiniDab_Intro", "Emote_InfiniDab_Loop", "athena_emote_infinidab", true);	
-					case 72:
+					case 70:
 					CreateEmote(target, "Emote_Intensity_Start", "Emote_Intensity_Loop", "emote_Intensity", true);
-					case 73:
+					case 71:
 					CreateEmote(target, "Emote_IrishJig_Start", "Emote_IrishJig", "emote_irish_jig_foley_music_loop", true);
-					case 74:
+					case 72:
 					CreateEmote(target, "Emote_KoreanEagle", "none", "Athena_Music_Emotes_KoreanEagle", true);
-					case 75:
+					case 73:
 					CreateEmote(target, "Emote_Kpop_02", "none", "emote_kpop_01", true);	
-					case 76:
+					case 74:
 					CreateEmote(target, "Emote_LivingLarge", "none", "emote_LivingLarge_A", true);	
-					case 77:
+					case 75:
 					CreateEmote(target, "Emote_Maracas", "none", "emote_samba_new_B", true);
-					case 78:
+					case 76:
 					CreateEmote(target, "Emote_PopLock", "none", "Athena_Emote_PopLock", true);
-					case 79:
+					case 77:
 					CreateEmote(target, "Emote_PopRock", "none", "Emote_PopRock_01", true);		
-					case 80:
+					case 78:
 					CreateEmote(target, "Emote_RobotDance", "none", "athena_emote_robot_music", true);	
-					case 81:
+					case 79:
 					CreateEmote(target, "Emote_T-Rex", "none", "Emote_Dino_Complete", false);
-					case 82:
+					case 80:
 					CreateEmote(target, "Emote_TechnoZombie", "none", "athena_emote_founders_music", true);		
-					case 83:
+					case 81:
 					CreateEmote(target, "Emote_Twist", "none", "athena_emotes_music_twist", true);
-					case 84:
+					case 82:
 					CreateEmote(target, "Emote_WarehouseDance_Start", "Emote_WarehouseDance_Loop", "Emote_Warehouse", true);
-					case 85:
+					case 83:
 					CreateEmote(target, "Emote_Wiggle", "none", "Wiggle_Music_Loop", true);
-					case 86:
+					case 84:
 					CreateEmote(target, "Emote_Youre_Awesome", "none", "youre_awesome_emote_music", false);						
 					default:
-					PrintToChat(client, "%t", "INVALID_EMOTE_ID");
+					CPrintToChat(client, "%t", "INVALID_EMOTE_ID");
 		}
 }
 
@@ -1822,11 +1813,11 @@ public int MenuHandler_EmotePlayers(Menu menu, MenuAction action, int param1, in
 
 		if ((target = GetClientOfUserId(userid)) == 0)
 		{
-			PrintToChat(param1, "[SM] %t", "Player no longer available");
+			CPrintToChat(param1, "[SM] %t", "Player no longer available");
 		}
 		else if (!CanUserTarget(param1, target))
 		{
-			PrintToChat(param1, "[SM] %t", "Unable to target");
+			CPrintToChat(param1, "[SM] %t", "Unable to target");
 		}
 		else
 		{
@@ -1887,59 +1878,57 @@ void DisplayEmotesAmountMenu(int client)
 	AddTranslatedMenuItem(menu, "31", "Emote_Salute", client);
 	AddTranslatedMenuItem(menu, "32", "Emote_SmoothDrive", client);	
 	AddTranslatedMenuItem(menu, "33", "Emote_Snap", client);
-	AddTranslatedMenuItem(menu, "34", "Emote_StageBow", client);
-	AddTranslatedMenuItem(menu, "35", "Emote_ThumbsDown", client);
-	AddTranslatedMenuItem(menu, "36", "Emote_ThumbsUp", client);	
-	AddTranslatedMenuItem(menu, "37", "Emote_Wave2", client);
-	AddTranslatedMenuItem(menu, "38", "Emote_Yeet", client);
-	AddTranslatedMenuItem(menu, "39", "DanceMoves", client);
-	AddTranslatedMenuItem(menu, "40", "Emote_Mask_Off_Intro", client);
-	AddTranslatedMenuItem(menu, "41", "Emote_Zippy_Dance", client);
-	AddTranslatedMenuItem(menu, "42", "ElectroShuffle", client);
-	AddTranslatedMenuItem(menu, "43", "Emote_AerobicChamp", client);
-	AddTranslatedMenuItem(menu, "44", "Emote_Bendy", client);
-	AddTranslatedMenuItem(menu, "45", "Emote_BandOfTheFort", client);
-	AddTranslatedMenuItem(menu, "46", "Emote_Boogie_Down_Intro", client);	
-	AddTranslatedMenuItem(menu, "47", "Emote_Capoeira", client);
-	AddTranslatedMenuItem(menu, "48", "Emote_Charleston", client);
-	AddTranslatedMenuItem(menu, "49", "Emote_Chicken", client);
-	AddTranslatedMenuItem(menu, "50", "Emote_Dance_NoBones", client);	
-	AddTranslatedMenuItem(menu, "51", "Emote_Dance_Shoot", client);
-	AddTranslatedMenuItem(menu, "52", "Emote_Dance_SwipeIt", client);
-	AddTranslatedMenuItem(menu, "53", "Emote_Dance_Disco_T3", client);
-	AddTranslatedMenuItem(menu, "54", "Emote_DG_Disco", client);	
-	AddTranslatedMenuItem(menu, "55", "Emote_Dance_Worm", client);
-	AddTranslatedMenuItem(menu, "56", "Emote_Dance_Loser", client);
-	AddTranslatedMenuItem(menu, "57", "Emote_Dance_Breakdance", client);
-	AddTranslatedMenuItem(menu, "58", "Emote_Dance_Pump", client);	
-	AddTranslatedMenuItem(menu, "59", "Emote_Dance_RideThePony", client);
-	AddTranslatedMenuItem(menu, "60", "Emote_Dab", client);
-	AddTranslatedMenuItem(menu, "61", "Emote_EasternBloc_Start", client);
-	AddTranslatedMenuItem(menu, "62", "Emote_FancyFeet", client);	
-	AddTranslatedMenuItem(menu, "63", "Emote_FlossDance", client);
-	AddTranslatedMenuItem(menu, "64", "Emote_FlippnSexy", client);
-	AddTranslatedMenuItem(menu, "65", "Emote_Fresh", client);
-	AddTranslatedMenuItem(menu, "66", "Emote_GrooveJam", client);	
-	AddTranslatedMenuItem(menu, "67", "Emote_guitar", client);
-	AddTranslatedMenuItem(menu, "68", "Emote_Hillbilly_Shuffle_Intro", client);
-	AddTranslatedMenuItem(menu, "69", "Emote_Hiphop_01", client);
-	AddTranslatedMenuItem(menu, "70", "Emote_Hula_Start", client);	
-	AddTranslatedMenuItem(menu, "71", "Emote_InfiniDab_Intro", client);
-	AddTranslatedMenuItem(menu, "72", "Emote_Intensity_Start", client);
-	AddTranslatedMenuItem(menu, "73", "Emote_IrishJig_Start", client);
-	AddTranslatedMenuItem(menu, "74", "Emote_KoreanEagle", client);	
-	AddTranslatedMenuItem(menu, "75", "Emote_Kpop_02", client);
-	AddTranslatedMenuItem(menu, "76", "Emote_LivingLarge", client);
-	AddTranslatedMenuItem(menu, "77", "Emote_Maracas", client);
-	AddTranslatedMenuItem(menu, "78", "Emote_PopLock", client);
-	AddTranslatedMenuItem(menu, "79", "Emote_PopRock", client);
-	AddTranslatedMenuItem(menu, "80", "Emote_RobotDance", client);
-	AddTranslatedMenuItem(menu, "81", "Emote_T-Rex", client);	
-	AddTranslatedMenuItem(menu, "82", "Emote_TechnoZombie", client);
-	AddTranslatedMenuItem(menu, "83", "Emote_Twist", client);
-	AddTranslatedMenuItem(menu, "84", "Emote_WarehouseDance_Start", client);
-	AddTranslatedMenuItem(menu, "85", "Emote_Wiggle", client);
-	AddTranslatedMenuItem(menu, "86", "Emote_Youre_Awesome", client);	
+	AddTranslatedMenuItem(menu, "34", "Emote_StageBow", client);	
+	AddTranslatedMenuItem(menu, "35", "Emote_Wave2", client);
+	AddTranslatedMenuItem(menu, "36", "Emote_Yeet", client);
+	AddTranslatedMenuItem(menu, "37", "DanceMoves", client);
+	AddTranslatedMenuItem(menu, "38", "Emote_Mask_Off_Intro", client);
+	AddTranslatedMenuItem(menu, "39", "Emote_Zippy_Dance", client);
+	AddTranslatedMenuItem(menu, "40", "ElectroShuffle", client);
+	AddTranslatedMenuItem(menu, "41", "Emote_AerobicChamp", client);
+	AddTranslatedMenuItem(menu, "42", "Emote_Bendy", client);
+	AddTranslatedMenuItem(menu, "43", "Emote_BandOfTheFort", client);
+	AddTranslatedMenuItem(menu, "44", "Emote_Boogie_Down_Intro", client);	
+	AddTranslatedMenuItem(menu, "45", "Emote_Capoeira", client);
+	AddTranslatedMenuItem(menu, "46", "Emote_Charleston", client);
+	AddTranslatedMenuItem(menu, "47", "Emote_Chicken", client);
+	AddTranslatedMenuItem(menu, "48", "Emote_Dance_NoBones", client);	
+	AddTranslatedMenuItem(menu, "49", "Emote_Dance_Shoot", client);
+	AddTranslatedMenuItem(menu, "50", "Emote_Dance_SwipeIt", client);
+	AddTranslatedMenuItem(menu, "51", "Emote_Dance_Disco_T3", client);
+	AddTranslatedMenuItem(menu, "52", "Emote_DG_Disco", client);	
+	AddTranslatedMenuItem(menu, "53", "Emote_Dance_Worm", client);
+	AddTranslatedMenuItem(menu, "54", "Emote_Dance_Loser", client);
+	AddTranslatedMenuItem(menu, "55", "Emote_Dance_Breakdance", client);
+	AddTranslatedMenuItem(menu, "56", "Emote_Dance_Pump", client);	
+	AddTranslatedMenuItem(menu, "57", "Emote_Dance_RideThePony", client);
+	AddTranslatedMenuItem(menu, "58", "Emote_Dab", client);
+	AddTranslatedMenuItem(menu, "59", "Emote_EasternBloc_Start", client);
+	AddTranslatedMenuItem(menu, "60", "Emote_FancyFeet", client);	
+	AddTranslatedMenuItem(menu, "61", "Emote_FlossDance", client);
+	AddTranslatedMenuItem(menu, "62", "Emote_FlippnSexy", client);
+	AddTranslatedMenuItem(menu, "63", "Emote_Fresh", client);
+	AddTranslatedMenuItem(menu, "64", "Emote_GrooveJam", client);	
+	AddTranslatedMenuItem(menu, "65", "Emote_guitar", client);
+	AddTranslatedMenuItem(menu, "66", "Emote_Hillbilly_Shuffle_Intro", client);
+	AddTranslatedMenuItem(menu, "67", "Emote_Hiphop_01", client);
+	AddTranslatedMenuItem(menu, "68", "Emote_Hula_Start", client);	
+	AddTranslatedMenuItem(menu, "69", "Emote_InfiniDab_Intro", client);
+	AddTranslatedMenuItem(menu, "70", "Emote_Intensity_Start", client);
+	AddTranslatedMenuItem(menu, "71", "Emote_IrishJig_Start", client);
+	AddTranslatedMenuItem(menu, "72", "Emote_KoreanEagle", client);	
+	AddTranslatedMenuItem(menu, "73", "Emote_Kpop_02", client);
+	AddTranslatedMenuItem(menu, "74", "Emote_LivingLarge", client);
+	AddTranslatedMenuItem(menu, "75", "Emote_Maracas", client);
+	AddTranslatedMenuItem(menu, "76", "Emote_PopLock", client);
+	AddTranslatedMenuItem(menu, "77", "Emote_PopRock", client);
+	AddTranslatedMenuItem(menu, "78", "Emote_RobotDance", client);
+	AddTranslatedMenuItem(menu, "79", "Emote_T-Rex", client);	
+	AddTranslatedMenuItem(menu, "80", "Emote_TechnoZombie", client);
+	AddTranslatedMenuItem(menu, "81", "Emote_Twist", client);
+	AddTranslatedMenuItem(menu, "82", "Emote_WarehouseDance_Start", client);
+	AddTranslatedMenuItem(menu, "83", "Emote_Wiggle", client);
+	AddTranslatedMenuItem(menu, "84", "Emote_Youre_Awesome", client);	
 	
 	menu.Display(client, MENU_TIME_FOREVER);
 }
@@ -1968,11 +1957,11 @@ public int MenuHandler_EmotesAmount(Menu menu, MenuAction action, int param1, in
 
 		if ((target = GetClientOfUserId(g_EmotesTarget[param1])) == 0)
 		{
-			PrintToChat(param1, "[SM] %t", "Player no longer available");
+			CPrintToChat(param1, "[SM] %t", "Player no longer available");
 		}
 		else if (!CanUserTarget(param1, target))
 		{
-			PrintToChat(param1, "[SM] %t", "Unable to target");
+			CPrintToChat(param1, "[SM] %t", "Unable to target");
 		}
 		else
 		{
@@ -1999,7 +1988,7 @@ void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int
 
 stock bool IsValidClient(int client, bool nobots = true)
 {
-	if (client <= 0 || client > MaxClients || !IsClientConnected(client)) // || (nobots && IsFakeClient(client)))
+	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
 	{
 		return false;
 	}
@@ -2088,4 +2077,10 @@ stock void Array_Copy(const any[] array, any[] newArray, int size)
 stock int Weapon_GetPrimaryClip(int weapon)
 {
 	return GetEntProp(weapon, Prop_Data, "m_iClip1");
+}
+
+bool CheckAdminFlags(int client, int iFlag)
+{
+	int iUserFlags = GetUserFlagBits(client);
+	return (iUserFlags & ADMFLAG_ROOT || (iUserFlags & iFlag) == iFlag);
 }

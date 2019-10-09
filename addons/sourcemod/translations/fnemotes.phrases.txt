@@ -1,33 +1,37 @@
 "Phrases"
 {
+	"NO_ACCESS_FLAG"
+	{
+		"en"			"[{olive}Emotes{default}]{darkred} You don't have access to use emotes!!"
+	}
 	"MUST_BE_ALIVE"
 	{
-		"en"			"\x02[Emotes]\x07 You must be alive to use this!"
+		"en"			"[{olive}Emotes{default}]{darkred} You must be alive to use emotes!"
 	}
 
 	"STAY_ON_GROUND"
 	{
-		"en"			"\x02[Emotes]\x07 You must stay on the ground to use this!"
+		"en"			"[{olive}Emotes{default}]{darkred} You must stay on the ground to use emotes!"
 	}
 
 	"COOLDOWN_EMOTES"
 	{
-		"en"			"\x02[Emotes]\x07 It is on cooldown!"
+		"en"			"[{olive}Emotes{default}]{darkred} Emotes on cooldown!"
 	}
 
 	"AMIN_1_INVALID"
 	{
-		"en"			"\x02[Emotes]\x07 Argument 1 is invalid!!!"
+		"en"			"[{olive}Emotes{default}]{darkred} Argument 1 is invalid!!!"
 	}
 	
 	"CANNOT_USE_NOW"
 	{
-		"en"			"\x02[Emotes]\x07 You can't use it right now!"
+		"en"			"[{olive}Emotes{default}]{darkred} You can't use emotes right now!"
 	}
 
 	"INVALID_EMOTE_ID"
 	{
-		"en"			"\x02[Emotes]\x07 Invalid Emote ID, Should be between (1-86)"
+		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-86)"
 	}
 
 	"RANDOM_EMOTE"
