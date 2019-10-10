@@ -64,7 +64,7 @@ public void OnPluginStart()
 
 	HookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);
 	
-	HookEvent("player_spawn",  Event_PlayerSpawn, 	EventHookMode_Pre);
+	HookEvent("round_prestart",  Event_Start);
 
 	g_cvEmotesSounds = CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
 	g_cvCooldown = CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
@@ -301,13 +301,14 @@ void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast)
 	}
 }
 
-void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
+void Event_Start(Event event, const char[] name, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(event.GetInt("userid"));
-	
-	ResetCam(client);
-	//StopEmote(client);
-	WeaponUnblock(client);
+	for (int i = 1; i <= MaxClients; i++)
+            if (IsValidClient(i, false) && g_bClientDancing[i]) {
+				ResetCam(i);
+				//StopEmote(client);
+				WeaponUnblock(i);
+			}
 }
 
 public Action Command_Menu(int client, int args)
