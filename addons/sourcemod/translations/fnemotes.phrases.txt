@@ -3,508 +3,598 @@
 	"NO_ACCESS_FLAG"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You don't have access to use emotes!!"
+		"es"			"[{olive}Emotes{default}]{darkred} No tienes acceso a usar emotes!!"
 	}
 	"MUST_BE_ALIVE"
 	{
-		"en"			"[{olive}Emotes{default}]{darkred} You must be alive to use emotes!"
+		"en"			"[{olive}Emotes{default}]{darkred} You must be alive to use this!"
+		"es"			"[{olive}Emotes{default}]{darkred} Debes estar vivo para usar eso!"
 	}
 
 	"STAY_ON_GROUND"
 	{
-		"en"			"[{olive}Emotes{default}]{darkred} You must stay on the ground to use emotes!"
+		"en"			"[{olive}Emotes{default}]{darkred} You must stay on the ground to use this!"
+		"es"			"[{olive}Emotes{default}]{darkred} Debes estar en el suelo para usar eso!"
 	}
 
 	"COOLDOWN_EMOTES"
 	{
-		"en"			"[{olive}Emotes{default}]{darkred} Emotes on cooldown!"
+		"en"			"[{olive}Emotes{default}]{darkred} It is on cooldown!"
+		"es"			"[{olive}Emotes{default}]{darkred} Está enfriándose!"
 	}
 
 	"AMIN_1_INVALID"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} Argument 1 is invalid!!!"
+		"es"			"[{olive}Emotes{default}]{darkred} El Argumento 1 es inválido"
 	}
 	
 	"CANNOT_USE_NOW"
 	{
-		"en"			"[{olive}Emotes{default}]{darkred} You can't use emotes right now!"
+		"en"			"[{olive}Emotes{default}]{darkred} You can't use it right now!"
+		"es"			"[{olive}Emotes{default}]{darkred} No puedes usar eso ahora mismo!"
 	}
 
 	"INVALID_EMOTE_ID"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-86)"
+		"es"			"[{olive}Emotes{default}]{darkred} Emote ID inválida, Debe estar entre (1-86)"
 	}
 
 	"RANDOM_EMOTE"
 	{
 		"en"			"Random Emote"
+		"es"			"Emote Aleatorio"
 	}
 
 	"RANDOM_DANCE"
 	{
 		"en"			"Random Dance"
+		"es"			"Baile Aleatorio"
 	}	
 
 	"EMOTES_LIST"
 	{
 		"en"			"Emotes List"
+		"es"			"Lista de Emotes"
 	}
 
 	"DANCES_LIST"
 	{
 		"en"			"Dances List"
+		"es"			"Lista de Bailes"
 	}		
 
 	"EMOTE_PLAYER"
 	{
 		"en"			"Emote player"
+		"es"			"Reproductor de Emotes"
 	}	
 
 	"SELECT_EMOTE"
 	{
 		"en"			"Select Emote"
+		"es"			"Seleccionar Emote"
 	}
 	
 	"TITLE_MAIM_MENU"
 	{
 		"en"			"Emotes and Dances"
+		"es"			"Emotes y Bailes"
 	}
 	
 	"TITLE_EMOTES_MENU"
 	{
 		"en"			"Emotes"
+		"es"			"Emotes"
 	}	
 	
 	"TITLE_DANCES_MENU"
 	{
 		"en"			"Dances"
+		"es"			"Bailes"
 	}	
 
 	"Emote_Fonzie_Pistol"
 	{
 		"en"			"Finger Guns"
+		"es"			"Pistolas de Dedos"
 	}
 
 	"Emote_Bring_It_On"
 	{
 		"en"			"Come To Me"
+		"es"			"Ven A Mi"
 	}
 
 	"Emote_ThumbsDown"
 	{
 		"en"			"Thumbs Down"
-	}
-
-	"Emote_ThumbsUp"
-	{
-		"en"			"Thumbs Up"
+		"es"			"Pulgares Abajo"
 	}
 	
 	"Emote_Celebration_Loop"
 	{
 		"en"			"Celebration"
+		"es"			"Celebración"
 	}
 
 	"Emote_BlowKiss"
 	{
 		"en"			"Blow kiss"
+		"es"			"Beso Aéreo"
 	}
 
 	"Emote_Calculated"
 	{
 		"en"			"Calculated"
+		"es"			"Calculado"
 	}
 
 	"Emote_Confused"
 	{
 		"en"			"Confused"
+		"es"			"Confundido"
 	}
 	
 	"Emote_Chug"
 	{
 		"en"			"Chug"
+		"es"			"Resoplar"
 	}
 
 	"Emote_Cry"
 	{
 		"en"			"Cry"
+		"es"			"Llorar"
 	}
 
 	"Emote_DustingOffHands"
 	{
 		"en"			"Band of the fort"
+		"es"			"Desempolvarse las Manos"
 	}
 
 	"Emote_DustOffShoulders"
 	{
 		"en"			"Shake It Up 2"
+		"es"			"Muévelo 2"
 	}
 	
 	"Emote_Facepalm"
 	{
 		"en"			"Facepalm"
+		"es"			"Palmada en la Cara"
 	}
 
 	"Emote_Fishing"
 	{
 		"en"			"On the Hook"
+		"es"			"En el Gancho"
 	}
 
 	"Emote_Flex"
 	{
 		"en"			"Flex"
+		"es"			"Flexionarse"
 	}
 
 	"Emote_golfclap"
 	{
 		"en"			"Golf Clap"
+		"es"			"Palmaditas"
 	}
 	
 	"Emote_HandSignals"
 	{
 		"en"			"Hand Signals"
+		"es"			"Selales de Mano"
 	}
 
 	"Emote_HeelClick"
 	{
 		"en"			"Click!"
+		"es"			"Click!"
 	}
 
 	"Emote_Hotstuff"
 	{
 		"en"			"Hot Stuff"
+		"es"			"Cosas Calientes"
 	}
 
 	"Emote_IBreakYou"
 	{
 		"en"			"Breaking Point"
+		"es"			"Punto de Ruptura"
 	}
 	
 	"Emote_IHeartYou"
 	{
 		"en"			"True Love"
+		"es"			"Amor Verdadero
 	}
 
 	"Emote_Kung-Fu_Salute"
 	{
 		"en"			"Kung-Fu Salute"
+		"es"			"Saludo de Kung-Fu"
 	}
 
 	"Emote_Laugh"
 	{
 		"en"			"Laugh"
+		"es"			"Risa"
 	}
 
 	"Emote_Luchador"
 	{
 		"en"			"Luchador"
+		"es"			"Luchador"
 	}
 	
 	"Emote_Make_It_Rain"
 	{
 		"en"			"Make it Rain"
+		"es"			"Haz que Llueva"
 	}
 
 	"Emote_NotToday"
 	{
 		"en"			"No hoy"
+		"es"			"Hoy No"
 	}
 
 	"Emote_RockPaperScissor_Paper"
 	{
 		"en"			"Paper"
+		"es"			"Papel"
 	}
 
 	"Emote_RockPaperScissor_Rock"
 	{
 		"en"			"Rock"
+		"es"			"Piedra"
 	}
 	
 	"Emote_RockPaperScissor_Scissor"
 	{
 		"en"			"Scissors"
+		"es"			"Tijeras"
 	}
 
 	"Emote_Salt"
 	{
 		"en"			"Salt"
+		"es"			"Sal"
 	}
 
 	"Emote_Salute"
 	{
 		"en"			"Salute"
+		"es"			"Saludo"
 	}
 
 	"Emote_SmoothDrive"
 	{
 		"en"			"Drive Car"
+		"es"			"Conducir Coche"
 	}
 	"Emote_Snap"
 	{
 		"en"			"Snap"
+		"es"			"Chasquido"
 	}
 
 	"Emote_StageBow"
 	{
 		"en"			"Stage Bow"
-	}
-
-	"Emote_ThumbsDown"
-	{
-		"en"			"Thumbs Down"
+		"es"			"Reverencia"
 	}
 
 	"Emote_ThumbsUp"
 	{
 		"en"			"Thumbs Up"
+		"es"			"Pulgares Arriba"
 	}
 	"Emote_Wave2"
 	{
 		"en"			"Salute 2"
+		"es"			"Saludo 2"
 	}
 
 	"Emote_Yeet"
 	{
 		"en"			"Yeet"
+		"es"			"Estúpido"
 	}
 
 	"DanceMoves"
 	{
 		"en"			"Dance Moves"
+		"es"			"Movimientos de Baile"
 	}
 
 	"Emote_Mask_Off_Intro"
 	{
 		"en"			"Orange Justice"
+		"es"			"Justicia Naranja"
 	}
 	
 	"Emote_Zippy_Dance"
 	{
 		"en"			"Rambunctious"
+		"es"			"Bullicioso"
 	}
 
 	"ElectroShuffle"
 	{
 		"en"			"Electro Shuffle"
+		"es"			"Shuffle Electrónico"
 	}
 
 	"Emote_AerobicChamp"
 	{
 		"en"			"Aerobic"
+		"es"			"Aeróbico"
 	}
 
 	"Emote_Bendy"
 	{
 		"en"			"Bendy"
+		"es"			"Flexible"
 	}
 	
 	"Emote_BandOfTheFort"
 	{
 		"en"			"Best Mates"
+		"es"			"Mejores Amigos"
 	}
 
 	"Emote_Boogie_Down_Intro"
 	{
 		"en"			"Boogie"
+		"es"			"Boogie"
 	}
 
 	"Emote_Capoeira"
 	{
 		"en"			"Capoeira"
+		"es"			"Capoeira"
 	}
 
 	"Emote_Charleston"
 	{
 		"en"			"Flapper"
+		"es"			"A la Moda"
 	}
 	
 	"Emote_Chicken"
 	{
 		"en"			"Chicken"
+		"es"			"Pollo"
 	}
 
 	"Emote_Dance_NoBones"
 	{
 		"en"			"Boneless"
+		"es"			"Sin Huesos"
 	}
 
 	"Emote_Dance_Shoot"
 	{
 		"en"			"Hype"
+		"es"			"Bombo"
 	}
 
 	"Emote_Dance_SwipeIt"
 	{
 		"en"			"Shake It Up"
+		"es"			"Muévelo"
 	}
 	
 	"Emote_Dance_Disco_T3"
 	{
 		"en"			"Disco Fever"
+		"es"			"Disco para Siempre"
 	}
 
 	"Emote_DG_Disco"
 	{
 		"en"			"Disco Fever 2"
+		"es"			"Disco para Siempre 2"
 	}
 
 	"Emote_Dance_Worm"
 	{
 		"en"			"The Worm"
+		"es"			"El Gusano"
 	}
 
 	"Emote_Dance_Loser"
 	{
 		"en"			"Take The L"
+		"es"			"Toma La L"
 	}
 	
 	"Emote_Dance_Breakdance"
 	{
 		"en"			"BreakDance"
+		"es"			"BreakDance"
 	}
 
 	"Emote_Dance_Pump"
 	{
 		"en"			"Pump"
+		"es"			"Bomba"
 	}
 
 	"Emote_Dance_RideThePony"
 	{
 		"en"			"Ride The Pony"
+		"es"			"Monta Al Pony"
 	}
 
 	"Emote_Dab"
 	{
 		"en"			"Dab"
+		"es"			"Dab"
 	}
 
 	"Emote_EasternBloc_Start"
 	{
-		"en"			"Eanster Bloc"
+		"en"			"Eastern Bloc"
+		"es"			"Bloque Oriental"
 	}
 
 	"Emote_FancyFeet"
 	{
 		"en"			"Dream Feet"
+		"es"			"Pies de Suelo
 	}
 
 	"Emote_FlossDance"
 	{
 		"en"			"Floss"
+		"es"			"Hilo Dental"
 	}
 
 	"Emote_FlippnSexy"
 	{
 		"en"			"Flippn"
+		"es"			"Flippin Sexy"
 	}
 
 	"Emote_Fresh"
 	{
 		"en"			"Fresh"
+		"es"			"Fresco"
 	}
 
 	"Emote_GrooveJam"
 	{
 		"en"			"Grefg"
+		"es"			"Grefg"
 	}
 
 	"Emote_guitar"
 	{
 		"en"			"Guitar"
+		"es"			"Guitarra"
 	}
 
 	"Emote_Hillbilly_Shuffle_Intro"
 	{
 		"en"			"Shuffle"
+		"es"			"Shuffle"
 	}
 
 	"Emote_Hiphop_01"
 	{
 		"en"			"Hip Hop"
+		"es"			"Hip Hop"
 	}
 
 	"Emote_Hula_Start"
 	{
 		"en"			"Hula Hop"
+		"es"			"Hula Hop"
 	}
 
 	"Emote_InfiniDab_Intro"
 	{
 		"en"			"Infinite Dab"
+		"es"			"Dab Infinito"
 	}
 
 	"Emote_Intensity_Start"
 	{
 		"en"			"Intensity"
+		"es"			"Intensidad"
 	}
 
 	"Emote_IrishJig_Start"
 	{
 		"en"			"Turkish Dabke"
+		"es"			"Dabke Turco"
 	}
 
 	"Emote_KoreanEagle"
 	{
 		"en"			"Eagle"
+		"es"			"Águila"
 	}
 
 	"Emote_Kpop_02"
 	{
 		"en"			"True Heart"
+		"es"			"Corazón Verdadero"
 	}
 
 	"Emote_LivingLarge"
 	{
 		"en"			"Living Large"
+		"es"			"Viviendo a lo Grande"
 	}
 
 	"Emote_Maracas"
 	{
 		"en"			"Maracas"
+		"es"			"Maracas"
 	}
 
 	"Emote_PopLock"
 	{
 		"en"			"Pop Lock"
+		"es"			"Pop Lock"
 	}
 
 	"Emote_PopRock"
 	{
 		"en"			"Star Power"
+		"es"			"Poder Estelar"
 	}
 
 	"Emote_RobotDance"
 	{
 		"en"			"Robot"
+		"es"			"Robot"
 	}
 
 	"Emote_T-Rex"
 	{
 		"en"			"T-Rex"
+		"es"			"T-Rex"
 	}
 
 	"Emote_TechnoZombie"
 	{
 		"en"			"Reanimated"
+		"es"			"Reanimado"
 	}
 
 	"Emote_Twist"
 	{
 		"en"			"Twist"
+		"es"			"Twist"
 	}
 
 	"Emote_WarehouseDance_Start"
 	{
 		"en"			"Ware House"
+		"es"			"Almacén"
 	}
 
 	"Emote_Wiggle"
 	{
 		"en"			"Wiggle"
+		"es"			"Meneo"
 	}
 
 	"Emote_Youre_Awesome"
 	{
 		"en"			"You're Awesome"
+		"es"			"Eres Increíble"
 	}
 
 }	
