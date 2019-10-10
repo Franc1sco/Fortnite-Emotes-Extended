@@ -42,7 +42,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.0.8",
+	version = "1.0.9",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -306,7 +306,8 @@ void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	
 	ResetCam(client);
-	StopEmote(client);
+	//StopEmote(client);
+	WeaponUnblock(client);
 }
 
 public Action Command_Menu(int client, int args)
