@@ -3,7 +3,8 @@
 #include <sdktools>
 #include <sdkhooks>
 #include <multicolors>
-//#include <fnemotes> // usable in others plugins but not needed here (that i know)
+#include <autoexecconfig>
+
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
 
@@ -27,9 +28,6 @@ char g_sEmoteSound[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
 bool g_bClientDancing[MAXPLAYERS+1];
 
-float g_fLastAngles[MAXPLAYERS+1][3];
-float g_fLastPosition[MAXPLAYERS+1][3];
-
 
 Handle CooldownTimers[MAXPLAYERS+1];
 bool g_bEmoteCooldown[MAXPLAYERS+1];
@@ -42,7 +40,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.0.9",
+	version = "1.1",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -65,19 +63,31 @@ public void OnPluginStart()
 	HookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);
 	
 	HookEvent("round_prestart",  Event_Start);
+	
+	/**
+		Convars
+	**/
+	
+	AutoExecConfig_SetFile("fortnite_emotes_extended");
 
-	g_cvEmotesSounds = CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
-	g_cvCooldown = CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
-	g_cvFlagEmotesMenu = CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for !emotes command (empty for all players)");
-	g_cvHideWeapons = CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
+	g_cvEmotesSounds = AutoExecConfig_CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
+	g_cvCooldown = AutoExecConfig_CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
+	g_cvFlagEmotesMenu = AutoExecConfig_CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for !emotes command (empty for all players)");
+	g_cvHideWeapons = AutoExecConfig_CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
+	
+	AutoExecConfig_ExecuteFile();
+	
+	AutoExecConfig_CleanFile();
+	
+	/**
+		End Convars
+	**/
 
 	g_cvThirdperson = FindConVar("sv_allow_thirdperson");
 	if (!g_cvThirdperson) SetFailState("sv_allow_thirdperson not found!");
 
 	g_cvThirdperson.AddChangeHook(OnConVarChanged);
 	g_cvThirdperson.BoolValue = true;
-
-	AutoExecConfig(true, "fortnite_emotes_extended");
 	
 	TopMenu topmenu;
 	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null))
@@ -345,6 +355,12 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		CReplyToCommand(client, "%t", "STAY_ON_GROUND");
 		return Plugin_Handled;
 	}
+	
+	if (GetEntProp(client, Prop_Send, "m_bIsScoped"))
+	{
+		CReplyToCommand(client, "%t", "SCOPE_DETECTED");
+		return Plugin_Handled;
+	}
 
 	if (CooldownTimers[client])
 	{
@@ -377,9 +393,6 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		GetClientAbsOrigin(client, vec);
 		GetClientAbsAngles(client, ang);
 
-		g_fLastPosition[client] = vec;
-		g_fLastAngles[client] = ang;
-
 		char emoteEntName[16];
 		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
 		
@@ -391,7 +404,7 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		ActivateEntity(EmoteEnt);
 		DispatchSpawn(EmoteEnt);
 
-		TeleportEntity(EmoteEnt, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
+		TeleportEntity(EmoteEnt, vec, ang, NULL_VECTOR);
 		
 		SetVariantString(emoteEntName);
 		AcceptEntityInput(client, "SetParent", client, client, 0);
@@ -542,8 +555,7 @@ void StopEmote(int client)
 	{
 		AcceptEntityInput(client, "ClearParent", client, client, 0);
 		AcceptEntityInput(iEmoteEnt, "Kill");
-
-		TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
+		
 		ResetCam(client);
 		WeaponUnblock(client);
 		SetEntityMoveType(client, MOVETYPE_WALK);
