@@ -11,6 +11,7 @@
 #pragma newdecls required
 
 ConVar g_cvThirdperson;
+ConVar g_cvHidePlayers;
 
 TopMenu hTopMenu;
 
@@ -34,13 +35,15 @@ bool g_bEmoteCooldown[MAXPLAYERS+1];
 
 int g_iWeaponHandEnt[MAXPLAYERS+1];
 
+bool g_bHooked[MAXPLAYERS + 1];
+
 
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.1",
+	version = "1.2",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -74,6 +77,7 @@ public void OnPluginStart()
 	g_cvCooldown = AutoExecConfig_CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
 	g_cvFlagEmotesMenu = AutoExecConfig_CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for !emotes command (empty for all players)");
 	g_cvHideWeapons = AutoExecConfig_CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
+	g_cvHidePlayers = CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", _, true, 0.0, true, 1.0);
 	
 	AutoExecConfig_ExecuteFile();
 	
@@ -255,36 +259,21 @@ public void OnMapStart()
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_hot_music.wav");
 }
 
-
-public void OnClientPutInServer(int client)
-{
-	if (IsValidClient(client))
-	{	
-		ResetCam(client);
-		TerminateEmote(client);
-		g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
-
-		if (CooldownTimers[client] != null)
-		{
-			KillTimer(CooldownTimers[client]);
-		}
-	}
-}
-
 public void OnClientDisconnect(int client)
 {
 	if (IsValidClient(client))
 	{
-		ResetCam(client);
-		TerminateEmote(client);
+		StopEmote(client);
 
 		if (CooldownTimers[client] != null)
 		{
 			KillTimer(CooldownTimers[client]);
 			CooldownTimers[client] = null;
-			g_bEmoteCooldown[client] = false;
 		}
 	}
+	g_bHooked[client] = false;
+	g_bEmoteCooldown[client] = false;
+	g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
 }
 
 void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) 
@@ -293,7 +282,6 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 	
 	if (IsValidClient(client))
 	{
-		ResetCam(client);
 		StopEmote(client);
 	}
 }
@@ -314,10 +302,8 @@ void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast)
 void Event_Start(Event event, const char[] name, bool dontBroadcast)
 {
 	for (int i = 1; i <= MaxClients; i++)
-            if (IsValidClient(i, false) && g_bClientDancing[i]) {
-				ResetCam(i);
-				//StopEmote(client);
-				WeaponUnblock(i);
+            if (IsValidClient(i) && g_bClientDancing[i]) {
+				StopEmote(i);
 			}
 }
 
@@ -486,11 +472,21 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 
 		SetVariantString(anim1);
 		AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
-
+		
+		if(g_cvHidePlayers.BoolValue)
+		{
+			for(int i = 1; i <= MaxClients; i++)
+				if (IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client) && !g_bHooked[i])
+				{
+					SDKHook(i, SDKHook_SetTransmit, SetTransmit);
+					g_bHooked[i] = true;
+				}
+		}
+		
 		SetCam(client);
-
+		
 		g_bClientDancing[client] = true;
-
+		
 		if (g_cvCooldown.FloatValue > 0.0)
 		{
 			CooldownTimers[client] = CreateTimer(g_cvCooldown.FloatValue, ResetCooldown, client);
@@ -547,6 +543,10 @@ int GetEmoteActivator(int iEntRefDancer)
 
 void StopEmote(int client)
 {
+	g_bClientDancing[client] = false;
+	ResetCam(client);
+	WeaponUnblock(client);
+	
 	if (!g_iEmoteEnt[client])
 		return;
 
@@ -556,17 +556,11 @@ void StopEmote(int client)
 		AcceptEntityInput(client, "ClearParent", client, client, 0);
 		AcceptEntityInput(iEmoteEnt, "Kill");
 		
-		ResetCam(client);
-		WeaponUnblock(client);
 		SetEntityMoveType(client, MOVETYPE_WALK);
 
-		g_iEmoteEnt[client] = 0;
-		g_bClientDancing[client] = false;
-	} else
-	{
-		g_iEmoteEnt[client] = 0;
-		g_bClientDancing[client] = false;
 	}
+	
+	g_iEmoteEnt[client] = 0;
 
 	if (g_iEmoteSoundEnt[client])
 	{
@@ -576,46 +570,9 @@ void StopEmote(int client)
 		{
 			StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
 			AcceptEntityInput(iEmoteSoundEnt, "Kill");
-			g_iEmoteSoundEnt[client] = 0;
-		} else
-		{
-			g_iEmoteSoundEnt[client] = 0;
 		}
-	}
-}
-
-void TerminateEmote(int client)
-{
-	if (!g_iEmoteEnt[client])
-		return;
-
-	int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
-	if (iEmoteEnt && iEmoteEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteEnt))
-	{
-		AcceptEntityInput(client, "ClearParent", client, client, 0);
-		AcceptEntityInput(iEmoteEnt, "Kill");
-
-		g_iEmoteEnt[client] = 0;
-		g_bClientDancing[client] = false;
-	} else
-	{
-		g_iEmoteEnt[client] = 0;
-		g_bClientDancing[client] = false;
-	}
-
-	if (g_iEmoteSoundEnt[client])
-	{
-		int iEmoteSoundEnt = EntRefToEntIndex(g_iEmoteSoundEnt[client]);
-
-		if (!StrEqual(g_sEmoteSound[client], "") && iEmoteSoundEnt && iEmoteSoundEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteSoundEnt))
-		{
-			StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
-			AcceptEntityInput(iEmoteSoundEnt, "Kill");
-			g_iEmoteSoundEnt[client] = 0;
-		} else
-		{
-			g_iEmoteSoundEnt[client] = 0;
-		}
+		
+		g_iEmoteSoundEnt[client] = 0;
 	}
 }
 
@@ -644,6 +601,17 @@ void WeaponUnblock(int client)
 	//Even if are not activated, there will be no errors
 	SDKUnhook(client, SDKHook_PostThinkPost, OnPostThinkPost);
 	
+	if(GetEmotePeople() == 0)
+	{
+		for(int i = 1; i <= MaxClients; i++)
+			if (IsClientInGame(i) && GetClientTeam(i) != GetClientTeam(client) && g_bHooked[i])
+			{
+				SDKUnhook(i, SDKHook_SetTransmit, SetTransmit);
+				g_bHooked[i] = false;
+			}
+	}
+	g_bHooked[client] = false;
+	
 	if(IsPlayerAlive(client) && g_iWeaponHandEnt[client] != INVALID_ENT_REFERENCE)
 	{
 		int iEnt = EntRefToEntIndex(g_iWeaponHandEnt[client]);
@@ -655,6 +623,13 @@ void WeaponUnblock(int client)
 	
 	g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
 }
+
+public Action SetTransmit(int entity, int client) 
+{ 
+	if(IsPlayerAlive(client) && GetClientTeam(client) != GetClientTeam(entity)) return Plugin_Handled;
+	
+	return Plugin_Continue; 
+} 
 
 Action WeaponCanUseSwitch(int client, int weapon)
 {
@@ -1738,7 +1713,7 @@ void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int
 	menu.AddItem(opt, buffer);
 }
 
-stock bool IsValidClient(int client, bool nobots = true)
+stock bool IsValidClient(int client, bool nobots = false)
 {
 	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
 	{
@@ -1751,4 +1726,14 @@ bool CheckAdminFlags(int client, int iFlag)
 {
 	int iUserFlags = GetUserFlagBits(client);
 	return (iUserFlags & ADMFLAG_ROOT || (iUserFlags & iFlag) == iFlag);
+}
+
+int GetEmotePeople()
+{
+	int count;
+	for(int i = 1; i <= MaxClients; i++)
+		if (IsClientInGame(i) && g_bClientDancing[i])
+			count++;
+			
+	return count;
 }
