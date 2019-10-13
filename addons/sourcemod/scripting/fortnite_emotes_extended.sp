@@ -20,9 +20,6 @@ ConVar g_cvCooldown;
 ConVar g_cvEmotesSounds;
 ConVar g_cvHideWeapons;
 
-float g_fLastAngles[MAXPLAYERS+1][3];
-float g_fLastPosition[MAXPLAYERS+1][3];
-
 int g_iEmoteEnt[MAXPLAYERS+1];
 int g_iEmoteSoundEnt[MAXPLAYERS+1];
 
@@ -38,9 +35,9 @@ bool g_bEmoteCooldown[MAXPLAYERS+1];
 
 int g_iWeaponHandEnt[MAXPLAYERS+1];
 
-bool g_bHooked[MAXPLAYERS + 1];
-
 Handle g_EmoteForward;
+
+bool g_bHooked[MAXPLAYERS + 1];
 
 
 public Plugin myinfo =
@@ -103,6 +100,8 @@ public void OnPluginStart()
 	{
 		OnAdminMenuReady(topmenu);
 	}	
+	
+	g_EmoteForward = CreateGlobalForward("fnemotes_OnEmote", ET_Ignore, Param_Cell);
 }
 
 public void OnPluginEnd()
@@ -117,8 +116,6 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 {
 	RegPluginLibrary("fnemotes");
 	CreateNative("fnemotes_IsClientEmoting", Native_IsClientEmoting);
-	
-	g_EmoteForward = CreateGlobalForward("fnemotes_OnEmote", ET_Ignore, Param_Cell);
 	return APLRes_Success;
 }
 
@@ -274,21 +271,37 @@ public void OnMapStart()
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_hot_music.wav");
 }
 
+
+public void OnClientPutInServer(int client)
+{
+	if (IsValidClient(client))
+	{	
+		ResetCam(client);
+		TerminateEmote(client);
+		g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
+
+		if (CooldownTimers[client] != null)
+		{
+			KillTimer(CooldownTimers[client]);
+		}
+	}
+}
+
 public void OnClientDisconnect(int client)
 {
 	if (IsValidClient(client))
 	{
-		StopEmote(client);
+		ResetCam(client);
+		TerminateEmote(client);
 
 		if (CooldownTimers[client] != null)
 		{
 			KillTimer(CooldownTimers[client]);
 			CooldownTimers[client] = null;
+			g_bEmoteCooldown[client] = false;
 		}
 	}
 	g_bHooked[client] = false;
-	g_bEmoteCooldown[client] = false;
-	g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
 }
 
 void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) 
@@ -297,6 +310,7 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 	
 	if (IsValidClient(client))
 	{
+		ResetCam(client);
 		StopEmote(client);
 	}
 }
@@ -317,8 +331,12 @@ void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast)
 void Event_Start(Event event, const char[] name, bool dontBroadcast)
 {
 	for (int i = 1; i <= MaxClients; i++)
-            if (IsValidClient(i) && g_bClientDancing[i]) {
-				StopEmote(i);
+            if (IsValidClient(i, false) && g_bClientDancing[i]) {
+				ResetCam(i);
+				//StopEmote(client);
+				WeaponUnblock(i);
+				
+				g_bClientDancing[i] = false;
 			}
 }
 
@@ -393,9 +411,6 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		float vec[3], ang[3];
 		GetClientAbsOrigin(client, vec);
 		GetClientAbsAngles(client, ang);
-		
-		g_fLastPosition[client] = vec;
-		g_fLastAngles[client] = ang;
 
 		char emoteEntName[16];
 		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
@@ -490,6 +505,10 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 
 		SetVariantString(anim1);
 		AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
+
+		SetCam(client);
+
+		g_bClientDancing[client] = true;
 		
 		if(g_cvHidePlayers.BoolValue)
 		{
@@ -500,19 +519,18 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 					g_bHooked[i] = true;
 				}
 		}
-		
-		SetCam(client);
-		
-		g_bClientDancing[client] = true;
-		
+
 		if (g_cvCooldown.FloatValue > 0.0)
 		{
 			CooldownTimers[client] = CreateTimer(g_cvCooldown.FloatValue, ResetCooldown, client);
 		}
 		
-		Call_StartForward(g_EmoteForward);
-		Call_PushCell(client);
-		Call_Finish();
+		if(g_EmoteForward != null)
+		{
+			Call_StartForward(g_EmoteForward);
+			Call_PushCell(client);
+			Call_Finish();
+		}
 	}
 	
 	return Plugin_Handled;
@@ -520,9 +538,6 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 
 public Action OnPlayerRunCmd(int client, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon)
 {
-	if(!IsValidClient(client))
-		return Plugin_Continue;
-		
 	if (g_bClientDancing[client] && !(GetEntityFlags(client) & FL_ONGROUND))
 		StopEmote(client);
 
@@ -568,10 +583,6 @@ int GetEmoteActivator(int iEntRefDancer)
 
 void StopEmote(int client)
 {
-	g_bClientDancing[client] = false;
-	ResetCam(client);
-	WeaponUnblock(client);
-	
 	if (!g_iEmoteEnt[client])
 		return;
 
@@ -581,13 +592,17 @@ void StopEmote(int client)
 		AcceptEntityInput(client, "ClearParent", client, client, 0);
 		AcceptEntityInput(iEmoteEnt, "Kill");
 		
+		ResetCam(client);
+		WeaponUnblock(client);
 		SetEntityMoveType(client, MOVETYPE_WALK);
-		
-		TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
 
+		g_iEmoteEnt[client] = 0;
+		g_bClientDancing[client] = false;
+	} else
+	{
+		g_iEmoteEnt[client] = 0;
+		g_bClientDancing[client] = false;
 	}
-	
-	g_iEmoteEnt[client] = 0;
 
 	if (g_iEmoteSoundEnt[client])
 	{
@@ -597,9 +612,46 @@ void StopEmote(int client)
 		{
 			StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
 			AcceptEntityInput(iEmoteSoundEnt, "Kill");
+			g_iEmoteSoundEnt[client] = 0;
+		} else
+		{
+			g_iEmoteSoundEnt[client] = 0;
 		}
-		
-		g_iEmoteSoundEnt[client] = 0;
+	}
+}
+
+void TerminateEmote(int client)
+{
+	if (!g_iEmoteEnt[client])
+		return;
+
+	int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
+	if (iEmoteEnt && iEmoteEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteEnt))
+	{
+		AcceptEntityInput(client, "ClearParent", client, client, 0);
+		AcceptEntityInput(iEmoteEnt, "Kill");
+
+		g_iEmoteEnt[client] = 0;
+		g_bClientDancing[client] = false;
+	} else
+	{
+		g_iEmoteEnt[client] = 0;
+		g_bClientDancing[client] = false;
+	}
+
+	if (g_iEmoteSoundEnt[client])
+	{
+		int iEmoteSoundEnt = EntRefToEntIndex(g_iEmoteSoundEnt[client]);
+
+		if (!StrEqual(g_sEmoteSound[client], "") && iEmoteSoundEnt && iEmoteSoundEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteSoundEnt))
+		{
+			StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
+			AcceptEntityInput(iEmoteSoundEnt, "Kill");
+			g_iEmoteSoundEnt[client] = 0;
+		} else
+		{
+			g_iEmoteSoundEnt[client] = 0;
+		}
 	}
 }
 
@@ -650,13 +702,6 @@ void WeaponUnblock(int client)
 	g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
 }
 
-public Action SetTransmit(int entity, int client) 
-{ 
-	if(g_bClientDancing[client] && IsPlayerAlive(client) && GetClientTeam(client) != GetClientTeam(entity)) return Plugin_Handled;
-	
-	return Plugin_Continue; 
-} 
-
 Action WeaponCanUseSwitch(int client, int weapon)
 {
 	return Plugin_Stop;
@@ -666,6 +711,13 @@ void OnPostThinkPost(int client)
 {
 	SetEntProp(client, Prop_Send, "m_iAddonBits", 0);
 }
+
+public Action SetTransmit(int entity, int client) 
+{ 
+	if(g_bClientDancing[client] && IsPlayerAlive(client) && GetClientTeam(client) != GetClientTeam(entity)) return Plugin_Handled;
+	
+	return Plugin_Continue; 
+} 
 
 void SetCam(int client)
 {
@@ -1739,13 +1791,13 @@ void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int
 	menu.AddItem(opt, buffer);
 }
 
-stock bool IsValidClient(int client, bool nobots = false)
+stock bool IsValidClient(int client, bool nobots = true)
 {
-	if (client <= 0 || client > MaxClients || !IsClientInGame(client) || !IsClientConnected(client) || IsClientSourceTV(client)  || (nobots && IsFakeClient(client)))
+	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
 	{
 		return false;
 	}
-	return true;
+	return IsClientInGame(client);
 }
 
 bool CheckAdminFlags(int client, int iFlag)
