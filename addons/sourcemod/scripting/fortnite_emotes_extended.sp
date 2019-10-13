@@ -105,6 +105,14 @@ public void OnPluginStart()
 	}	
 }
 
+public void OnPluginEnd()
+{
+	for (int i = 1; i <= MaxClients; i++)
+            if (IsValidClient(i) && g_bClientDancing[i]) {
+				StopEmote(i);
+			}
+}
+
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
 	RegPluginLibrary("fnemotes");
@@ -512,6 +520,9 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 
 public Action OnPlayerRunCmd(int client, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon)
 {
+	if(!IsValidClient(client))
+		return Plugin_Continue;
+		
 	if (g_bClientDancing[client] && !(GetEntityFlags(client) & FL_ONGROUND))
 		StopEmote(client);
 
@@ -1730,11 +1741,11 @@ void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int
 
 stock bool IsValidClient(int client, bool nobots = false)
 {
-	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
+	if (client <= 0 || client > MaxClients || !IsClientInGame(client) || !IsClientConnected(client) || IsClientSourceTV(client)  || (nobots && IsFakeClient(client)))
 	{
 		return false;
 	}
-	return IsClientInGame(client);
+	return true;
 }
 
 bool CheckAdminFlags(int client, int iFlag)
