@@ -37,13 +37,15 @@ int g_iWeaponHandEnt[MAXPLAYERS+1];
 
 bool g_bHooked[MAXPLAYERS + 1];
 
+Handle g_EmoteForward;
+
 
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.2",
+	version = "1.2.1",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -104,6 +106,8 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 {
 	RegPluginLibrary("fnemotes");
 	CreateNative("fnemotes_IsClientEmoting", Native_IsClientEmoting);
+	
+	g_EmoteForward = CreateGlobalForward("fnemotes_OnEmote", ET_Ignore, Param_Cell);
 	return APLRes_Success;
 }
 
@@ -491,6 +495,10 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		{
 			CooldownTimers[client] = CreateTimer(g_cvCooldown.FloatValue, ResetCooldown, client);
 		}
+		
+		Call_StartForward(g_EmoteForward);
+		Call_PushCell(client);
+		Call_Finish();
 	}
 	
 	return Plugin_Handled;
