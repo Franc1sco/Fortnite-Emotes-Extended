@@ -20,6 +20,9 @@ ConVar g_cvCooldown;
 ConVar g_cvEmotesSounds;
 ConVar g_cvHideWeapons;
 
+float g_fLastAngles[MAXPLAYERS+1][3];
+float g_fLastPosition[MAXPLAYERS+1][3];
+
 int g_iEmoteEnt[MAXPLAYERS+1];
 int g_iEmoteSoundEnt[MAXPLAYERS+1];
 
@@ -45,7 +48,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.2.1",
+	version = "1.2.2dev",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -382,6 +385,9 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		float vec[3], ang[3];
 		GetClientAbsOrigin(client, vec);
 		GetClientAbsAngles(client, ang);
+		
+		g_fLastPosition[client] = vec;
+		g_fLastAngles[client] = ang;
 
 		char emoteEntName[16];
 		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
@@ -565,6 +571,8 @@ void StopEmote(int client)
 		AcceptEntityInput(iEmoteEnt, "Kill");
 		
 		SetEntityMoveType(client, MOVETYPE_WALK);
+		
+		TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
 
 	}
 	
@@ -612,13 +620,12 @@ void WeaponUnblock(int client)
 	if(GetEmotePeople() == 0)
 	{
 		for(int i = 1; i <= MaxClients; i++)
-			if (IsClientInGame(i) && GetClientTeam(i) != GetClientTeam(client) && g_bHooked[i])
+			if (IsClientInGame(i) && g_bHooked[i])
 			{
 				SDKUnhook(i, SDKHook_SetTransmit, SetTransmit);
 				g_bHooked[i] = false;
 			}
 	}
-	g_bHooked[client] = false;
 	
 	if(IsPlayerAlive(client) && g_iWeaponHandEnt[client] != INVALID_ENT_REFERENCE)
 	{
@@ -634,7 +641,7 @@ void WeaponUnblock(int client)
 
 public Action SetTransmit(int entity, int client) 
 { 
-	if(IsPlayerAlive(client) && GetClientTeam(client) != GetClientTeam(entity)) return Plugin_Handled;
+	if(g_bClientDancing[client] && IsPlayerAlive(client) && GetClientTeam(client) != GetClientTeam(entity)) return Plugin_Handled;
 	
 	return Plugin_Continue; 
 } 
