@@ -16,6 +16,7 @@ ConVar g_cvHidePlayers;
 TopMenu hTopMenu;
 
 ConVar g_cvFlagEmotesMenu;
+ConVar g_cvFlagDancesMenu;
 ConVar g_cvCooldown;
 ConVar g_cvEmotesSounds;
 ConVar g_cvHideWeapons;
@@ -45,7 +46,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.2.2",
+	version = "1.2.3",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -77,7 +78,8 @@ public void OnPluginStart()
 
 	g_cvEmotesSounds = AutoExecConfig_CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
 	g_cvCooldown = AutoExecConfig_CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
-	g_cvFlagEmotesMenu = AutoExecConfig_CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for !emotes command (empty for all players)");
+	g_cvFlagEmotesMenu = AutoExecConfig_CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)");
+	g_cvFlagDancesMenu = AutoExecConfig_CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)");
 	g_cvHideWeapons = AutoExecConfig_CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
 	g_cvHidePlayers = CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", _, true, 0.0, true, 1.0);
 	
@@ -353,7 +355,7 @@ public Action Command_Menu(int client, int args)
 	{
 		Menu_Dance(client);
 	}
-	else CPrintToChat(client, "%t", "NO_ACCESS_FLAG");	
+	else CPrintToChat(client, "%t", "NO_DANCE_ACCESS_FLAG");	
 
 	return Plugin_Handled;
 }
@@ -789,6 +791,14 @@ int MenuHandler1(Menu menu, MenuAction action, int param1, int param2)
 
 Action EmotesMenu(int client)
 {
+	char sBuffer[32];
+	g_cvFlagEmotesMenu.GetString(sBuffer, sizeof(sBuffer));
+
+	if (!CheckAdminFlags(client, ReadFlagString(sBuffer)))
+	{
+		CPrintToChat(client, "%t", "NO_EMOTES_ACCESS_FLAG");
+		return Plugin_Handled;
+	}
 	Menu menu = new Menu(MenuHandlerEmotes);
 	
 	char title[65];
@@ -941,6 +951,14 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 
 Action DancesMenu(int client)
 {
+	char sBuffer[32];
+	g_cvFlagDancesMenu.GetString(sBuffer, sizeof(sBuffer));
+
+	if (!CheckAdminFlags(client, ReadFlagString(sBuffer)))
+	{
+		CPrintToChat(client, "%t", "NO_DANCES_ACCESS_FLAG");
+		return Plugin_Handled;
+	}
 	Menu menu = new Menu(MenuHandlerDances);
 	
 	char title[65];
@@ -1128,7 +1146,15 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 
 Action RandomEmote(int i)
 {
+					char sBuffer[32];
+					g_cvFlagEmotesMenu.GetString(sBuffer, sizeof(sBuffer));
 
+					if (!CheckAdminFlags(i, ReadFlagString(sBuffer)))
+					{
+						CPrintToChat(i, "%t", "NO_EMOTES_ACCESS_FLAG");
+						return;
+					}
+					
 					int number = GetRandomInt(1, 36);
 					
 					switch (number)
@@ -1211,6 +1237,14 @@ Action RandomEmote(int i)
 
 Action RandomDance(int i)
 {
+					char sBuffer[32];
+					g_cvFlagDancesMenu.GetString(sBuffer, sizeof(sBuffer));
+
+					if (!CheckAdminFlags(i, ReadFlagString(sBuffer)))
+					{
+						CPrintToChat(i, "%t", "NO_DANCES_ACCESS_FLAG");
+						return;
+					}
 					int number = GetRandomInt(1, 48);
 					
 					switch (number)
