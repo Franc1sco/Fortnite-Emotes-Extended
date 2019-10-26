@@ -1,0 +1,14 @@
+"Games"
+{
+	"csgo"
+	{
+		"Offsets"
+		{
+			"CEconWearable::Equip"
+			{
+				"linux"		"268"
+				"windows"	"267"
+			}
+		}
+	}
+}
