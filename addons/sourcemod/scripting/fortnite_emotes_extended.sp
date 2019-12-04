@@ -964,10 +964,6 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 				Menu_Dance(client);
 			}
 		}
-		case MenuAction_End:
-		{
-			delete menu;
-		}
 	}
 }
 
@@ -1162,10 +1158,6 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 			{
 				Menu_Dance(client);
 			}
-		}
-		case MenuAction_End:
-		{
-			delete menu;
 		}
 	}
 }
