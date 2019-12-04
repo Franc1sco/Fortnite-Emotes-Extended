@@ -37,7 +37,7 @@ bool g_bEmoteCooldown[MAXPLAYERS+1];
 int g_iWeaponHandEnt[MAXPLAYERS+1];
 
 Handle g_EmoteForward;
-
+Handle g_EmoteForward_Pre;
 bool g_bHooked[MAXPLAYERS + 1];
 
 
@@ -104,6 +104,7 @@ public void OnPluginStart()
 	}	
 	
 	g_EmoteForward = CreateGlobalForward("fnemotes_OnEmote", ET_Ignore, Param_Cell);
+	g_EmoteForward_Pre = CreateGlobalForward("fnemotes_OnEmote_Pre", ET_Event, Param_Cell);
 }
 
 public void OnPluginEnd()
@@ -364,7 +365,20 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 {
 	if (!IsValidClient(client))
 		return Plugin_Handled;
+	
+	if(g_EmoteForward_Pre != null)
+	{
+		Action res = Plugin_Continue;
+		Call_StartForward(g_EmoteForward_Pre);
+		Call_PushCell(client);
+		Call_Finish(res);
 
+		if (res != Plugin_Continue)
+		{
+			return Plugin_Handled;
+		}
+	}
+	
 	if (!IsPlayerAlive(client))
 	{
 		CReplyToCommand(client, "%t", "MUST_BE_ALIVE");
@@ -784,7 +798,11 @@ int MenuHandler1(Menu menu, MenuAction action, int param1, int param2)
 				case 2: EmotesMenu(client);
 				case 3: DancesMenu(client);
 			}
-		}	
+		}
+		case MenuAction_End:
+		{
+			delete menu;
+		}
 	}
 }
 
@@ -945,6 +963,10 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 			{
 				Menu_Dance(client);
 			}
+		}
+		case MenuAction_End:
+		{
+			delete menu;
 		}
 	}
 }
@@ -1140,7 +1162,11 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 			{
 				Menu_Dance(client);
 			}
-		}		
+		}
+		case MenuAction_End:
+		{
+			delete menu;
+		}
 	}
 }
 
