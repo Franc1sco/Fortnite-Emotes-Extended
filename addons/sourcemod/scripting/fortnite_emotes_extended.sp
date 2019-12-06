@@ -46,7 +46,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.2.3",
+	version = "1.2.4",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
