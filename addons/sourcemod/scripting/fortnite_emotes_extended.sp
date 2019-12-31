@@ -4,7 +4,6 @@
 #include <sdkhooks>
 #include <multicolors>
 #include <autoexecconfig>
-
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
 
@@ -18,6 +17,7 @@ TopMenu hTopMenu;
 ConVar g_cvFlagEmotesMenu;
 ConVar g_cvFlagDancesMenu;
 ConVar g_cvCooldown;
+ConVar g_cvSoundVolume;
 ConVar g_cvEmotesSounds;
 ConVar g_cvHideWeapons;
 
@@ -46,7 +46,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.2.4",
+	version = "1.3",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -78,6 +78,7 @@ public void OnPluginStart()
 
 	g_cvEmotesSounds = AutoExecConfig_CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
 	g_cvCooldown = AutoExecConfig_CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
+	g_cvSoundVolume = AutoExecConfig_CreateConVar("sm_emotes_soundvolume", "0.4", "Sound volume for the emotes.");
 	g_cvFlagEmotesMenu = AutoExecConfig_CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)");
 	g_cvFlagDancesMenu = AutoExecConfig_CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)");
 	g_cvHideWeapons = AutoExecConfig_CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
@@ -503,7 +504,7 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 					FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "kodua/fortnite_emotes/%s.mp3", soundNameBuffer);
 				}
 
-				EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_CONVO, _, 0.8, _, _, vec, _, _, _);
+				EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_CONVO, _, g_cvSoundVolume.FloatValue, _, _, vec, _, _, _);
 			}
 		} else
 		{
@@ -1079,7 +1080,7 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 					case 13:
 					CreateEmote(client, "Emote_Dance_Shoot", "none", "athena_emotes_music_shoot_v7", true);
 					case 14:
-					CreateEmote(client, "Emote_Dance_SwipeIt", "none", "Emote_Dance_SwipeIt", true);
+					CreateEmote(client, "Emote_Dance_SwipeIt", "none", "Athena_Emotes_Music_SwipeIt", true);
 					case 15:
 					CreateEmote(client, "Emote_Dance_Disco_T3", "none", "athena_emote_disco", true);
 					case 16:
@@ -1091,7 +1092,7 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 					case 19:
 					CreateEmote(client, "Emote_Dance_Breakdance", "none", "athena_emote_breakdance_music", false);
 					case 20:
-					CreateEmote(client, "Emote_Dance_Pump", "none", "Emote_Dance_Pump.wav", true);
+					CreateEmote(client, "Emote_Dance_Pump", "none", "Emote_Dance_Pump", true);
 					case 21:
 					CreateEmote(client, "Emote_Dance_RideThePony", "none", "athena_emote_ridethepony_music_01", false);
 					case 22:
@@ -1294,7 +1295,7 @@ Action RandomDance(int i)
 						case 13:
 						CreateEmote(i, "Emote_Dance_Shoot", "none", "athena_emotes_music_shoot_v7", true);
 						case 14:
-						CreateEmote(i, "Emote_Dance_SwipeIt", "none", "Emote_Dance_SwipeIt", true);
+						CreateEmote(i, "Emote_Dance_SwipeIt", "none", "Athena_Emotes_Music_SwipeIt", true);
 						case 15:
 						CreateEmote(i, "Emote_Dance_Disco_T3", "none", "athena_emote_disco", true);
 						case 16:
@@ -1306,7 +1307,7 @@ Action RandomDance(int i)
 						case 19:
 						CreateEmote(i, "Emote_Dance_Breakdance", "none", "athena_emote_breakdance_music", false);
 						case 20:
-						CreateEmote(i, "Emote_Dance_Pump", "none", "Emote_Dance_Pump.wav", true);
+						CreateEmote(i, "Emote_Dance_Pump", "none", "Emote_Dance_Pump", true);
 						case 21:
 						CreateEmote(i, "Emote_Dance_RideThePony", "none", "athena_emote_ridethepony_music_01", false);
 						case 22:
@@ -1520,7 +1521,7 @@ void PerformEmote(int client, int target, int amount)
 					case 49:
 					CreateEmote(target, "Emote_Dance_Shoot", "none", "athena_emotes_music_shoot_v7", true);
 					case 50:
-					CreateEmote(target, "Emote_Dance_SwipeIt", "none", "Emote_Dance_SwipeIt", true);
+					CreateEmote(target, "Emote_Dance_SwipeIt", "none", "Athena_Emotes_Music_SwipeIt", true);
 					case 51:
 					CreateEmote(target, "Emote_Dance_Disco_T3", "none", "athena_emote_disco", true);
 					case 52:
@@ -1532,7 +1533,7 @@ void PerformEmote(int client, int target, int amount)
 					case 55:
 					CreateEmote(target, "Emote_Dance_Breakdance", "none", "athena_emote_breakdance_music", false);
 					case 56:
-					CreateEmote(target, "Emote_Dance_Pump", "none", "Emote_Dance_Pump.wav", true);
+					CreateEmote(target, "Emote_Dance_Pump", "none", "Emote_Dance_Pump", true);
 					case 57:
 					CreateEmote(target, "Emote_Dance_RideThePony", "none", "athena_emote_ridethepony_music_01", false);
 					case 58:
