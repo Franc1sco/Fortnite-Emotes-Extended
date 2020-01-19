@@ -40,13 +40,16 @@ Handle g_EmoteForward;
 Handle g_EmoteForward_Pre;
 bool g_bHooked[MAXPLAYERS + 1];
 
+float g_fLastAngles[MAXPLAYERS+1][3];
+float g_fLastPosition[MAXPLAYERS+1][3];
+
 
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.3",
+	version = "1.3.1dev",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -428,6 +431,9 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		float vec[3], ang[3];
 		GetClientAbsOrigin(client, vec);
 		GetClientAbsAngles(client, ang);
+		
+		g_fLastPosition[client] = vec;
+		g_fLastAngles[client] = ang;
 
 		char emoteEntName[16];
 		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
@@ -608,6 +614,8 @@ void StopEmote(int client)
 	{
 		AcceptEntityInput(client, "ClearParent", client, client, 0);
 		AcceptEntityInput(iEmoteEnt, "Kill");
+		
+		TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
 		
 		ResetCam(client);
 		WeaponUnblock(client);
