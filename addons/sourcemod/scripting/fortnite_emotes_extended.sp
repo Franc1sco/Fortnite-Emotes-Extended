@@ -50,7 +50,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.4",
+	version = "1.4.1",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -362,7 +362,7 @@ public Action Command_Menu(int client, int args)
 	{
 		Menu_Dance(client);
 	}
-	else CPrintToChat(client, "%t", "NO_DANCE_ACCESS_FLAG");	
+	else CPrintToChat(client, "%t", "NO_DANCES_ACCESS_FLAG");	
 
 	return Plugin_Handled;
 }
