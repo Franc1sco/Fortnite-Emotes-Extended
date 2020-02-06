@@ -606,9 +606,13 @@ void StopEmote(int client)
 	int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
 	if (iEmoteEnt && iEmoteEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteEnt))
 	{
-		AcceptEntityInput(client, "ClearParent", client, client, 0);
-		AcceptEntityInput(iEmoteEnt, "Kill");
-		
+		char emoteEntName[50];
+		GetEntPropString(iEmoteEnt, Prop_Data, "m_iName", emoteEntName, sizeof(emoteEntName));
+		SetVariantString(emoteEntName);
+		AcceptEntityInput(client, "ClearParent", iEmoteEnt, iEmoteEnt, 0);
+		DispatchKeyValue(iEmoteEnt, "OnUser1", "!self,Kill,,1.0,-1");
+		AcceptEntityInput(iEmoteEnt, "FireUser1");
+
 		ResetCam(client);
 		WeaponUnblock(client);
 		SetEntityMoveType(client, MOVETYPE_WALK);
@@ -645,8 +649,12 @@ void TerminateEmote(int client)
 	int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
 	if (iEmoteEnt && iEmoteEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteEnt))
 	{
-		AcceptEntityInput(client, "ClearParent", client, client, 0);
-		AcceptEntityInput(iEmoteEnt, "Kill");
+		char emoteEntName[50];
+		GetEntPropString(iEmoteEnt, Prop_Data, "m_iName", emoteEntName, sizeof(emoteEntName));
+		SetVariantString(emoteEntName);
+		AcceptEntityInput(client, "ClearParent", iEmoteEnt, iEmoteEnt, 0);
+		DispatchKeyValue(iEmoteEnt, "OnUser1", "!self,Kill,,1.0,-1");
+		AcceptEntityInput(iEmoteEnt, "FireUser1");
 
 		g_iEmoteEnt[client] = 0;
 		g_bClientDancing[client] = false;
