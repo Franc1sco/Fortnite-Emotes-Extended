@@ -362,7 +362,7 @@ public Action Command_Menu(int client, int args)
 	{
 		Menu_Dance(client);
 	}
-	else CPrintToChat(client, "%t", "NO_DANCE_ACCESS_FLAG");	
+	else CPrintToChat(client, "%t", "NO_DANCES_ACCESS_FLAG");	
 
 	return Plugin_Handled;
 }
