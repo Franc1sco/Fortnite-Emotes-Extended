@@ -1873,6 +1873,37 @@ int MenuHandler_EmotesAmount(Menu menu, MenuAction action, int param1, int param
 	}
 }
 
+public void OnEntityCreated(int entity, const char[] classname)
+{
+    if(StrEqual(classname, "trigger_multiple"))
+    {
+        SDKHook(entity, SDKHook_StartTouch, OnTrigger);
+        SDKHook(entity, SDKHook_EndTouch, OnTrigger);
+        SDKHook(entity, SDKHook_Touch, OnTrigger);
+    }
+    else if(StrEqual(classname, "trigger_hurt"))
+    {
+        SDKHook(entity, SDKHook_StartTouch, OnTrigger);
+        SDKHook(entity, SDKHook_EndTouch, OnTrigger);
+        SDKHook(entity, SDKHook_Touch, OnTrigger);
+    }
+    else if(StrEqual(classname, "trigger_push"))
+    {
+        SDKHook(entity, SDKHook_StartTouch, OnTrigger);
+        SDKHook(entity, SDKHook_EndTouch, OnTrigger);
+        SDKHook(entity, SDKHook_Touch, OnTrigger);
+    }
+}
+
+public Action OnTrigger(int entity, int other)
+{
+    if (0 < other <= MaxClients)
+    {
+        StopEmote(other);
+    }
+    return Plugin_Continue;
+} 
+
 void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int client)
 {
 	char buffer[128];
