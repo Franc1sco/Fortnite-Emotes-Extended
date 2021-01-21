@@ -19,14 +19,22 @@
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
-#include <multicolors>
-#include <autoexecconfig>
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
 
 #pragma newdecls required
 
-ConVar g_cvThirdperson;
+
+#define EF_BONEMERGE                (1 << 0)
+#define EF_NOSHADOW                 (1 << 4)
+#define EF_BONEMERGE_FASTCULL       (1 << 7)
+#define EF_NORECEIVESHADOW          (1 << 6)
+#define EF_PARENT_ANIMATES          (1 << 9)
+#define HIDEHUD_ALL                 (1 << 2)
+#define HIDEHUD_CROSSHAIR           (1 << 8)
+#define CVAR_FLAGS			FCVAR_NOTIFY
+
+
 ConVar g_cvHidePlayers;
 
 TopMenu hTopMenu;
@@ -38,6 +46,7 @@ ConVar g_cvSoundVolume;
 ConVar g_cvEmotesSounds;
 ConVar g_cvHideWeapons;
 ConVar g_cvTeleportBack;
+ConVar g_cvSpeed;
 
 int g_iEmoteEnt[MAXPLAYERS+1];
 int g_iEmoteSoundEnt[MAXPLAYERS+1];
@@ -65,67 +74,56 @@ float g_fLastPosition[MAXPLAYERS+1][3];
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
-	author = "Kodua, Franc1sco franug, TheBO$$",
-	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.4.2",
-	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
+	author = "Kodua, Franc1sco franug, TheBO$$, Foxhound",
+	description = "This plugin is for demonstration of some animations from Fortnite in L4D2",
+	version = "2020",
+	url = "https://forums.alliedmods.net/showthread.php?t=318981"
 };
 
-public void OnPluginStart()
-{	
+public void OnPluginStart() {
 	LoadTranslations("common.phrases");
 	LoadTranslations("fnemotes.phrases");
-	
-	RegConsoleCmd("sm_emotes", Command_Menu);
-	RegConsoleCmd("sm_emote", Command_Menu);
-	RegConsoleCmd("sm_dances", Command_Menu);	
-	RegConsoleCmd("sm_dance", Command_Menu);
-	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
-	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
-	RegAdminCmd("sm_setdances", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
-	RegAdminCmd("sm_setdance", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 
-	HookEvent("player_death", 	Event_PlayerDeath, 	EventHookMode_Pre);
+	RegConsoleCmd("sm_emotes", Command_Menu, "");
+	RegConsoleCmd("sm_emote", Command_Menu, "");
+	RegConsoleCmd("sm_dances", Command_Menu, "");
+	RegConsoleCmd("sm_dance", Command_Menu, "");
+	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]", "");
+	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]", "");
+	RegAdminCmd("sm_setdances", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]", "");
+	RegAdminCmd("sm_setdance", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]", "");
 
-	HookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);
-	
-	HookEvent("round_prestart",  Event_Start);
-	
+	HookEvent("player_death", OnPlayerDeath, EventHookMode_Pre);
+
+	HookEvent("player_hurt", Event_PlayerHurt, EventHookMode_Pre);
+
+	HookEvent("round_start", Event_Start);
+
 	/**
 		Convars
 	**/
-	
-	AutoExecConfig_SetFile("fortnite_emotes_extended");
 
-	g_cvEmotesSounds = AutoExecConfig_CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", _, true, 0.0, true, 1.0);
-	g_cvCooldown = AutoExecConfig_CreateConVar("sm_emotes_cooldown", "4.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.");
-	g_cvSoundVolume = AutoExecConfig_CreateConVar("sm_emotes_soundvolume", "0.4", "Sound volume for the emotes.");
-	g_cvFlagEmotesMenu = AutoExecConfig_CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)");
-	g_cvFlagDancesMenu = AutoExecConfig_CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)");
-	g_cvHideWeapons = AutoExecConfig_CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", _, true, 0.0, true, 1.0);
-	g_cvHidePlayers = AutoExecConfig_CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", _, true, 0.0, true, 1.0);
-	g_cvTeleportBack = AutoExecConfig_CreateConVar("sm_emotes_teleportonend", "0", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", _, true, 0.0, true, 1.0);
-	
-	AutoExecConfig_ExecuteFile();
-	
-	AutoExecConfig_CleanFile();
-	
+	g_cvEmotesSounds = CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", CVAR_FLAGS);
+	g_cvCooldown = CreateConVar("sm_emotes_cooldown", "2.0", "Cooldown for emotes in seconds. -1 or 0 = no cooldown.", CVAR_FLAGS);
+	g_cvSoundVolume = CreateConVar("sm_emotes_soundvolume", "1.0", "Sound volume for the emotes.", CVAR_FLAGS);
+	g_cvFlagEmotesMenu = CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)", CVAR_FLAGS);
+	g_cvFlagDancesMenu = CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)", CVAR_FLAGS);
+	g_cvHideWeapons = CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", CVAR_FLAGS);
+	g_cvHidePlayers = CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", CVAR_FLAGS);
+	g_cvTeleportBack = CreateConVar("sm_emotes_teleportonend", "0", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", CVAR_FLAGS);
+	g_cvSpeed = CreateConVar("sm_emotes_speed", "0.80", "Sets the playback speed of the animation. default (1.0)", CVAR_FLAGS);
+
+	AutoExecConfig(true, "fortnite_emotes_extended_l4d");
+
 	/**
 		End Convars
 	**/
 
-	g_cvThirdperson = FindConVar("sv_allow_thirdperson");
-	if (!g_cvThirdperson) SetFailState("sv_allow_thirdperson not found!");
-
-	g_cvThirdperson.AddChangeHook(OnConVarChanged);
-	g_cvThirdperson.BoolValue = true;
-	
 	TopMenu topmenu;
-	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null))
-	{
+	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null)) {
 		OnAdminMenuReady(topmenu);
-	}	
-	
+	}
+
 	g_EmoteForward = CreateGlobalForward("fnemotes_OnEmote", ET_Ignore, Param_Cell);
 	g_EmoteForward_Pre = CreateGlobalForward("fnemotes_OnEmote_Pre", ET_Event, Param_Cell);
 }
@@ -145,13 +143,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	return APLRes_Success;
 }
 
-void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
-{
-	if (convar == g_cvThirdperson)
-	{
-		if(newValue[0] != '1') convar.BoolValue = true;
-	}
-}
+
 
 int Native_IsClientEmoting(Handle plugin, int numParams)
 {
@@ -160,143 +152,148 @@ int Native_IsClientEmoting(Handle plugin, int numParams)
 
 public void OnMapStart()
 {
-	AddFileToDownloadsTable("models/player/custom_player/kodua/fortnite_emotes_v2.mdl");
-	AddFileToDownloadsTable("models/player/custom_player/kodua/fortnite_emotes_v2.vvd");
-	AddFileToDownloadsTable("models/player/custom_player/kodua/fortnite_emotes_v2.dx90.vtx");
+	
+	AddFileToDownloadsTable("models/player/custom_player/foxhound/fortnite_dances_emotes_ok.mdl");
+	AddFileToDownloadsTable("models/player/custom_player/foxhound/fortnite_dances_emotes_ok.vvd");
+	AddFileToDownloadsTable("models/player/custom_player/foxhound/fortnite_dances_emotes_ok.dx90.vtx");
+
+
 
 	// edit
 	// add the sound file routes here
+
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/ninja_dance_01.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/dance_soldier_03.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Hip_Hop_Good_Vibes_Mix_01_Loop.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_zippy_A.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_electroshuffle_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_aerobics_01.wav"); 
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_music_emotes_bendy.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_boogiedown.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_flapper_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_chicken_foley_01.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Hip_Hop_Good_Vibes_Mix_01_Loop.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_zippy_A.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_electroshuffle_music.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_aerobics_01.mp3"); 
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_music_emotes_bendy.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_bandofthefort_music.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_boogiedown.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_flapper_music.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_chicken_foley_01.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_cry.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_music_boneless.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_music_shoot_v7.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Emotes_Music_SwipeIt.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_disco.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_music_boneless.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_music_shoot_v7.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Emotes_Music_SwipeIt.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_disco.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_worm_music.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_music_emotes_takethel.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_music_emotes_takethel.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_breakdance_music.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Dance_Pump.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Dance_Pump.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_ridethepony_music_01.mp3"); 
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_facepalm_foley_01.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Emotes_OnTheHook_02.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_floss_music.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_floss_music.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_FlippnSexy.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_fresh_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_groove_jam_a.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/br_emote_shred_guitar_mix_03_loop.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_fresh_music.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_groove_jam_a.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/br_emote_shred_guitar_mix_03_loop.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_HeelClick.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/s5_hiphop_breakin_132bmp_loop.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/s5_hiphop_breakin_132bmp_loop.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Hotstuff.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_hula_01.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_infinidab.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_Intensity.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_irish_jig_foley_music_loop.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Music_Emotes_KoreanEagle.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_kpop_01.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_hula_01.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_infinidab.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_Intensity.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_irish_jig_foley_music_loop.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Music_Emotes_KoreanEagle.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_kpop_01.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_laugh_01.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_LivingLarge_A.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_LivingLarge_A.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Luchador.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Hillbilly_Shuffle.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_samba_new_B.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Hillbilly_Shuffle.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_samba_new_B.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_makeitrain_music.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Emote_PopLock.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_PopRock_01.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_robot_music.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Athena_Emote_PopLock.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_PopRock_01.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_robot_music.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_salute_foley_01.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Snap1.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_stagebow.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Dino_Complete.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_founders_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_music_twist.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Warehouse.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Wiggle_Music_Loop.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_founders_music.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_music_twist.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Warehouse.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Wiggle_Music_Loop.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Emote_Yeet.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/youre_awesome_emote_music.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/eastern_bloc_musc_setup_d.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_hot_music.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/eastern_bloc_musc_setup_d.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_hot_music.mp3");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_capoeira.mp3");
     
 
 	// this dont touch
-	PrecacheModel("models/player/custom_player/kodua/fortnite_emotes_v2.mdl", true);
+	PrecacheModel("models/player/custom_player/foxhound/fortnite_dances_emotes_ok.mdl", true);
 
 	// edit
 	// add mp3 files without sound/
 	// add wav files with */
-	PrecacheSound("kodua/fortnite_emotes/ninja_dance_01.mp3");
-	PrecacheSound("kodua/fortnite_emotes/dance_soldier_03.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/Hip_Hop_Good_Vibes_Mix_01_Loop.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_zippy_A.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_electroshuffle_music.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_aerobics_01.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_music_emotes_bendy.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_boogiedown.wav");
-	PrecacheSound("kodua/fortnite_emotes/emote_capoeira.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_flapper_music.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_chicken_foley_01.wav");
-	PrecacheSound("kodua/fortnite_emotes/emote_cry.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_music_boneless.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emotes_music_shoot_v7.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/Athena_Emotes_Music_SwipeIt.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_disco.wav");
-	PrecacheSound("kodua/fortnite_emotes/athena_emote_worm_music.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_music_emotes_takethel.wav");
-	PrecacheSound("kodua/fortnite_emotes/athena_emote_breakdance_music.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/Emote_Dance_Pump.wav");
-	PrecacheSound("kodua/fortnite_emotes/athena_emote_ridethepony_music_01.mp3");
-	PrecacheSound("kodua/fortnite_emotes/athena_emote_facepalm_foley_01.mp3");
-	PrecacheSound("kodua/fortnite_emotes/Athena_Emotes_OnTheHook_02.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_floss_music.wav");
-	PrecacheSound("kodua/fortnite_emotes/Emote_FlippnSexy.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_fresh_music.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_groove_jam_a.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/br_emote_shred_guitar_mix_03_loop.wav");
-	PrecacheSound("kodua/fortnite_emotes/Emote_HeelClick.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/s5_hiphop_breakin_132bmp_loop.wav");
-	PrecacheSound("kodua/fortnite_emotes/Emote_Hotstuff.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_hula_01.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_infinidab.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_Intensity.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_irish_jig_foley_music_loop.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/Athena_Music_Emotes_KoreanEagle.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_kpop_01.wav");
-	PrecacheSound("kodua/fortnite_emotes/emote_laugh_01.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_LivingLarge_A.wav");
-	PrecacheSound("kodua/fortnite_emotes/Emote_Luchador.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/Emote_Hillbilly_Shuffle.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_samba_new_B.wav");
-	PrecacheSound("kodua/fortnite_emotes/athena_emote_makeitrain_music.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/Athena_Emote_PopLock.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/Emote_PopRock_01.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_robot_music.wav");
-	PrecacheSound("kodua/fortnite_emotes/athena_emote_salute_foley_01.mp3");
-	PrecacheSound("kodua/fortnite_emotes/Emote_Snap1.mp3");
-	PrecacheSound("kodua/fortnite_emotes/emote_stagebow.mp3");
-	PrecacheSound("kodua/fortnite_emotes/Emote_Dino_Complete.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_founders_music.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emotes_music_twist.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/Emote_Warehouse.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/Wiggle_Music_Loop.wav");
-	PrecacheSound("kodua/fortnite_emotes/Emote_Yeet.mp3");
-	PrecacheSound("kodua/fortnite_emotes/youre_awesome_emote_music.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/eastern_bloc_musc_setup_d.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_hot_music.wav");
-}
 
+	
+	PrecacheSound("kodua/fortnite_emotes/ninja_dance_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/dance_soldier_03.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Hip_Hop_Good_Vibes_Mix_01_Loop.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_zippy_A.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_electroshuffle_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_aerobics_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_music_emotes_bendy.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_bandofthefort_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_boogiedown.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_capoeira.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_flapper_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_chicken_foley_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_cry.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_music_boneless.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emotes_music_shoot_v7.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Athena_Emotes_Music_SwipeIt.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_disco.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_worm_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_music_emotes_takethel.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_breakdance_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Dance_Pump.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_ridethepony_music_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_facepalm_foley_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Athena_Emotes_OnTheHook_02.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_floss_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_FlippnSexy.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_fresh_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_groove_jam_a.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/br_emote_shred_guitar_mix_03_loop.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_HeelClick.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/s5_hiphop_breakin_132bmp_loop.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Hotstuff.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_hula_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_infinidab.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_Intensity.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_irish_jig_foley_music_loop.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Athena_Music_Emotes_KoreanEagle.mp3");
+	PrecacheSound("kodua/fortnite_emotes/emote_kpop_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_laugh_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_LivingLarge_A.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Luchador.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Hillbilly_Shuffle.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_samba_new_B.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_makeitrain_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Athena_Emote_PopLock.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_PopRock_01.mp3");
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_robot_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_salute_foley_01.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Snap1.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/emote_stagebow.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Dino_Complete.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_founders_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emotes_music_twist.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Warehouse.mp3");
+	PrecacheSound("kodua/fortnite_emotes/Wiggle_Music_Loop.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/Emote_Yeet.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/youre_awesome_emote_music.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/eastern_bloc_musc_setup_d.mp3");//ok
+	PrecacheSound("kodua/fortnite_emotes/athena_emote_hot_music.mp3");//ok
+	
+}
 
 public void OnClientPutInServer(int client)
 {
@@ -330,9 +327,9 @@ public void OnClientDisconnect(int client)
 	g_bHooked[client] = false;
 }
 
-void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) 
+public Action OnPlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(event.GetInt("userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
 	if (IsValidClient(client))
 	{
@@ -341,20 +338,25 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 	}
 }
 
-void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast) 
+public Action Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast) 
 {
 	int attacker = GetClientOfUserId(event.GetInt("attacker"));
+	int client = GetClientOfUserId(event.GetInt("userid"));
 
-	char sAttacker[16];
-	GetEntityClassname(attacker, sAttacker, sizeof(sAttacker));
-	if (StrEqual(sAttacker, "worldspawn"))//If player was killed by bomb
+	if (!IsSurvivor(client)) {
+		return Plugin_Continue;
+	}
+
+	if (attacker!=client)
 	{
-		int client = GetClientOfUserId(event.GetInt("userid"));
+		
 		StopEmote(client);
 	}
+
+	return Plugin_Continue;
 }
 
-void Event_Start(Event event, const char[] name, bool dontBroadcast)
+public Action Event_Start(Event event, const char[] name, bool dontBroadcast)
 {
 	for (int i = 1; i <= MaxClients; i++)
             if (IsValidClient(i, false) && g_bClientDancing[i]) {
@@ -363,7 +365,10 @@ void Event_Start(Event event, const char[] name, bool dontBroadcast)
 				WeaponUnblock(i);
 				
 				g_bClientDancing[i] = false;
+
 			}
+
+	return Plugin_Continue;
 }
 
 public Action Command_Menu(int client, int args)
@@ -384,81 +389,66 @@ public Action Command_Menu(int client, int args)
 	return Plugin_Handled;
 }
 
-Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped)
-{
-	if (!IsValidClient(client))
-		return Plugin_Handled;
-	
-	if(g_EmoteForward_Pre != null)
-	{
+Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped) {
+	if (!IsValidClient(client)) return Plugin_Handled;
+
+	if (g_EmoteForward_Pre != null) {
 		Action res = Plugin_Continue;
 		Call_StartForward(g_EmoteForward_Pre);
 		Call_PushCell(client);
 		Call_Finish(res);
 
-		if (res != Plugin_Continue)
-		{
+		if (res != Plugin_Continue) {
 			return Plugin_Handled;
 		}
 	}
-	
-	if (!IsPlayerAlive(client))
-	{
-		CReplyToCommand(client, "%t", "MUST_BE_ALIVE");
+
+	if (!IsPlayerAlive(client)) {
+		CPrintToChat(client, "%t", "MUST_BE_ALIVE");
 		return Plugin_Handled;
 	}
 
-	if (!(GetEntityFlags(client) & FL_ONGROUND))
-	{
-		CReplyToCommand(client, "%t", "STAY_ON_GROUND");
-		return Plugin_Handled;
-	}
-	
-	if (GetEntProp(client, Prop_Send, "m_bIsScoped"))
-	{
-		CReplyToCommand(client, "%t", "SCOPE_DETECTED");
+	if (! (GetEntityFlags(client) & FL_ONGROUND)) {
+		CPrintToChat(client, "%t", "STAY_ON_GROUND");
 		return Plugin_Handled;
 	}
 
-	if (CooldownTimers[client])
-	{
-		CReplyToCommand(client, "%t", "COOLDOWN_EMOTES");
+	if (CooldownTimers[client]) {
+		CPrintToChat(client, "%t", "COOLDOWN_EMOTES");
 		return Plugin_Handled;
 	}
 
-	if (StrEqual(anim1, ""))
-	{
-		CReplyToCommand(client, "%t", "AMIN_1_INVALID");
+	if (StrEqual(anim1, "")) {
+		CPrintToChat(client, "%t", "AMIN_1_INVALID");
 		return Plugin_Handled;
 	}
 
-	if (g_iEmoteEnt[client])
-		StopEmote(client);
+	if (g_iEmoteEnt[client]) StopEmote(client);
 
-	if (GetEntityMoveType(client) == MOVETYPE_NONE)
-	{
-		CReplyToCommand(client, "%t", "CANNOT_USE_NOW");
+	if (GetEntityMoveType(client) == MOVETYPE_NONE) {
+		CPrintToChat(client, "%t", "CANNOT_USE_NOW");
 		return Plugin_Handled;
 	}
 
 	int EmoteEnt = CreateEntityByName("prop_dynamic");
-	if (IsValidEntity(EmoteEnt))
-	{
+	if (IsValidEntity(EmoteEnt)) {
 		SetEntityMoveType(client, MOVETYPE_NONE);
 		WeaponBlock(client);
 
-		float vec[3], ang[3];
+		float vec[3],
+		ang[3];
 		GetClientAbsOrigin(client, vec);
 		GetClientAbsAngles(client, ang);
-		
+
 		g_fLastPosition[client] = vec;
 		g_fLastAngles[client] = ang;
 
 		char emoteEntName[16];
 		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
-		
+
 		DispatchKeyValue(EmoteEnt, "targetname", emoteEntName);
-		DispatchKeyValue(EmoteEnt, "model", "models/player/custom_player/kodua/fortnite_emotes_v2.mdl");
+		DispatchKeyValue(EmoteEnt, "model", "models/player/custom_player/foxhound/fortnite_dances_emotes_ok.mdl");
+
 		DispatchKeyValue(EmoteEnt, "solid", "0");
 		DispatchKeyValue(EmoteEnt, "rendermode", "10");
 
@@ -466,27 +456,19 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		DispatchSpawn(EmoteEnt);
 
 		TeleportEntity(EmoteEnt, vec, ang, NULL_VECTOR);
-		
+
 		SetVariantString(emoteEntName);
 		AcceptEntityInput(client, "SetParent", client, client, 0);
 
 		g_iEmoteEnt[client] = EntIndexToEntRef(EmoteEnt);
 
-		int enteffects = GetEntProp(client, Prop_Send, "m_fEffects");
-		enteffects |= 1; /* This is EF_BONEMERGE */
-		enteffects |= 16; /* This is EF_NOSHADOW */
-		enteffects |= 64; /* This is EF_NORECEIVESHADOW */
-		enteffects |= 128; /* This is EF_BONEMERGE_FASTCULL */
-		enteffects |= 512; /* This is EF_PARENT_ANIMATES */
-		SetEntProp(client, Prop_Send, "m_fEffects", enteffects);
+		SetEntProp(client, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_NOSHADOW | EF_NORECEIVESHADOW | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES);
 
 		//Sound
 
-		if (g_cvEmotesSounds.BoolValue && !StrEqual(soundName, ""))
-		{
+		if (g_cvEmotesSounds.BoolValue && !StrEqual(soundName, "")) {
 			int EmoteSoundEnt = CreateEntityByName("info_target");
-			if (IsValidEntity(EmoteSoundEnt))
-			{
+			if (IsValidEntity(EmoteSoundEnt)) {
 				char soundEntName[16];
 				FormatEx(soundEntName, sizeof(soundEntName), "soundEnt%i", GetRandomInt(1000000, 9999999));
 
@@ -506,41 +488,26 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 
 				char soundNameBuffer[64];
 
-				if (StrEqual(soundName, "ninja_dance_01") || StrEqual(soundName, "dance_soldier_03"))
-				{
+				if (StrEqual(soundName, "ninja_dance_01") || StrEqual(soundName, "dance_soldier_03")) {
 					int randomSound = GetRandomInt(0, 1);
-					if(randomSound)
-					{
-						soundNameBuffer = "ninja_dance_01";
-					} else
-					{
-						soundNameBuffer = "dance_soldier_03";
-					}
-				} else
-				{
+
+					soundNameBuffer = randomSound ? "ninja_dance_01":"dance_soldier_03";
+
+				} else {
 					FormatEx(soundNameBuffer, sizeof(soundNameBuffer), "%s", soundName);
 				}
 
-				if (isLooped)
-				{
-					FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "*/kodua/fortnite_emotes/%s.wav", soundNameBuffer);
-				} else
-				{
-					FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "kodua/fortnite_emotes/%s.mp3", soundNameBuffer);
-				}
+				FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "kodua/fortnite_emotes/%s.mp3", soundNameBuffer);
 
 				EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_CONVO, _, g_cvSoundVolume.FloatValue, _, _, vec, _, _, _);
 			}
-		} else
-		{
+		} else {
 			g_sEmoteSound[client] = "";
 		}
 
-		if (StrEqual(anim2, "none", false))
-		{
+		if (StrEqual(anim2, "none", false)) {
 			HookSingleEntityOutput(EmoteEnt, "OnAnimationDone", EndAnimation, true);
-		} else
-		{
+		} else {
 			SetVariantString(anim2);
 			AcceptEntityInput(EmoteEnt, "SetDefaultAnimation", -1, -1, 0);
 		}
@@ -548,33 +515,33 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		SetVariantString(anim1);
 		AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
 
+		if (g_cvSpeed.FloatValue != 1.0) SetEntPropFloat(EmoteEnt, Prop_Send, "m_flPlaybackRate", g_cvSpeed.FloatValue);
+
 		SetCam(client);
 
 		g_bClientDancing[client] = true;
-		
-		if(g_cvHidePlayers.BoolValue)
-		{
-			for(int i = 1; i <= MaxClients; i++)
-				if (IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client) && !g_bHooked[i])
-				{
-					SDKHook(i, SDKHook_SetTransmit, SetTransmit);
-					g_bHooked[i] = true;
-				}
+
+		if (g_cvHidePlayers.BoolValue) {
+			for (int i = 1; i <= MaxClients; i++)
+			if (IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client) && !g_bHooked[i]) {
+				SDKHook(i, SDKHook_SetTransmit, SetTransmit);
+				g_bHooked[i] = true;
+			}
 		}
 
-		if (g_cvCooldown.FloatValue > 0.0)
-		{
+		if (g_cvCooldown.FloatValue > 0.0) {
 			CooldownTimers[client] = CreateTimer(g_cvCooldown.FloatValue, ResetCooldown, client);
 		}
-		
-		if(g_EmoteForward != null)
-		{
+
+		if (g_EmoteForward != null) {
 			Call_StartForward(g_EmoteForward);
 			Call_PushCell(client);
 			Call_Finish();
 		}
+
+		if(isLooped){}
 	}
-	
+
 	return Plugin_Handled;
 }
 
@@ -772,21 +739,32 @@ public Action SetTransmit(int entity, int client)
 	return Plugin_Continue; 
 } 
 
+
 void SetCam(int client)
 {
-	ClientCommand(client, "cam_collision 0");
-	ClientCommand(client, "cam_idealdist 100");
-	ClientCommand(client, "cam_idealpitch 0");
-	ClientCommand(client, "cam_idealyaw 0");
-	ClientCommand(client, "thirdperson");
+
+    //L4D1
+    
+    SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | HIDEHUD_CROSSHAIR);
+    SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", 0);
+    SetEntProp(client, Prop_Send, "m_iObserverMode", 1);
+    SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 0);
+
 }
 
 void ResetCam(int client)
 {
-	ClientCommand(client, "firstperson");
-	ClientCommand(client, "cam_collision 1");
-	ClientCommand(client, "cam_idealdist 150");
-}
+
+    //L4D1
+
+    SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", -1);
+    SetEntProp(client, Prop_Send, "m_iObserverMode", 0);
+    SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 1);
+    SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDEHUD_CROSSHAIR);
+
+
+} 
+
 
 Action ResetCooldown(Handle timer, any client)
 {
@@ -1408,7 +1386,7 @@ Action Command_Admin_Emotes(int client, int args)
 {
 	if (args < 1)
 	{
-		CReplyToCommand(client, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
+		CPrintToChat(client, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 		return Plugin_Handled;
 	}
 	
@@ -1422,7 +1400,7 @@ Action Command_Admin_Emotes(int client, int args)
 		GetCmdArg(2, arg2, sizeof(arg2));
 		if (StringToIntEx(arg2, amount) < 1 || StringToIntEx(arg2, amount) > 86)
 		{
-			CReplyToCommand(client, "%t", "INVALID_EMOTE_ID");
+			CPrintToChat(client, "%t", "INVALID_EMOTE_ID");
 			return Plugin_Handled;
 		}
 	}
@@ -1873,37 +1851,6 @@ int MenuHandler_EmotesAmount(Menu menu, MenuAction action, int param1, int param
 	}
 }
 
-public void OnEntityCreated(int entity, const char[] classname)
-{
-    if(StrEqual(classname, "trigger_multiple"))
-    {
-        SDKHook(entity, SDKHook_StartTouch, OnTrigger);
-        SDKHook(entity, SDKHook_EndTouch, OnTrigger);
-        SDKHook(entity, SDKHook_Touch, OnTrigger);
-    }
-    else if(StrEqual(classname, "trigger_hurt"))
-    {
-        SDKHook(entity, SDKHook_StartTouch, OnTrigger);
-        SDKHook(entity, SDKHook_EndTouch, OnTrigger);
-        SDKHook(entity, SDKHook_Touch, OnTrigger);
-    }
-    else if(StrEqual(classname, "trigger_push"))
-    {
-        SDKHook(entity, SDKHook_StartTouch, OnTrigger);
-        SDKHook(entity, SDKHook_EndTouch, OnTrigger);
-        SDKHook(entity, SDKHook_Touch, OnTrigger);
-    }
-}
-
-public Action OnTrigger(int entity, int other)
-{
-    if (0 < other <= MaxClients)
-    {
-        StopEmote(other);
-    }
-    return Plugin_Continue;
-} 
-
 void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int client)
 {
 	char buffer[128];
@@ -1934,4 +1881,26 @@ int GetEmotePeople()
 			count++;
 			
 	return count;
+}
+
+
+void CPrintToChat(int client, char[] message, any ...)
+{
+	static char buffer[256];
+	SetGlobalTransTarget(client);
+	VFormat(buffer, sizeof(buffer), message, 2);
+	ReplaceColor(buffer, sizeof(buffer));
+	PrintToChat(client, buffer);
+}
+
+stock void ReplaceColor(char[] message, int maxLen)
+{
+    ReplaceString(message, maxLen, "{default}", "\x01", false);
+    ReplaceString(message, maxLen, "{darkred}", "\x04", false);
+    ReplaceString(message, maxLen, "{olive}", "\x05", false);
+}
+
+bool IsSurvivor(int client)
+{
+	return (client > 0 && client <= MaxClients && IsClientInGame(client) && GetClientTeam(client) == 2);
 }
