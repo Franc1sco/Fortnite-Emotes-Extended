@@ -73,14 +73,19 @@ float g_fLastPosition[MAXPLAYERS+1][3];
 
 public Plugin myinfo =
 {
-	name = "SM Fortnite Emotes Extended",
+	name = "SM Fortnite Emotes Extended - L4D Version",
 	author = "Kodua, Franc1sco franug, TheBO$$, Foxhound",
 	description = "This plugin is for demonstration of some animations from Fortnite in L4D2",
-	version = "2020",
+	version = "1.4.3",
 	url = "https://forums.alliedmods.net/showthread.php?t=318981"
 };
 
+EngineVersion _Game;
+
 public void OnPluginStart() {
+	
+	_Game = GetEngineVersion();
+	
 	LoadTranslations("common.phrases");
 	LoadTranslations("fnemotes.phrases");
 
@@ -744,11 +749,17 @@ void SetCam(int client)
 {
 
     //L4D1
-    
-    SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | HIDEHUD_CROSSHAIR);
-    SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", 0);
-    SetEntProp(client, Prop_Send, "m_iObserverMode", 1);
-    SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 0);
+    if(_Game == Engine_Left4Dead)
+	{
+		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | HIDEHUD_CROSSHAIR);
+		SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", 0);
+		SetEntProp(client, Prop_Send, "m_iObserverMode", 1);
+		SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 0);
+	}
+	else{
+		SetEntPropFloat(client, Prop_Send, "m_TimeForceExternalView", 99999.3);
+		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | HIDEHUD_CROSSHAIR);
+	}
 
 }
 
@@ -756,11 +767,17 @@ void ResetCam(int client)
 {
 
     //L4D1
-
-    SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", -1);
-    SetEntProp(client, Prop_Send, "m_iObserverMode", 0);
-    SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 1);
-    SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDEHUD_CROSSHAIR);
+	if(_Game == Engine_Left4Dead)
+	{
+		SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", -1);
+		SetEntProp(client, Prop_Send, "m_iObserverMode", 0);
+		SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 1);
+		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDEHUD_CROSSHAIR);
+	}
+	else{
+		SetEntPropFloat(client, Prop_Send, "m_TimeForceExternalView", 0.0);
+		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDEHUD_CROSSHAIR);
+	}
 
 
 } 
