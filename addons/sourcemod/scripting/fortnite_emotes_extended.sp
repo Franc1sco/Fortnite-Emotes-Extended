@@ -80,6 +80,9 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_emote", Command_Menu);
 	RegConsoleCmd("sm_dances", Command_Menu);	
 	RegConsoleCmd("sm_dance", Command_Menu);
+	RegConsoleCmd("sm_perform_emote", Command_Perform);
+	RegConsoleCmd("sm_random_emote", Command_Random_Emote);
+	RegConsoleCmd("sm_random_dance", Command_Random_Dance);
 	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setdances", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
@@ -381,6 +384,44 @@ public Action Command_Menu(int client, int args)
 	}
 	else CPrintToChat(client, "%t", "NO_DANCES_ACCESS_FLAG");	
 
+	return Plugin_Handled;
+}
+
+public Action Command_Perform(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+		
+	int amount;
+	char arg1[8];
+	GetCmdArg(1, arg1, sizeof(arg1));
+	amount = StringToInt(arg1);
+
+	PerformEmote(client, client, amount);
+	
+	
+	return Plugin_Handled;
+}
+
+public Action Command_Random_Emote(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+		
+	RandomEmote(client);
+	
+	
+	return Plugin_Handled;
+}
+
+public Action Command_Random_Dance(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+		
+	RandomDance(client);
+	
+	
 	return Plugin_Handled;
 }
 
