@@ -80,9 +80,9 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_emote", Command_Menu);
 	RegConsoleCmd("sm_dances", Command_Menu);	
 	RegConsoleCmd("sm_dance", Command_Menu);
-	RegConsoleCmd("sm_perform_emote", Command_Perform);
-	RegConsoleCmd("sm_random_emote", Command_Random_Emote);
-	RegConsoleCmd("sm_random_dance", Command_Random_Dance);
+	RegConsoleCmd("sm_perform_emote", Command_Perform,"[SM] Usage: sm_perform_emote [Emote ID]");
+	RegConsoleCmd("sm_random_emote", Command_Random_Emote,"[SM] Usage: sm_random_emote");
+	RegConsoleCmd("sm_random_dance", Command_Random_Dance,"[SM] Usage: sm_random_dance");
 	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setdances", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
