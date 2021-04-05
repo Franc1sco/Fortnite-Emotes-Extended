@@ -54,9 +54,9 @@
 
 	"INVALID_EMOTE_ID"
 	{
-		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-86)"
-		"tr"			"[{olive}Emotes{default}]{darkred} Geçersiz Emote ID, (1-86) arasında olmalıdır"	
-		"es"			"[{olive}Emotes{default}]{darkred} Emote ID inválida, Debe estar entre (1-86)"
+		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-84)"
+		"tr"			"[{olive}Emotes{default}]{darkred} Geçersiz Emote ID, (1-84) arasında olmalıdır"	
+		"es"			"[{olive}Emotes{default}]{darkred} Emote ID inválida, Debe estar entre (1-84)"
 	}
 
 	"RANDOM_EMOTE"
@@ -124,588 +124,588 @@
 
 	"Emote_Fonzie_Pistol"
 	{
-		"en"			"Finger Guns"
-		"tr"			"Parmak silahları"
-		"es"			"Pistolas de Dedos"
+		"en"			"Finger Guns (id 1)"
+		"tr"			"Parmak silahları (id 1)"
+		"es"			"Pistolas de Dedos (id 1)"
 	}
 
 	"Emote_Bring_It_On"
 	{
-		"en"			"Come To Me"
-		"tr"			"Bana Gel"		
-		"es"			"Ven A Mi"
+		"en"			"Come To Me (id 2)"
+		"tr"			"Bana Gel (id 2)"		
+		"es"			"Ven A Mi (id 2)"
 	}
 
 	"Emote_ThumbsDown"
 	{
-		"en"			"Thumbs Down"
-		"tr"			"Başparmak Aşağı"
-		"es"			"Pulgares Abajo"
+		"en"			"Thumbs Down (id 3)"
+		"tr"			"Başparmak Aşağı (id 3)"
+		"es"			"Pulgares Abajo (id 3)"
 	}
 	
 	"Emote_Celebration_Loop"
 	{
-		"en"			"Celebration"
-		"tr"			"Kutlama"
-		"es"			"Celebración"
+		"en"			"Celebration (id 5)"
+		"tr"			"Kutlama (id 5)"
+		"es"			"Celebración (id 5)"
 	}
 
 	"Emote_BlowKiss"
 	{
-		"en"			"Blow kiss"
-		"tr"			"Öpücük atmak"
-		"es"			"Beso Aéreo"
+		"en"			"Blow kiss (id 6)"
+		"tr"			"Öpücük atmak (id 6)"
+		"es"			"Beso Aéreo (id 6)"
 	}
 
 	"Emote_Calculated"
 	{
-		"en"			"Calculated"
-		"tr"			"Hesaplanmış"
-		"es"			"Calculado"
+		"en"			"Calculated (id 7)"
+		"tr"			"Hesaplanmış (id 7)"
+		"es"			"Calculado (id 7)"
 	}
 
 	"Emote_Confused"
 	{
-		"en"			"Confused"
-		"tr"			"Şaşkın"
-		"es"			"Confundido"
+		"en"			"Confused (id 8)"
+		"tr"			"Şaşkın (id 8)"
+		"es"			"Confundido (id 8)"
 	}
 	
 	"Emote_Chug"
 	{
-		"en"			"Chug"
-		"tr"			"Chug"  
-		"es"			"Resoplar"
+		"en"			"Chug (id 9)"
+		"tr"			"Chug (id 9)"  
+		"es"			"Resoplar (id 9)"
 	}
 
 	"Emote_Cry"
 	{
-		"en"			"Cry"
-		"tr"			"Ağlamak"
-		"es"			"Llorar"
+		"en"			"Cry (id 10)"
+		"tr"			"Ağlamak (id 10)"
+		"es"			"Llorar (id 10)"
 	}
 
 	"Emote_DustingOffHands"
 	{
-		"en"			"Band of the fort"
-		"tr"			"Kale grubu"
-		"es"			"Desempolvarse las Manos"
+		"en"			"Band of the fort (id 11)"
+		"tr"			"Kale grubu (id 11)"
+		"es"			"Desempolvarse las Manos (id 11)"
 	}
 
 	"Emote_DustOffShoulders"
 	{
-		"en"			"Shake It Up 2"
-		"tr"			"2 kadar salla" 
-		"es"			"Muévelo 2"
+		"en"			"Shake It Up 2 (id 12)"
+		"tr"			"2 kadar salla (id 12)" 
+		"es"			"Muévelo 2 (id 12)"
 	}
 	
 	"Emote_Facepalm"
 	{
-		"en"			"Facepalm"
-		"tr"			"Facepalm" 
-		"es"			"Palmada en la Cara"
+		"en"			"Facepalm (id 13)"
+		"tr"			"Facepalm (id 13)" 
+		"es"			"Palmada en la Cara (id 13)"
 	}
 
 	"Emote_Fishing"
 	{
-		"en"			"On the Hook"
-		"tr"			"Kancada"
-		"es"			"En el Gancho"
+		"en"			"On the Hook (id 14)"
+		"tr"			"Kancada (id 14)"
+		"es"			"En el Gancho (id 14)"
 	}
 
 	"Emote_Flex"
 	{
-		"en"			"Flex"
-		"tr"			"Esnek"
-		"es"			"Flexionarse"
+		"en"			"Flex (id 15)"
+		"tr"			"Esnek (id 15)"
+		"es"			"Flexionarse (id 15)"
 	}
 
 	"Emote_golfclap"
 	{
-		"en"			"Golf Clap"
-		"tr"			"Golf alkış"  
-		"es"			"Palmaditas"
+		"en"			"Golf Clap (id 16)"
+		"tr"			"Golf alkış (id 16)"  
+		"es"			"Palmaditas (id 16)"
 	}
 	
 	"Emote_HandSignals"
 	{
-		"en"			"Hand Signals"
-		"tr"			"El işaretleri"
-		"es"			"Selales de Mano"
+		"en"			"Hand Signals (id 17)"
+		"tr"			"El işaretleri (id 17)"
+		"es"			"Selales de Mano (id 17)"
 	}
 
 	"Emote_HeelClick"
 	{
-		"en"			"Click!"
-		"tr"			"Tıkla!"
-		"es"			"Click!"
+		"en"			"Click! (id 18)"
+		"tr"			"Tıkla! (id 18)"
+		"es"			"Click! (id 18)"
 	}
 
 	"Emote_Hotstuff"
 	{
-		"en"			"Hot Stuff"
-		"tr"			"Sıcak sayfalar"
-		"es"			"Cosas Calientes"
+		"en"			"Hot Stuff (id 19)"
+		"tr"			"Sıcak sayfalar (id 19)"
+		"es"			"Cosas Calientes (id 19)"
 	}
 
 	"Emote_IBreakYou"
 	{
-		"en"			"Breaking Point"
-		"tr"			"Kırılma noktası"
-		"es"			"Punto de Ruptura"
+		"en"			"Breaking Point (id 20)"
+		"tr"			"Kırılma noktası (id 20)"
+		"es"			"Punto de Ruptura (id 20)"
 	}
 	
 	"Emote_IHeartYou"
 	{
-		"en"			"True Love"
-		"tr"			"Gerçek aşk"  
-		"es"			"Amor Verdadero"
+		"en"			"True Love (id 21)"
+		"tr"			"Gerçek aşk (id 21)"  
+		"es"			"Amor Verdadero (id 21)"
 	}
 
 	"Emote_Kung-Fu_Salute"
 	{
-		"en"			"Kung-Fu Salute"
-		"tr"			"Kung-Fu Selamı"
-		"es"			"Saludo de Kung-Fu"
+		"en"			"Kung-Fu Salute (id 22)"
+		"tr"			"Kung-Fu Selamı (id 22)"
+		"es"			"Saludo de Kung-Fu (id 22)"
 	}
 
 	"Emote_Laugh"
 	{
-		"en"			"Laugh"
-		"tr"			"Gülmek"
-		"es"			"Risa"
+		"en"			"Laugh (id 23)"
+		"tr"			"Gülmek (id 23)"
+		"es"			"Risa (id 23)"
 	}
 
 	"Emote_Luchador"
 	{
-		"en"			"Luchador"
-		"tr"			"Savaşçı"
-		"es"			"Luchador"
+		"en"			"Luchador (id 24)"
+		"tr"			"Savaşçı (id 24)"
+		"es"			"Luchador (id 24)"
 	}
 	
 	"Emote_Make_It_Rain"
 	{
-		"en"			"Make it Rain"
-		"tr"			"Yağdır"
-		"es"			"Haz que Llueva"
+		"en"			"Make it Rain (id 25)"
+		"tr"			"Yağdır (id 25)"
+		"es"			"Haz que Llueva (id 25)"
 	}
 
 	"Emote_NotToday"
 	{
-		"en"			"No hoy"
-		"tr"			"Bugün değil"
-		"es"			"Hoy No"
+		"en"			"No hoy  (id 26)"
+		"tr"			"Bugün değil (id 26)"
+		"es"			"Hoy No (id 26)"
 	}
 
 	"Emote_RockPaperScissor_Paper"
 	{
-		"en"			"Paper"
-		"tr"			"Kağıt"
-		"es"			"Papel"
+		"en"			"Paper (id 27)"
+		"tr"			"Kağıt (id 27)"
+		"es"			"Papel (id 27)"
 	}
 
 	"Emote_RockPaperScissor_Rock"
 	{
-		"en"			"Rock"
-		"tr"			"Taş"
-		"es"			"Piedra"
+		"en"			"Rock (id 28)"
+		"tr"			"Taş (id 28)"
+		"es"			"Piedra (id 28)"
 	}
 	
 	"Emote_RockPaperScissor_Scissor"
 	{
-		"en"			"Scissors"
-		"tr"			"Taş"
-		"es"			"Tijeras"
+		"en"			"Scissors (id 29)"
+		"tr"			"Taş (id 29)"
+		"es"			"Tijeras (id 29)"
 	}
 
 	"Emote_Salt"
 	{
-		"en"			"Salt"
-		"tr"			"Tuz"
-		"es"			"Sal"
+		"en"			"Salt (id 30)"
+		"tr"			"Tuz (id 30)"
+		"es"			"Sal (id 30)"
 	}
 
 	"Emote_Salute"
 	{
-		"en"			"Salute"
-		"tr"			"Sağlık"
-		"es"			"Saludo"
+		"en"			"Salute (id 31)"
+		"tr"			"Sağlık (id 31)"
+		"es"			"Saludo (id 31)"
 	}
 
 	"Emote_SmoothDrive"
 	{
-		"en"			"Drive Car"
-		"tr"			"Araba sürmek"
-		"es"			"Conducir Coche"
+		"en"			"Drive Car (id 32)"
+		"tr"			"Araba sürmek (id 32)"
+		"es"			"Conducir Coche (id 32)"
 	}
 	"Emote_Snap"
 	{
-		"en"			"Snap"
-		"tr"			"Ani"
-		"es"			"Chasquido"
+		"en"			"Snap (id 33)"
+		"tr"			"Ani (id 33)"
+		"es"			"Chasquido (id 33)"
 	}
 
 	"Emote_StageBow"
 	{
-		"en"			"Stage Bow"
-		"tr"			"Sahne yay"
-		"es"			"Reverencia"
+		"en"			"Stage Bow (id 34)"
+		"tr"			"Sahne yay (id 34)"
+		"es"			"Reverencia (id 34)"
 	}
 
 	"Emote_ThumbsUp"
 	{
-		"en"			"Thumbs Up"
-		"tr"			"Başparmak havaya" 
-		"es"			"Pulgares Arriba"
+		"en"			"Thumbs Up (id 4)"
+		"tr"			"Başparmak havaya (id 4)" 
+		"es"			"Pulgares Arriba (id 4)"
 	}
 	"Emote_Wave2"
 	{
-		"en"			"Salute 2"
-		"tr"			"Sağlık 2"
-		"es"			"Saludo 2"
+		"en"			"Salute 2 (id 35)"
+		"tr"			"Sağlık 2 (id 35)"
+		"es"			"Saludo 2 (id 35)"
 	}
 
 	"Emote_Yeet"
 	{
-		"en"			"Yeet"
-		"tr"			"Yeet"
-		"es"			"Estúpido"
+		"en"			"Yeet (id 36)"
+		"tr"			"Yeet (id 36)"
+		"es"			"Estúpido (id 36)"
 	}
 
 	"DanceMoves"
 	{
-		"en"			"Dance Moves"
-		"tr"			"Dans hareketleri"
-		"es"			"Movimientos de Baile"
+		"en"			"Dance Moves (id 37)"
+		"tr"			"Dans hareketleri (id 37)"
+		"es"			"Movimientos de Baile (id 37)"
 	}
 
 	"Emote_Mask_Off_Intro"
 	{
-		"en"			"Orange Justice"
-		"tr"			"Turuncu Adalet"
-		"es"			"Justicia Naranja"
+		"en"			"Orange Justice (id 38)"
+		"tr"			"Turuncu Adalet (id 38)"
+		"es"			"Justicia Naranja (id 38)"
 	}
 	
 	"Emote_Zippy_Dance"
 	{
-		"en"			"Rambunctious"
-		"tr"			"Neşeli"
-		"es"			"Bullicioso"
+		"en"			"Rambunctious (id 39)"
+		"tr"			"Neşeli (id 39)"
+		"es"			"Bullicioso (id 39)"
 	}
 
 	"ElectroShuffle"
 	{
-		"en"			"Electro Shuffle"
-		"tr"			"Elektro Karıştırma"
-		"es"			"Shuffle Electrónico"
+		"en"			"Electro Shuffle (id 40)"
+		"tr"			"Elektro Karıştırma (id 40)"
+		"es"			"Shuffle Electrónico (id 40)"
 	}
 
 	"Emote_AerobicChamp"
 	{
-		"en"			"Aerobic"
-		"tr"			"Aerobik"
-		"es"			"Aeróbico"
+		"en"			"Aerobic (id 41)"
+		"tr"			"Aerobik (id 41)"
+		"es"			"Aeróbico (id 41)"
 	}
 
 	"Emote_Bendy"
 	{
-		"en"			"Bendy"
-		"tr"			"Bendy"
-		"es"			"Flexible"
+		"en"			"Bendy (id 42)"
+		"tr"			"Bendy (id 42)"
+		"es"			"Flexible (id 42)"
 	}
 	
 	"Emote_BandOfTheFort"
 	{
-		"en"			"Best Mates"
-		"tr"			"En iyi arkadaşlar" 
-		"es"			"Mejores Amigos"
+		"en"			"Best Mates (id 43)"
+		"tr"			"En iyi arkadaşlar (id 43)" 
+		"es"			"Mejores Amigos (id 43)"
 	}
 
 	"Emote_Boogie_Down_Intro"
 	{
-		"en"			"Boogie"
-		"tr"			"Boogie"
-		"es"			"Boogie"
+		"en"			"Boogie (id 44)"
+		"tr"			"Boogie (id 44)"
+		"es"			"Boogie (id 44)"
 	}
 
 	"Emote_Capoeira"
 	{
-		"en"			"Capoeira"
-		"tr"			"Capoeira"
-		"es"			"Capoeira"
+		"en"			"Capoeira (id 45)"
+		"tr"			"Capoeira (id 45)"
+		"es"			"Capoeira (id 45)"
 	}
 
 	"Emote_Charleston"
 	{
-		"en"			"Flapper"
-		"tr"			"Sineklik"
-		"es"			"A la Moda"
+		"en"			"Flapper (id 46)"
+		"tr"			"Sineklik (id 46)"
+		"es"			"A la Moda (id 46)"
 	}
 	
 	"Emote_Chicken"
 	{
-		"en"			"Chicken"
-		"tr"			"Tavuk"
-		"es"			"Pollo"
+		"en"			"Chicken (id 47)"
+		"tr"			"Tavuk (id 47)"
+		"es"			"Pollo (id 47)"
 	}
 
 	"Emote_Dance_NoBones"
 	{
-		"en"			"Boneless"
-		"tr"			"Kemiksiz"
-		"es"			"Sin Huesos"
+		"en"			"Boneless (id 48)"
+		"tr"			"Kemiksiz (id 48)"
+		"es"			"Sin Huesos (id 48)"
 	}
 
 	"Emote_Dance_Shoot"
 	{
-		"en"			"Hype"
-		"tr"			"Yutturmaca"
-		"es"			"Bombo"
+		"en"			"Hype (id 49)"
+		"tr"			"Yutturmaca (id 49)"
+		"es"			"Bombo (id 49)"
 	}
 
 	"Emote_Dance_SwipeIt"
 	{
-		"en"			"Shake It Up"
-		"tr"			"Salla"
-		"es"			"Muévelo"
+		"en"			"Shake It Up (id 50)"
+		"tr"			"Salla (id 50)"
+		"es"			"Muévelo (id 50)"
 	}
 	
 	"Emote_Dance_Disco_T3"
 	{
-		"en"			"Disco Fever"
-		"tr"			"Disko ateşi"
-		"es"			"Disco para Siempre"
+		"en"			"Disco Fever (id 51)"
+		"tr"			"Disko ateşi (id 51)"
+		"es"			"Disco para Siempre (id 51)"
 	}
 
 	"Emote_DG_Disco"
 	{
-		"en"			"Disco Fever 2"
-		"tr"			"Disko ateşi 2"
-		"es"			"Disco para Siempre 2"
+		"en"			"Disco Fever 2 (id 52)"
+		"tr"			"Disko ateşi 2 (id 52)"
+		"es"			"Disco para Siempre 2 (id 52)"
 	}
 
 	"Emote_Dance_Worm"
 	{
-		"en"			"The Worm"
-		"tr"			"Solucan"
-		"es"			"El Gusano"
+		"en"			"The Worm (id 53)"
+		"tr"			"Solucan (id 53)"
+		"es"			"El Gusano (id 53)"
 	}
 
 	"Emote_Dance_Loser"
 	{
-		"en"			"Take The L"
-		"tr"			"L al"
-		"es"			"Toma La L"
+		"en"			"Take The L (id 54)"
+		"tr"			"L al (id 54)"
+		"es"			"Toma La L (id 54)"
 	}
 	
 	"Emote_Dance_Breakdance"
 	{
-		"en"			"BreakDance"
-		"tr"			"BreakDance"
-		"es"			"BreakDance"
+		"en"			"BreakDance (id 55)"
+		"tr"			"BreakDance (id 55)"
+		"es"			"BreakDance (id 55)"
 	}
 
 	"Emote_Dance_Pump"
 	{
-		"en"			"Pump"
-		"tr"			"Pompa"
-		"es"			"Bomba"
+		"en"			"Pump (id 56)"
+		"tr"			"Pompa (id 56)"
+		"es"			"Bomba (id 56)"
 	}
 
 	"Emote_Dance_RideThePony"
 	{
-		"en"			"Ride The Pony"
-		"tr"			"Midilli Yolculuğu"
-		"es"			"Monta Al Pony"
+		"en"			"Ride The Pony (id 57)"
+		"tr"			"Midilli Yolculuğu (id 57)"
+		"es"			"Monta Al Pony (id 57)"
 	}
 
 	"Emote_Dab"
 	{
-		"en"			"Dab"
-		"tr"			"Dab"
-		"es"			"Dab"
+		"en"			"Dab (id 58)"
+		"tr"			"Dab (id 58)"
+		"es"			"Dab (id 58)"
 	}
 
 	"Emote_EasternBloc_Start"
 	{
-		"en"			"Eastern Bloc"
-		"tr"			"Doğu Bloğu"
-		"es"			"Bloque Oriental"
+		"en"			"Eastern Bloc (id 59)"
+		"tr"			"Doğu Bloğu (id 59)"
+		"es"			"Bloque Oriental (id 59)"
 	}
 
 	"Emote_FancyFeet"
 	{
-		"en"			"Dream Feet"
-		"tr"			"Rüya Ayakları"
-		"es"			"Pies de Suelo"
+		"en"			"Dream Feet (id 60)"
+		"tr"			"Rüya Ayakları (id 60)"
+		"es"			"Pies de Suelo (id 60)"
 	}
 
 	"Emote_FlossDance"
 	{
-		"en"			"Floss"
-		"tr"			"Diş ipi"
-		"es"			"Hilo Dental"
+		"en"			"Floss (id 61)"
+		"tr"			"Diş ipi (id 61)"
+		"es"			"Hilo Dental (id 61)"
 	}
 
 	"Emote_FlippnSexy"
 	{
-		"en"			"Flippn"
-		"tr"			"Flippn"
-		"es"			"Flippin Sexy"
+		"en"			"Flippn (id 62)"
+		"tr"			"Flippn (id 62)"
+		"es"			"Flippin Sexy (id 62)"
 	}
 
 	"Emote_Fresh"
 	{
-		"en"			"Fresh"
-		"tr"			"Taze"
-		"es"			"Fresco"
+		"en"			"Fresh (id 63)"
+		"tr"			"Taze (id 63)"
+		"es"			"Fresco (id 63)"
 	}
 
 	"Emote_GrooveJam"
 	{
-		"en"			"Grefg"
-		"tr"			"Grefg"
-		"es"			"Grefg"
+		"en"			"Grefg (id 64)"
+		"tr"			"Grefg (id 64)"
+		"es"			"Grefg (id 64)"
 	}
 
 	"Emote_guitar"
 	{
-		"en"			"Guitar"
-		"tr"			"Gitar"
-		"es"			"Guitarra"
+		"en"			"Guitar (id 65)"
+		"tr"			"Gitar (id 65)"
+		"es"			"Guitarra (id 65)"
 	}
 
 	"Emote_Hillbilly_Shuffle_Intro"
 	{
-		"en"			"Shuffle"
-		"tr"			"Karıştır"
-		"es"			"Shuffle"
+		"en"			"Shuffle (id 66)"
+		"tr"			"Karıştır (id 66)"
+		"es"			"Shuffle (id 66)"
 	}
 
 	"Emote_Hiphop_01"
 	{
-		"en"			"Hip Hop"
-		"tr"			"Hip Hop"
-		"es"			"Hip Hop"
+		"en"			"Hip Hop (id 67)"
+		"tr"			"Hip Hop (id 67)"
+		"es"			"Hip Hop (id 67)"
 	}
 
 	"Emote_Hula_Start"
 	{
-		"en"			"Hula Hop"
-		"tr"			"Hula Hop"
-		"es"			"Hula Hop"
+		"en"			"Hula Hop (id 68)"
+		"tr"			"Hula Hop (id 68)"
+		"es"			"Hula Hop (id 68)"
 	}
 
 	"Emote_InfiniDab_Intro"
 	{
-		"en"			"Infinite Dab"
-		"tr"			"Sonsuz Dab"
-		"es"			"Dab Infinito"
+		"en"			"Infinite Dab (id 69)"
+		"tr"			"Sonsuz Dab (id 69)"
+		"es"			"Dab Infinito (id 69)"
 	}
 
 	"Emote_Intensity_Start"
 	{
-		"en"			"Intensity"
-		"tr"			"Yoğunluk"
-		"es"			"Intensidad"
+		"en"			"Intensity (id 70)"
+		"tr"			"Yoğunluk (id 70)"
+		"es"			"Intensidad (id 70)"
 	}
 
 	"Emote_IrishJig_Start"
 	{
-		"en"			"Turkish Dabke"
-		"tr"			"Türk Dabke"
-		"es"			"Dabke Turco"
+		"en"			"Turkish Dabke (id 71)"
+		"tr"			"Türk Dabke (id 71)"
+		"es"			"Dabke Turco (id 71)"
 	}
 
 	"Emote_KoreanEagle"
 	{
-		"en"			"Eagle"
-		"tr"			"Kartal"
-		"es"			"Águila"
+		"en"			"Eagle (id 72)"
+		"tr"			"Kartal (id 72)"
+		"es"			"Águila (id 72)"
 	}
 
 	"Emote_Kpop_02"
 	{
-		"en"			"True Heart"
-		"tr"			"Gerçek kalp"
-		"es"			"Corazón Verdadero"
+		"en"			"True Heart (id 73)"
+		"tr"			"Gerçek kalp (id 73)"
+		"es"			"Corazón Verdadero (id 73)"
 	}
 
 	"Emote_LivingLarge"
 	{
-		"en"			"Living Large"
-		"tr"			"Büyük Yaşa"
-		"es"			"Viviendo a lo Grande"
+		"en"			"Living Large (id 74)"
+		"tr"			"Büyük Yaşa (id 74)"
+		"es"			"Viviendo a lo Grande (id 74)"
 	}
 
 	"Emote_Maracas"
 	{
-		"en"			"Maracas"
-		"tr"			"Maracas"
-		"es"			"Maracas"
+		"en"			"Maracas (id 75)"
+		"tr"			"Maracas (id 75)"
+		"es"			"Maracas (id 75)"
 	}
 
 	"Emote_PopLock"
 	{
-		"en"			"Pop Lock"
-		"tr"			"Pop Kilidi"		
-		"es"			"Pop Lock"
+		"en"			"Pop Lock (id 76)"
+		"tr"			"Pop Kilidi (id 76)"		
+		"es"			"Pop Lock (id 76)"
 	}
 
 	"Emote_PopRock"
 	{
-		"en"			"Star Power"
-		"tr"			"Yıldız gücü"		
-		"es"			"Poder Estelar"
+		"en"			"Star Power (id 77)"
+		"tr"			"Yıldız gücü (id 77)"		
+		"es"			"Poder Estelar (id 77)"
 	}
 
 	"Emote_RobotDance"
 	{
-		"en"			"Robot"
-		"tr"			"Robot"		
-		"es"			"Robot"
+		"en"			"Robot (id 78)"
+		"tr"			"Robot (id 78)"		
+		"es"			"Robot (id 78)"
 	}
 
 	"Emote_T-Rex"
 	{
-		"en"			"T-Rex"
-		"tr"			"T-Rex"		
-		"es"			"T-Rex"
+		"en"			"T-Rex (id 79)"
+		"tr"			"T-Rex (id 79)"		
+		"es"			"T-Rex (id 79)"
 	}
 
 	"Emote_TechnoZombie"
 	{
-		"en"			"Reanimated"
-		"tr"			"Yeniden canlandırıldı"		
-		"es"			"Reanimado"
+		"en"			"Reanimated (id 80)"
+		"tr"			"Yeniden canlandırıldı (id 80)"		
+		"es"			"Reanimado (id 80)"
 	}
 
 	"Emote_Twist"
 	{
-		"en"			"Twist"
-		"tr"			"Dönemeç"		
-		"es"			"Twist"
+		"en"			"Twist (id 81)"
+		"tr"			"Dönemeç (id 81)"		
+		"es"			"Twist (id 81)"
 	}
 
 	"Emote_WarehouseDance_Start"
 	{
-		"en"			"Ware House"
-		"tr"			"Depo"		
-		"es"			"Almacén"
+		"en"			"Ware House (id 82)"
+		"tr"			"Depo (id 82)"		
+		"es"			"Almacén (id 82)"
 	}
 
 	"Emote_Wiggle"
 	{
-		"en"			"Wiggle"
-		"tr"			"Kıpırdatmak"		
-		"es"			"Meneo"
+		"en"			"Wiggle (id 83)"
+		"tr"			"Kıpırdatmak (id 83)"		
+		"es"			"Meneo (id 83)"
 	}
 
 	"Emote_Youre_Awesome"
 	{
-		"en"			"You're Awesome"
-		"tr"			"Harikasın"		
-		"es"			"Eres Increíble"
+		"en"			"You're Awesome (id 84)"
+		"tr"			"Harikasın (id 84)"		
+		"es"			"Eres Increíble (id 84)"
 	}
 
 }
