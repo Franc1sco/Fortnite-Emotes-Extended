@@ -48,7 +48,6 @@ char g_sEmoteSound[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
 bool g_bClientDancing[MAXPLAYERS+1];
 
-
 Handle CooldownTimers[MAXPLAYERS+1];
 bool g_bEmoteCooldown[MAXPLAYERS+1];
 
@@ -61,34 +60,32 @@ bool g_bHooked[MAXPLAYERS + 1];
 float g_fLastAngles[MAXPLAYERS+1][3];
 float g_fLastPosition[MAXPLAYERS+1][3];
 
-
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.4.2",
+	version = "1.4.2fix",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
 public void OnPluginStart()
 {	
-	LoadTranslations("common.phrases");
 	LoadTranslations("fnemotes.phrases");
+	LoadTranslations("common.phrases");
 	
 	RegConsoleCmd("sm_emotes", Command_Menu);
 	RegConsoleCmd("sm_emote", Command_Menu);
-	RegConsoleCmd("sm_dances", Command_Menu);	
+	RegConsoleCmd("sm_dances", Command_Menu);
 	RegConsoleCmd("sm_dance", Command_Menu);
+	
 	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setdances", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setdance", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 
 	HookEvent("player_death", 	Event_PlayerDeath, 	EventHookMode_Pre);
-
-	HookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);
-	
+	HookEvent("player_hurt", 	Event_PlayerHurt, 	EventHookMode_Pre);	
 	HookEvent("round_prestart",  Event_Start);
 	
 	/**
@@ -106,8 +103,7 @@ public void OnPluginStart()
 	g_cvHidePlayers = AutoExecConfig_CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", _, true, 0.0, true, 1.0);
 	g_cvTeleportBack = AutoExecConfig_CreateConVar("sm_emotes_teleportonend", "0", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", _, true, 0.0, true, 1.0);
 	
-	AutoExecConfig_ExecuteFile();
-	
+	AutoExecConfig_ExecuteFile();	
 	AutoExecConfig_CleanFile();
 	
 	/**
@@ -168,8 +164,8 @@ public void OnMapStart()
 	// add the sound file routes here
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/ninja_dance_01.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/dance_soldier_03.mp3");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/Hip_Hop_Good_Vibes_Mix_01_Loop.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_zippy_A.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/hip_hop_good_vibes_mix_01_loop.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_zippy_a.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_electroshuffle_music.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_aerobics_01.wav"); 
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_music_emotes_bendy.wav");
@@ -225,8 +221,7 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/eastern_bloc_musc_setup_d.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_hot_music.wav");
-    
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_hot_music.wav");    
 
 	// this dont touch
 	PrecacheModel("models/player/custom_player/kodua/fortnite_emotes_v2.mdl", true);
@@ -236,8 +231,8 @@ public void OnMapStart()
 	// add wav files with */
 	PrecacheSound("kodua/fortnite_emotes/ninja_dance_01.mp3");
 	PrecacheSound("kodua/fortnite_emotes/dance_soldier_03.mp3");
-	PrecacheSound("*/kodua/fortnite_emotes/Hip_Hop_Good_Vibes_Mix_01_Loop.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/emote_zippy_A.wav");
+	PrecacheSound("*/kodua/fortnite_emotes/hip_hop_good_vibes_mix_01_loop.wav");
+	PrecacheSound("*/kodua/fortnite_emotes/emote_zippy_a.wav");
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_electroshuffle_music.wav");
 	PrecacheSound("*/kodua/fortnite_emotes/emote_aerobics_01.wav");
 	PrecacheSound("*/kodua/fortnite_emotes/athena_music_emotes_bendy.wav");
@@ -296,7 +291,6 @@ public void OnMapStart()
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_hot_music.wav");
 }
-
 
 public void OnClientPutInServer(int client)
 {
@@ -843,7 +837,6 @@ int MenuHandler1(Menu menu, MenuAction action, int param1, int param2)
 	}
 }
 
-
 Action EmotesMenu(int client)
 {
 	char sBuffer[32];
@@ -962,7 +955,7 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 					case 22:
 					CreateEmote(client, "Emote_Kung-Fu_Salute", "none", "", false);
 					case 23:
-					CreateEmote(client, "Emote_Laugh", "Emote_Laugh_CT", "emote_laugh_01.mp3", false);		
+					CreateEmote(client, "Emote_Laugh", "Emote_Laugh_CT", "emote_laugh_01.mp3", false);
 					case 24:
 					CreateEmote(client, "Emote_Luchador", "none", "Emote_Luchador", false);
 					case 25:
@@ -988,8 +981,7 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 					case 35:
 					CreateEmote(client, "Emote_Wave2", "none", "", false);
 					case 36:
-					CreateEmote(client, "Emote_Yeet", "none", "Emote_Yeet", false);				
-					
+					CreateEmote(client, "Emote_Yeet", "none", "Emote_Yeet", false);					
 				}
 			}
 			menu.DisplayAt(client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
@@ -1286,8 +1278,7 @@ Action RandomEmote(int i)
 						CreateEmote(i, "Emote_Wave2", "none", "", false);
 						case 36:
 						CreateEmote(i, "Emote_Yeet", "none", "Emote_Yeet", false);	
-					}	
-
+					}
 }
 
 Action RandomDance(int i)
@@ -1385,13 +1376,13 @@ Action RandomDance(int i)
 						case 40:
 						CreateEmote(i, "Emote_PopLock", "none", "Athena_Emote_PopLock", true);
 						case 41:
-						CreateEmote(i, "Emote_PopRock", "none", "Emote_PopRock_01", true);		
+						CreateEmote(i, "Emote_PopRock", "none", "Emote_PopRock_01", true);
 						case 42:
 						CreateEmote(i, "Emote_RobotDance", "none", "athena_emote_robot_music", true);	
 						case 43:
 						CreateEmote(i, "Emote_T-Rex", "none", "Emote_Dino_Complete", false);
 						case 44:
-						CreateEmote(i, "Emote_TechnoZombie", "none", "athena_emote_founders_music", true);		
+						CreateEmote(i, "Emote_TechnoZombie", "none", "athena_emote_founders_music", true);
 						case 45:
 						CreateEmote(i, "Emote_Twist", "none", "athena_emotes_music_twist", true);
 						case 46:
@@ -1400,9 +1391,8 @@ Action RandomDance(int i)
 						CreateEmote(i, "Emote_Wiggle", "none", "Wiggle_Music_Loop", true);
 						case 48:
 						CreateEmote(i, "Emote_Youre_Awesome", "none", "youre_awesome_emote_music", false);	
-					}	
+					}
 }
-
 
 Action Command_Admin_Emotes(int client, int args)
 {
@@ -1443,8 +1433,7 @@ Action Command_Admin_Emotes(int client, int args)
 	{
 		ReplyToTargetError(client, target_count);
 		return Plugin_Handled;
-	}
-	
+	}	
 	
 	for (int i = 0; i < target_count; i++)
 	{
@@ -1533,7 +1522,7 @@ void PerformEmote(int client, int target, int amount)
 					case 37:
 					CreateEmote(target, "DanceMoves", "none", "ninja_dance_01", false);
 					case 38:
-					CreateEmote(target, "Emote_Mask_Off_Intro", "Emote_Mask_Off_Loop", "Hip_Hop_Good_Vibes_Mix_01_Loop", true);						
+					CreateEmote(target, "Emote_Mask_Off_Intro", "Emote_Mask_Off_Loop", "Hip_Hop_Good_Vibes_Mix_01_Loop", true);
 					case 39:
 					CreateEmote(target, "Emote_Zippy_Dance", "none", "emote_zippy_A", true);
 					case 40:
@@ -1543,9 +1532,9 @@ void PerformEmote(int client, int target, int amount)
 					case 42:
 					CreateEmote(target, "Emote_Bendy", "none", "athena_music_emotes_bendy", true);
 					case 43:
-					CreateEmote(target, "Emote_BandOfTheFort", "none", "athena_emote_bandofthefort_music", true);	
+					CreateEmote(target, "Emote_BandOfTheFort", "none", "athena_emote_bandofthefort_music", true);
 					case 44:
-					CreateEmote(target, "Emote_Boogie_Down_Intro", "Emote_Boogie_Down", "emote_boogiedown", true);	
+					CreateEmote(target, "Emote_Boogie_Down_Intro", "Emote_Boogie_Down", "emote_boogiedown", true);
 					case 45:
 					CreateEmote(target, "Emote_Capoeira", "none", "emote_capoeira", false);
 					case 46:
@@ -1561,7 +1550,7 @@ void PerformEmote(int client, int target, int amount)
 					case 51:
 					CreateEmote(target, "Emote_Dance_Disco_T3", "none", "athena_emote_disco", true);
 					case 52:
-					CreateEmote(target, "Emote_DG_Disco", "none", "athena_emote_disco", true); 					
+					CreateEmote(target, "Emote_DG_Disco", "none", "athena_emote_disco", true);
 					case 53:
 					CreateEmote(target, "Emote_Dance_Worm", "none", "athena_emote_worm_music", false);
 					case 54:
@@ -1595,7 +1584,7 @@ void PerformEmote(int client, int target, int amount)
 					case 68:
 					CreateEmote(target, "Emote_Hula_Start", "Emote_Hula", "emote_hula_01", true);
 					case 69:
-					CreateEmote(target, "Emote_InfiniDab_Intro", "Emote_InfiniDab_Loop", "athena_emote_infinidab", true);	
+					CreateEmote(target, "Emote_InfiniDab_Intro", "Emote_InfiniDab_Loop", "athena_emote_infinidab", true);
 					case 70:
 					CreateEmote(target, "Emote_Intensity_Start", "Emote_Intensity_Loop", "emote_Intensity", true);
 					case 71:
@@ -1603,21 +1592,21 @@ void PerformEmote(int client, int target, int amount)
 					case 72:
 					CreateEmote(target, "Emote_KoreanEagle", "none", "Athena_Music_Emotes_KoreanEagle", true);
 					case 73:
-					CreateEmote(target, "Emote_Kpop_02", "none", "emote_kpop_01", true);	
+					CreateEmote(target, "Emote_Kpop_02", "none", "emote_kpop_01", true);
 					case 74:
-					CreateEmote(target, "Emote_LivingLarge", "none", "emote_LivingLarge_A", true);	
+					CreateEmote(target, "Emote_LivingLarge", "none", "emote_LivingLarge_A", true);
 					case 75:
 					CreateEmote(target, "Emote_Maracas", "none", "emote_samba_new_B", true);
 					case 76:
 					CreateEmote(target, "Emote_PopLock", "none", "Athena_Emote_PopLock", true);
 					case 77:
-					CreateEmote(target, "Emote_PopRock", "none", "Emote_PopRock_01", true);		
+					CreateEmote(target, "Emote_PopRock", "none", "Emote_PopRock_01", true);
 					case 78:
-					CreateEmote(target, "Emote_RobotDance", "none", "athena_emote_robot_music", true);	
+					CreateEmote(target, "Emote_RobotDance", "none", "athena_emote_robot_music", true);
 					case 79:
 					CreateEmote(target, "Emote_T-Rex", "none", "Emote_Dino_Complete", false);
 					case 80:
-					CreateEmote(target, "Emote_TechnoZombie", "none", "athena_emote_founders_music", true);		
+					CreateEmote(target, "Emote_TechnoZombie", "none", "athena_emote_founders_music", true);
 					case 81:
 					CreateEmote(target, "Emote_Twist", "none", "athena_emotes_music_twist", true);
 					case 82:
@@ -1625,7 +1614,7 @@ void PerformEmote(int client, int target, int amount)
 					case 83:
 					CreateEmote(target, "Emote_Wiggle", "none", "Wiggle_Music_Loop", true);
 					case 84:
-					CreateEmote(target, "Emote_Youre_Awesome", "none", "youre_awesome_emote_music", false);						
+					CreateEmote(target, "Emote_Youre_Awesome", "none", "youre_awesome_emote_music", false);
 					default:
 					CPrintToChat(client, "%t", "INVALID_EMOTE_ID");
 		}
@@ -1750,7 +1739,7 @@ void DisplayEmotesAmountMenu(int client)
 	AddTranslatedMenuItem(menu, "9", "Emote_Chug", client);
 	AddTranslatedMenuItem(menu, "10", "Emote_Cry", client);
 	AddTranslatedMenuItem(menu, "11", "Emote_DustingOffHands", client);
-	AddTranslatedMenuItem(menu, "12", "Emote_DustOffShoulders", client);	
+	AddTranslatedMenuItem(menu, "12", "Emote_DustOffShoulders", client);
 	AddTranslatedMenuItem(menu, "13", "Emote_Facepalm", client);
 	AddTranslatedMenuItem(menu, "14", "Emote_Fishing", client);
 	AddTranslatedMenuItem(menu, "15", "Emote_Flex", client);
@@ -1762,17 +1751,17 @@ void DisplayEmotesAmountMenu(int client)
 	AddTranslatedMenuItem(menu, "21", "Emote_IHeartYou", client);
 	AddTranslatedMenuItem(menu, "22", "Emote_Kung-Fu_Salute", client);
 	AddTranslatedMenuItem(menu, "23", "Emote_Laugh", client);
-	AddTranslatedMenuItem(menu, "24", "Emote_Luchador", client);	
+	AddTranslatedMenuItem(menu, "24", "Emote_Luchador", client);
 	AddTranslatedMenuItem(menu, "25", "Emote_Make_It_Rain", client);
 	AddTranslatedMenuItem(menu, "26", "Emote_NotToday", client);
 	AddTranslatedMenuItem(menu, "27", "Emote_RockPaperScissor_Paper", client);
-	AddTranslatedMenuItem(menu, "28", "Emote_RockPaperScissor_Rock", client);	
+	AddTranslatedMenuItem(menu, "28", "Emote_RockPaperScissor_Rock", client);
 	AddTranslatedMenuItem(menu, "29", "Emote_RockPaperScissor_Scissor", client);
 	AddTranslatedMenuItem(menu, "30", "Emote_Salt", client);
 	AddTranslatedMenuItem(menu, "31", "Emote_Salute", client);
 	AddTranslatedMenuItem(menu, "32", "Emote_SmoothDrive", client);	
 	AddTranslatedMenuItem(menu, "33", "Emote_Snap", client);
-	AddTranslatedMenuItem(menu, "34", "Emote_StageBow", client);	
+	AddTranslatedMenuItem(menu, "34", "Emote_StageBow", client);
 	AddTranslatedMenuItem(menu, "35", "Emote_Wave2", client);
 	AddTranslatedMenuItem(menu, "36", "Emote_Yeet", client);
 	AddTranslatedMenuItem(menu, "37", "DanceMoves", client);
@@ -1782,15 +1771,15 @@ void DisplayEmotesAmountMenu(int client)
 	AddTranslatedMenuItem(menu, "41", "Emote_AerobicChamp", client);
 	AddTranslatedMenuItem(menu, "42", "Emote_Bendy", client);
 	AddTranslatedMenuItem(menu, "43", "Emote_BandOfTheFort", client);
-	AddTranslatedMenuItem(menu, "44", "Emote_Boogie_Down_Intro", client);	
+	AddTranslatedMenuItem(menu, "44", "Emote_Boogie_Down_Intro", client);
 	AddTranslatedMenuItem(menu, "45", "Emote_Capoeira", client);
 	AddTranslatedMenuItem(menu, "46", "Emote_Charleston", client);
 	AddTranslatedMenuItem(menu, "47", "Emote_Chicken", client);
-	AddTranslatedMenuItem(menu, "48", "Emote_Dance_NoBones", client);	
+	AddTranslatedMenuItem(menu, "48", "Emote_Dance_NoBones", client);
 	AddTranslatedMenuItem(menu, "49", "Emote_Dance_Shoot", client);
 	AddTranslatedMenuItem(menu, "50", "Emote_Dance_SwipeIt", client);
 	AddTranslatedMenuItem(menu, "51", "Emote_Dance_Disco_T3", client);
-	AddTranslatedMenuItem(menu, "52", "Emote_DG_Disco", client);	
+	AddTranslatedMenuItem(menu, "52", "Emote_DG_Disco", client);
 	AddTranslatedMenuItem(menu, "53", "Emote_Dance_Worm", client);
 	AddTranslatedMenuItem(menu, "54", "Emote_Dance_Loser", client);
 	AddTranslatedMenuItem(menu, "55", "Emote_Dance_Breakdance", client);
@@ -1798,15 +1787,15 @@ void DisplayEmotesAmountMenu(int client)
 	AddTranslatedMenuItem(menu, "57", "Emote_Dance_RideThePony", client);
 	AddTranslatedMenuItem(menu, "58", "Emote_Dab", client);
 	AddTranslatedMenuItem(menu, "59", "Emote_EasternBloc_Start", client);
-	AddTranslatedMenuItem(menu, "60", "Emote_FancyFeet", client);	
+	AddTranslatedMenuItem(menu, "60", "Emote_FancyFeet", client);
 	AddTranslatedMenuItem(menu, "61", "Emote_FlossDance", client);
 	AddTranslatedMenuItem(menu, "62", "Emote_FlippnSexy", client);
 	AddTranslatedMenuItem(menu, "63", "Emote_Fresh", client);
-	AddTranslatedMenuItem(menu, "64", "Emote_GrooveJam", client);	
+	AddTranslatedMenuItem(menu, "64", "Emote_GrooveJam", client);
 	AddTranslatedMenuItem(menu, "65", "Emote_guitar", client);
 	AddTranslatedMenuItem(menu, "66", "Emote_Hillbilly_Shuffle_Intro", client);
 	AddTranslatedMenuItem(menu, "67", "Emote_Hiphop_01", client);
-	AddTranslatedMenuItem(menu, "68", "Emote_Hula_Start", client);	
+	AddTranslatedMenuItem(menu, "68", "Emote_Hula_Start", client);
 	AddTranslatedMenuItem(menu, "69", "Emote_InfiniDab_Intro", client);
 	AddTranslatedMenuItem(menu, "70", "Emote_Intensity_Start", client);
 	AddTranslatedMenuItem(menu, "71", "Emote_IrishJig_Start", client);
@@ -1822,7 +1811,7 @@ void DisplayEmotesAmountMenu(int client)
 	AddTranslatedMenuItem(menu, "81", "Emote_Twist", client);
 	AddTranslatedMenuItem(menu, "82", "Emote_WarehouseDance_Start", client);
 	AddTranslatedMenuItem(menu, "83", "Emote_Wiggle", client);
-	AddTranslatedMenuItem(menu, "84", "Emote_Youre_Awesome", client);	
+	AddTranslatedMenuItem(menu, "84", "Emote_Youre_Awesome", client);
 	
 	menu.Display(client, MENU_TIME_FOREVER);
 }
