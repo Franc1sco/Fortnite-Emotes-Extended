@@ -3,50 +3,60 @@
 	"SCOPE_DETECTED"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You can't use emotes while scoping!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Você não pode usar emotes com o scope aberto!"
 		"es"			"[{olive}Emotes{default}]{darkred} No puedes usar esto mientras usas la mirilla del arma!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 开镜时您无法使用表情动作！"
 	}
+	
 	"NO_DANCES_ACCESS_FLAG"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You don't have access to use dances!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Você não tem acesso para usar danças!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Dances kullanmaya erişiminiz yok!"
 		"es"			"[{olive}Emotes{default}]{darkred} No tienes acceso a usar dances!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您无权使用舞蹈！"
 	}
+	
 	"NO_EMOTES_ACCESS_FLAG"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You don't have access to use emotes!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Você não tem acesso para usar emotes!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Emotes kullanmaya erişiminiz yok!"
 		"es"			"[{olive}Emotes{default}]{darkred} No tienes acceso a usar emotes!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您无权使用表情动作！"
 	}
+	
 	"MUST_BE_ALIVE"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You must be alive to use this!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Você deve estar vivo para usar isso!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Bunu kullanmak için hayatta olmalısın!"	
 		"es"			"[{olive}Emotes{default}]{darkred} Debes estar vivo para usar eso!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您必须在存活时才能使用！"
 	}
-
+	
 	"STAY_ON_GROUND"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You must stay on the ground to use this!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Você deve ficar no chão para usar isso!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Bunu kullanmak için haraket etmemelisin!"		
 		"es"			"[{olive}Emotes{default}]{darkred} Debes estar en el suelo para usar eso!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您必须呆在地上才能使用！"
 	}
-
+	
 	"COOLDOWN_EMOTES"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} It is on cooldown!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Aguarde o cooldown para usar este comando novamente!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Biraz bekle!"		
 		"es"			"[{olive}Emotes{default}]{darkred} Está enfriándose!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 冷却中！"
 	}
-
+	
 	"AMIN_1_INVALID"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} Argument 1 is invalid!"
+		"pt"			"[{olive}Emotes{default}]{darkred} O argumento 1 é inválido!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Bağımsız değişken 1 geçersiz!"		
 		"es"			"[{olive}Emotes{default}]{darkred} El Argumento 1 es inválido"
 		"chi"			"[{olive}表情动作{default}]{darkred} 参数1无效！"
@@ -55,6 +65,7 @@
 	"CANNOT_USE_NOW"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You can't use it right now!"
+		"pt"			"[{olive}Emotes{default}]{darkred} Você não pode usar agora!"
 		"tr"			"[{olive}Emotes{default}]{darkred} Şu anda kullanamazsın!"		
 		"es"			"[{olive}Emotes{default}]{darkred} No puedes usar eso ahora mismo!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您现在不能使用！"
@@ -63,6 +74,7 @@
 	"INVALID_EMOTE_ID"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-86)"
+		"pt"			"[{olive}Emotes{default}]{darkred} ID de Emote inválido, deve estar entre (1-86)"
 		"tr"			"[{olive}Emotes{default}]{darkred} Geçersiz Emote ID, (1-86) arasında olmalıdır"	
 		"es"			"[{olive}Emotes{default}]{darkred} Emote ID inválida, Debe estar entre (1-86)"
 		"chi"			"[{olive}表情动作{default}]{darkred} 无效的表情动作编号，应该在(1-86)之间"
@@ -71,6 +83,7 @@
 	"RANDOM_EMOTE"
 	{
 		"en"			"Random Emote"
+		"pt"			"Emote Aleatório"
 		"tr"			"Rastgele Emote"			
 		"es"			"Emote Aleatorio"
 		"chi"			"随机表情动作"
@@ -79,6 +92,7 @@
 	"RANDOM_DANCE"
 	{
 		"en"			"Random Dance"
+		"pt"			"Dança Aleatória"
 		"tr"			"Rastgele Dans"
 		"es"			"Baile Aleatorio"
 		"chi"			"随机舞蹈"
@@ -87,6 +101,7 @@
 	"EMOTES_LIST"
 	{
 		"en"			"Emotes List"
+		"pt"			"Lista de Emotes"
 		"tr"			"Emotelar Listesi"
 		"es"			"Lista de Emotes"
 		"chi"			"表情动作列表"
@@ -95,6 +110,7 @@
 	"DANCES_LIST"
 	{
 		"en"			"Dances List"
+		"pt"			"Lista de Danças"
 		"tr"			"Dans Listesi"
 		"es"			"Lista de Bailes"
 		"chi"			"舞蹈列表"
@@ -103,6 +119,7 @@
 	"EMOTE_PLAYER"
 	{
 		"en"			"Emote player"
+		"pt"			"Emote player"
 		"tr"			"Emote oyuncu"
 		"es"			"Reproductor de Emotes"
 		"chi"			"表情动作玩家"
@@ -111,6 +128,7 @@
 	"SELECT_EMOTE"
 	{
 		"en"			"Select Emote"
+		"pt"			"Selecione Emote"
 		"tr"			"Emote Seç"
 		"es"			"Seleccionar Emote"
 		"chi"			"选择表情动作"
@@ -118,7 +136,8 @@
 	
 	"TITLE_MAIM_MENU"
 	{
-		"en"			"Emotes and Dances"
+		"en"			"Emotes & Dances"
+		"pt"			"Emotes & Danças"
 		"tr"			"Emotelar ve Danslar" 
 		"es"			"Emotes y Bailes"
 		"chi"			"表情动作和舞蹈"
@@ -127,6 +146,7 @@
 	"TITLE_EMOTES_MENU"
 	{
 		"en"			"Emotes"
+		"pt"			"Emotes"
 		"tr"			"Emotelar"
 		"es"			"Emotes"
 		"chi"			"表情动作"
@@ -135,6 +155,7 @@
 	"TITLE_DANCES_MENU"
 	{
 		"en"			"Dances"
+		"pt"			"Danças"
 		"tr"			"Danslar"  
 		"es"			"Bailes"
 		"chi"			"舞蹈"
