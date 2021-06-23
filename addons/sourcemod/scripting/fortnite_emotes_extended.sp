@@ -63,7 +63,7 @@ float g_fLastPosition[MAXPLAYERS+1][3];
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
-	author = "Kodua, Franc1sco franug, TheBO$$,crashzk",
+	author = "Kodua, Franc1sco franug, TheBO$$, crashzk",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
 	version = "1.4.3",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
