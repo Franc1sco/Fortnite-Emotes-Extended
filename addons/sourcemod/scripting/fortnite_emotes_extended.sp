@@ -63,9 +63,9 @@ float g_fLastPosition[MAXPLAYERS+1][3];
 public Plugin myinfo =
 {
 	name = "SM Fortnite Emotes Extended",
-	author = "Kodua, Franc1sco franug, TheBO$$",
+	author = "Kodua, Franc1sco franug, TheBO$$,crashzk",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.4.2fix",
+	version = "1.4.3",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -171,6 +171,7 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_music_emotes_bendy.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_boogiedown.wav");
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_capoeira.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_flapper_music.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_chicken_foley_01.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/emote_cry.mp3");
@@ -220,8 +221,7 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/youre_awesome_emote_music.mp3");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.wav");
 	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/eastern_bloc_musc_setup_d.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
-	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_hot_music.wav");    
+	AddFileToDownloadsTable("sound/kodua/fortnite_emotes/athena_emote_hot_music.wav");
 
 	// this dont touch
 	PrecacheModel("models/player/custom_player/kodua/fortnite_emotes_v2.mdl", true);
@@ -288,7 +288,6 @@ public void OnMapStart()
 	PrecacheSound("kodua/fortnite_emotes/youre_awesome_emote_music.mp3");
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emotes_lankylegs_loop_02.wav");
 	PrecacheSound("*/kodua/fortnite_emotes/eastern_bloc_musc_setup_d.wav");
-	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_bandofthefort_music.wav");
 	PrecacheSound("*/kodua/fortnite_emotes/athena_emote_hot_music.wav");
 }
 
