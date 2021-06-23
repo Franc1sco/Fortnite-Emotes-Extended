@@ -1,6 +1,6 @@
 # Fortnite Emotes Extended
 
-This plugin allows players to use Fortnite Emotes & Dances plugin with all the private emotes included.
+This plugin allows players to use Emotes & Dances Fortnite do with all the private emotes included.
 
 **Note:** If you want to use a valve gloves plugin with this plugin you can use ***[my valve gloves plugin](https://github.com/Franc1sco/Franug-CSGO-Gloves)*** that have support for my emotes plugin version.
 
