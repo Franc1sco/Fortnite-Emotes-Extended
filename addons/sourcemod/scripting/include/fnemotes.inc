@@ -14,6 +14,23 @@
 native bool fnemotes_IsClientEmoting(int client);
 
 /**
+ * Terminate client's emote
+ *
+ * @param client    Client's id
+ * @return          True / False
+ */
+native bool fnemotes_TerminateClientEmote(int client);
+
+/**
+ * Stop client's emote
+ *
+ * @param client    Client's id
+ * @param restoreWeapon   Restore Weapon
+ * @return          True / False
+ */
+native bool fnemotes_StopClientEmote(int client, bool restoreWeapon = true);
+
+/**
  * When a client do a emote
  *
  * @param client    Client's id

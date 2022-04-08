@@ -134,13 +134,6 @@ public void OnPluginEnd()
 			}
 }
 
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
-{
-	RegPluginLibrary("fnemotes");
-	CreateNative("fnemotes_IsClientEmoting", Native_IsClientEmoting);
-	return APLRes_Success;
-}
-
 void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 {
 	if (convar == g_cvThirdperson)
@@ -149,10 +142,44 @@ void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue
 	}
 }
 
-int Native_IsClientEmoting(Handle plugin, int numParams)
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	RegPluginLibrary("fnemotes");
+
+	CreateNative("fnemotes_IsClientEmoting", Native_IsClientEmoting);
+	CreateNative("fnemotes_TerminateClientEmote", Native_TerminateClientEmote);
+	CreateNative("fnemotes_StopClientEmote", Native_StopClientEmote);
+
+	return APLRes_Success;
+}
+
+public int Native_IsClientEmoting(Handle plugin, int numParams)
 {
 	return g_bClientDancing[GetNativeCell(1)];
 }
+
+public int Native_TerminateClientEmote(Handle plugin, int numParams)
+{
+	int client = GetNativeCell(1);
+	if (client > 0 && client <= MaxClients && IsClientInGame(client) && g_bClientDancing[client])
+	{
+		TerminateEmote(client);
+	}
+
+	return 0;
+}
+
+public int Native_StopClientEmote(Handle plugin, int numParams)
+{
+	int client = GetNativeCell(1);
+	if (client > 0 && client <= MaxClients && IsClientInGame(client) && g_bClientDancing[client])
+	{
+		StopEmote(client, GetNativeCell(2));
+	}
+
+	return 0;
+}
+
 
 public void OnMapStart()
 {
@@ -330,7 +357,7 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 	if (IsValidClient(client))
 	{
 		ResetCam(client);
-		StopEmote(client);
+		StopEmote(client, false);
 	}
 }
 
@@ -615,7 +642,7 @@ int GetEmoteActivator(int iEntRefDancer)
 	return 0;
 }
 
-void StopEmote(int client)
+void StopEmote(int client, bool restoreWeapon = true)
 {
 	if (!g_iEmoteEnt[client])
 		return;
@@ -634,7 +661,7 @@ void StopEmote(int client)
 			TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
 		
 		ResetCam(client);
-		WeaponUnblock(client);
+		WeaponUnblock(client, restoreWeapon);
 		SetEntityMoveType(client, MOVETYPE_WALK);
 
 		g_iEmoteEnt[client] = 0;
@@ -717,14 +744,14 @@ void WeaponBlock(int client)
 	}
 }
 
-void WeaponUnblock(int client)
+void WeaponUnblock(int client, bool restore = true)
 {
 	SDKUnhook(client, SDKHook_WeaponCanUse, WeaponCanUseSwitch);
 	SDKUnhook(client, SDKHook_WeaponSwitch, WeaponCanUseSwitch);
-	
+
 	//Even if are not activated, there will be no errors
 	SDKUnhook(client, SDKHook_PostThinkPost, OnPostThinkPost);
-	
+
 	if(GetEmotePeople() == 0)
 	{
 		for(int i = 1; i <= MaxClients; i++)
@@ -734,8 +761,8 @@ void WeaponUnblock(int client)
 				g_bHooked[i] = false;
 			}
 	}
-	
-	if(IsPlayerAlive(client) && g_iWeaponHandEnt[client] != INVALID_ENT_REFERENCE)
+
+	if(restore && IsPlayerAlive(client) && g_iWeaponHandEnt[client] != INVALID_ENT_REFERENCE)
 	{
 		int iEnt = EntRefToEntIndex(g_iWeaponHandEnt[client]);
 		if(iEnt != INVALID_ENT_REFERENCE)
