@@ -1,6 +1,6 @@
 /*  SM Fortnite Emotes Extended
  *
- *  Copyright (C) 2020 Francisco 'Franc1sco' García
+ *  Copyright (C) 2020 - 2023 Francisco 'Franc1sco' García
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -65,7 +65,7 @@ public Plugin myinfo =
 	name = "SM Fortnite Emotes Extended",
 	author = "Kodua, Franc1sco franug, TheBO$$, crashzk",
 	description = "This plugin is for demonstration of some animations from Fortnite in CS:GO",
-	version = "1.4.2fix",
+	version = "1.5.0",
 	url = "https://github.com/Franc1sco/Fortnite-Emotes-Extended"
 };
 
@@ -78,6 +78,10 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_emote", Command_Menu);
 	RegConsoleCmd("sm_dances", Command_Menu);
 	RegConsoleCmd("sm_dance", Command_Menu);
+	
+	RegConsoleCmd("sm_perform_emote", Command_Perform,"[SM] Usage: sm_perform_emote [Emote ID]");
+	RegConsoleCmd("sm_random_emote", Command_Random_Emote,"[SM] Usage: sm_random_emote");
+	RegConsoleCmd("sm_random_dance", Command_Random_Dance,"[SM] Usage: sm_random_dance");
 	
 	RegAdminCmd("sm_setemotes", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
 	RegAdminCmd("sm_setemote", Command_Admin_Emotes, ADMFLAG_GENERIC, "[SM] Usage: sm_setemotes <#userid|name> [Emote ID]");
@@ -376,6 +380,41 @@ public Action Command_Menu(int client, int args)
 	return Plugin_Handled;
 }
 
+public Action Command_Perform(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	int amount;
+	char arg1[8];
+	GetCmdArg(1, arg1, sizeof(arg1));
+	amount = StringToInt(arg1);
+
+	PerformEmote(client, client, amount);
+
+	return Plugin_Handled;
+}
+
+public Action Command_Random_Emote(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	RandomEmote(client);
+
+	return Plugin_Handled;
+}
+
+public Action Command_Random_Dance(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	RandomDance(client);
+
+	return Plugin_Handled;
+}
+
 Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped)
 {
 	if (!IsValidClient(client))
@@ -473,7 +512,6 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
 		SetEntProp(client, Prop_Send, "m_fEffects", enteffects);
 
 		//Sound
-
 		if (g_cvEmotesSounds.BoolValue && !StrEqual(soundName, ""))
 		{
 			int EmoteSoundEnt = CreateEntityByName("info_target");
