@@ -7,7 +7,7 @@
 		"es"			"[{olive}Emotes{default}]{darkred} No puedes usar esto mientras usas la mirilla del arma!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 开镜时您无法使用表情动作！"
 	}
-	
+
 	"NO_DANCES_ACCESS_FLAG"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You don't have access to use dances!"
@@ -16,7 +16,7 @@
 		"es"			"[{olive}Emotes{default}]{darkred} No tienes acceso a usar dances!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您无权使用舞蹈！"
 	}
-	
+
 	"NO_EMOTES_ACCESS_FLAG"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You don't have access to use emotes!"
@@ -25,66 +25,66 @@
 		"es"			"[{olive}Emotes{default}]{darkred} No tienes acceso a usar emotes!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您无权使用表情动作！"
 	}
-	
+
 	"MUST_BE_ALIVE"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You must be alive to use this!"
 		"pt"			"[{olive}Emotes{default}]{darkred} Você deve estar vivo para usar isso!"
-		"tr"			"[{olive}Emotes{default}]{darkred} Bunu kullanmak için hayatta olmalısın!"	
+		"tr"			"[{olive}Emotes{default}]{darkred} Bunu kullanmak için hayatta olmalısın!"
 		"es"			"[{olive}Emotes{default}]{darkred} Debes estar vivo para usar eso!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您必须在存活时才能使用！"
 	}
-	
+
 	"STAY_ON_GROUND"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You must stay on the ground to use this!"
 		"pt"			"[{olive}Emotes{default}]{darkred} Você deve ficar no chão para usar isso!"
-		"tr"			"[{olive}Emotes{default}]{darkred} Bunu kullanmak için haraket etmemelisin!"		
+		"tr"			"[{olive}Emotes{default}]{darkred} Bunu kullanmak için haraket etmemelisin!"
 		"es"			"[{olive}Emotes{default}]{darkred} Debes estar en el suelo para usar eso!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您必须呆在地上才能使用！"
 	}
-	
+
 	"COOLDOWN_EMOTES"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} It is on cooldown!"
 		"pt"			"[{olive}Emotes{default}]{darkred} Aguarde o cooldown para usar este comando novamente!"
-		"tr"			"[{olive}Emotes{default}]{darkred} Biraz bekle!"		
+		"tr"			"[{olive}Emotes{default}]{darkred} Biraz bekle!"
 		"es"			"[{olive}Emotes{default}]{darkred} Está enfriándose!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 冷却中！"
 	}
-	
+
 	"AMIN_1_INVALID"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} Argument 1 is invalid!"
 		"pt"			"[{olive}Emotes{default}]{darkred} O argumento 1 é inválido!"
-		"tr"			"[{olive}Emotes{default}]{darkred} Bağımsız değişken 1 geçersiz!"		
+		"tr"			"[{olive}Emotes{default}]{darkred} Bağımsız değişken 1 geçersiz!"
 		"es"			"[{olive}Emotes{default}]{darkred} El Argumento 1 es inválido"
 		"chi"			"[{olive}表情动作{default}]{darkred} 参数1无效！"
 	}
-	
+
 	"CANNOT_USE_NOW"
 	{
 		"en"			"[{olive}Emotes{default}]{darkred} You can't use it right now!"
 		"pt"			"[{olive}Emotes{default}]{darkred} Você não pode usar agora!"
-		"tr"			"[{olive}Emotes{default}]{darkred} Şu anda kullanamazsın!"		
+		"tr"			"[{olive}Emotes{default}]{darkred} Şu anda kullanamazsın!"
 		"es"			"[{olive}Emotes{default}]{darkred} No puedes usar eso ahora mismo!"
 		"chi"			"[{olive}表情动作{default}]{darkred} 您现在不能使用！"
 	}
 
 	"INVALID_EMOTE_ID"
 	{
-		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-86)"
-		"pt"			"[{olive}Emotes{default}]{darkred} ID de Emote inválido, deve estar entre (1-86)"
-		"tr"			"[{olive}Emotes{default}]{darkred} Geçersiz Emote ID, (1-86) arasında olmalıdır"	
-		"es"			"[{olive}Emotes{default}]{darkred} Emote ID inválida, Debe estar entre (1-86)"
-		"chi"			"[{olive}表情动作{default}]{darkred} 无效的表情动作编号，应该在(1-86)之间"
+		"en"			"[{olive}Emotes{default}]{darkred} Invalid Emote ID, Should be between (1-84)"
+		"pt"			"[{olive}Emotes{default}]{darkred} ID de Emote inválido, deve estar entre (1-84)"
+		"tr"			"[{olive}Emotes{default}]{darkred} Geçersiz Emote ID, (1-84) arasında olmalıdır"
+		"es"			"[{olive}Emotes{default}]{darkred} Emote ID inválida, Debe estar entre (1-84)"
+		"chi"			"[{olive}表情动作{default}]{darkred} 无效的表情动作编号，应该在(1-84)之间"
 	}
 
 	"RANDOM_EMOTE"
 	{
 		"en"			"Random Emote"
 		"pt"			"Emote Aleatório"
-		"tr"			"Rastgele Emote"			
+		"tr"			"Rastgele Emote"
 		"es"			"Emote Aleatorio"
 		"chi"			"随机表情动作"
 	}
@@ -96,7 +96,7 @@
 		"tr"			"Rastgele Dans"
 		"es"			"Baile Aleatorio"
 		"chi"			"随机舞蹈"
-	}	
+	}
 
 	"EMOTES_LIST"
 	{
@@ -114,7 +114,7 @@
 		"tr"			"Dans Listesi"
 		"es"			"Lista de Bailes"
 		"chi"			"舞蹈列表"
-	}		
+	}
 
 	"EMOTE_PLAYER"
 	{
@@ -123,7 +123,7 @@
 		"tr"			"Emote oyuncu"
 		"es"			"Reproductor de Emotes"
 		"chi"			"表情动作玩家"
-	}	
+	}
 
 	"SELECT_EMOTE"
 	{
@@ -133,16 +133,16 @@
 		"es"			"Seleccionar Emote"
 		"chi"			"选择表情动作"
 	}
-	
+
 	"TITLE_MAIM_MENU"
 	{
 		"en"			"Emotes & Dances"
 		"pt"			"Emotes & Danças"
-		"tr"			"Emotelar ve Danslar" 
+		"tr"			"Emotelar ve Danslar"
 		"es"			"Emotes y Bailes"
 		"chi"			"表情动作和舞蹈"
 	}
-	
+
 	"TITLE_EMOTES_MENU"
 	{
 		"en"			"Emotes"
@@ -150,685 +150,684 @@
 		"tr"			"Emotelar"
 		"es"			"Emotes"
 		"chi"			"表情动作"
-	}	
-	
+	}
+
 	"TITLE_DANCES_MENU"
 	{
 		"en"			"Dances"
 		"pt"			"Danças"
-		"tr"			"Danslar"  
+		"tr"			"Danslar"
 		"es"			"Bailes"
 		"chi"			"舞蹈"
-	}	
+	}
 
 	"Emote_Fonzie_Pistol"
 	{
-		"en"			"Finger Guns"
-		"tr"			"Parmak silahları"
-		"es"			"Pistolas de Dedos"
-		"chi"			"手指枪"
+		"en"			"Finger Guns (ID 1)"
+		"tr"			"Parmak silahları (ID 1)"
+		"es"			"Pistolas de Dedos (ID 1)"
+		"chi"			"手指枪 (ID 1)"
 	}
 
 	"Emote_Bring_It_On"
 	{
-		"en"			"Come To Me"
-		"tr"			"Bana Gel"		
-		"es"			"Ven A Mi"
-		"chi"			"到我这儿来"
+		"en"			"Come To Me (ID 2)"
+		"tr"			"Bana Gel (ID 2)"
+		"es"			"Ven A Mi (ID 2)"
+		"chi"			"到我这儿来 (ID 2)"
 	}
 
 	"Emote_ThumbsDown"
 	{
-		"en"			"Thumbs Down"
-		"tr"			"Başparmak Aşağı"
-		"es"			"Pulgares Abajo"
-		"chi"			"大拇指向下"
+		"en"			"Thumbs Down (ID 3)"
+		"tr"			"Başparmak Aşağı (ID 3)"
+		"es"			"Pulgares Abajo (ID 3)"
+		"chi"			"大拇指向下 (ID 3)"
 	}
-	
+
 	"Emote_Celebration_Loop"
 	{
-		"en"			"Celebration"
-		"tr"			"Kutlama"
-		"es"			"Celebración"
-		"chi"			"庆祝"
+		"en"			"Celebration (ID 4)"
+		"tr"			"Kutlama (ID 4)"
+		"es"			"Celebración (ID 4)"
+		"chi"			"庆祝 (ID 4)"
 	}
 
 	"Emote_BlowKiss"
 	{
-		"en"			"Blow kiss"
-		"tr"			"Öpücük atmak"
-		"es"			"Beso Aéreo"
-		"chi"			"飞吻"
+		"en"			"Blow kiss (ID 5)"
+		"tr"			"Öpücük atmak (ID 5)"
+		"es"			"Beso Aéreo (ID 5)"
+		"chi"			"飞吻 (ID 5)"
 	}
 
 	"Emote_Calculated"
 	{
-		"en"			"Calculated"
-		"tr"			"Hesaplanmış"
-		"es"			"Calculado"
-		"chi"			"算计"
+		"en"			"Calculated (ID 6)"
+		"tr"			"Hesaplanmış (ID 6)"
+		"es"			"Calculado (ID 6)"
+		"chi"			"算计 (ID 6)"
 	}
 
 	"Emote_Confused"
 	{
-		"en"			"Confused"
-		"tr"			"Şaşkın"
-		"es"			"Confundido"
-		"chi"			"困惑"
+		"en"			"Confused (ID 7)"
+		"tr"			"Şaşkın (ID 7)"
+		"es"			"Confundido (ID 7)"
+		"chi"			"困惑 (ID 7)"
 	}
-	
+
 	"Emote_Chug"
 	{
-		"en"			"Chug"
-		"tr"			"Chug"  
-		"es"			"Resoplar"
-		"chi"			"嘎嚓嘎嚓"
+		"en"			"Chug (ID 8)"
+		"tr"			"Chug (ID 8)"
+		"es"			"Resoplar (ID 8)"
+		"chi"			"嘎嚓嘎嚓 (ID 8)"
 	}
 
 	"Emote_Cry"
 	{
-		"en"			"Cry"
-		"tr"			"Ağlamak"
-		"es"			"Llorar"
-		"chi"			"哭泣"
+		"en"			"Cry (ID 9)"
+		"tr"			"Ağlamak (ID 9)"
+		"es"			"Llorar (ID 9)"
+		"chi"			"哭泣 (ID 9)"
 	}
 
 	"Emote_DustingOffHands"
 	{
-		"en"			"Band of the fort"
-		"tr"			"Kale grubu"
-		"es"			"Desempolvarse las Manos"
-		"chi"			"堡垒乐队"
+		"en"			"Band of the fort (ID 10)"
+		"tr"			"Kale grubu (ID 10)"
+		"es"			"Desempolvarse las Manos (ID 10)"
+		"chi"			"堡垒乐队 (ID 10)"
 	}
 
 	"Emote_DustOffShoulders"
 	{
-		"en"			"Shake It Up 2"
-		"tr"			"2 kadar salla" 
-		"es"			"Muévelo 2"
-		"chi"			"舞动青春2"
+		"en"			"Shake It Up 2 (ID 11)"
+		"tr"			"2 kadar salla (ID 11)"
+		"es"			"Muévelo 2 (ID 11)"
+		"chi"			"舞动青春2 (ID 11)"
 	}
-	
+
 	"Emote_Facepalm"
 	{
-		"en"			"Facepalm"
-		"tr"			"Facepalm" 
-		"es"			"Palmada en la Cara"
-		"chi"			"捂脸"
+		"en"			"Facepalm (ID 12)"
+		"tr"			"Facepalm (ID 12)"
+		"es"			"Palmada en la Cara (ID 12)"
+		"chi"			"捂脸 (ID 12)"
 	}
 
 	"Emote_Fishing"
 	{
-		"en"			"On the Hook"
-		"tr"			"Kancada"
-		"es"			"En el Gancho"
-		"chi"			"陷入圈套"
+		"en"			"On the Hook (ID 13)"
+		"tr"			"Kancada (ID 13)"
+		"es"			"En el Gancho (ID 13)"
+		"chi"			"陷入圈套 (ID 13)"
 	}
 
 	"Emote_Flex"
 	{
-		"en"			"Flex"
-		"tr"			"Esnek"
-		"es"			"Flexionarse"
-		"chi"			"弯曲"
+		"en"			"Flex (ID 14)"
+		"tr"			"Esnek (ID 14)"
+		"es"			"Flexionarse (ID 14)"
+		"chi"			"弯曲 (ID 14)"
 	}
 
 	"Emote_golfclap"
 	{
-		"en"			"Golf Clap"
-		"tr"			"Golf alkış"  
-		"es"			"Palmaditas"
-		"chi"			"高尔夫球鼓掌"
+		"en"			"Golf Clap (ID 15)"
+		"tr"			"Golf alkış (ID 15)"
+		"es"			"Palmaditas (ID 15)"
+		"chi"			"高尔夫球鼓掌 (ID 15)"
 	}
-	
+
 	"Emote_HandSignals"
 	{
-		"en"			"Hand Signals"
-		"tr"			"El işaretleri"
-		"es"			"Selales de Mano"
-		"chi"			"手示信号"
+		"en"			"Hand Signals (ID 16)"
+		"tr"			"El işaretleri (ID 16)"
+		"es"			"Selales de Mano (ID 16)"
+		"chi"			"手示信号 (ID 16)"
 	}
 
 	"Emote_HeelClick"
 	{
-		"en"			"Click!"
-		"tr"			"Tıkla!"
-		"es"			"Click!"
-		"chi"			"点击！"
+		"en"			"Click! (ID 17)"
+		"tr"			"Tıkla! (ID 17)"
+		"es"			"Click! (ID 17)"
+		"chi"			"点击！ (ID 17)"
 	}
 
 	"Emote_Hotstuff"
 	{
-		"en"			"Hot Stuff"
-		"tr"			"Sıcak sayfalar"
-		"es"			"Cosas Calientes"
-		"chi"			"大人物"
+		"en"			"Hot Stuff (ID 18)"
+		"tr"			"Sıcak sayfalar (ID 18)"
+		"es"			"Cosas Calientes (ID 18)"
+		"chi"			"大人物 (ID 18)"
 	}
 
 	"Emote_IBreakYou"
 	{
-		"en"			"Breaking Point"
-		"tr"			"Kırılma noktası"
-		"es"			"Punto de Ruptura"
-		"chi"			"断点"
+		"en"			"Breaking Point (ID 19)"
+		"tr"			"Kırılma noktası (ID 19)"
+		"es"			"Punto de Ruptura (ID 19)"
+		"chi"			"断点 (ID 19)"
 	}
-	
+
 	"Emote_IHeartYou"
 	{
-		"en"			"True Love"
-		"tr"			"Gerçek aşk"  
-		"es"			"Amor Verdadero"
-		"chi"			"真爱"
+		"en"			"True Love (ID 20)"
+		"tr"			"Gerçek aşk (ID 20)"
+		"es"			"Amor Verdadero (ID 20)"
+		"chi"			"真爱 (ID 20)"
 	}
 
 	"Emote_Kung-Fu_Salute"
 	{
-		"en"			"Kung-Fu Salute"
-		"tr"			"Kung-Fu Selamı"
-		"es"			"Saludo de Kung-Fu"
-		"chi"			"功夫敬礼"
+		"en"			"Kung-Fu Salute (ID 21)"
+		"tr"			"Kung-Fu Selamı (ID 21)"
+		"es"			"Saludo de Kung-Fu (ID 21)"
+		"chi"			"功夫敬礼 (ID 21)"
 	}
 
 	"Emote_Laugh"
 	{
-		"en"			"Laugh"
-		"tr"			"Gülmek"
-		"es"			"Risa"
-		"chi"			"大笑"
+		"en"			"Laugh (ID 22)"
+		"tr"			"Gülmek (ID 22)"
+		"es"			"Risa (ID 22)"
+		"chi"			"大笑 (ID 22)"
 	}
 
 	"Emote_Luchador"
 	{
-		"en"			"Luchador"
-		"tr"			"Savaşçı"
-		"es"			"Luchador"
-		"chi"			"摔跤手"
+		"en"			"Luchador (ID 23)"
+		"tr"			"Savaşçı (ID 23"
+		"es"			"Luchador (ID 23"
+		"chi"			"摔跤手 (ID 23"
 	}
-	
+
 	"Emote_Make_It_Rain"
 	{
-		"en"			"Make it Rain"
-		"tr"			"Yağdır"
-		"es"			"Haz que Llueva"
-		"chi"			"发牌雨"
+		"en"			"Make it Rain (ID 24)"
+		"tr"			"Yağdır (ID 24)"
+		"es"			"Haz que Llueva (ID 24)"
+		"chi"			"发牌雨 (ID 24)"
 	}
 
 	"Emote_NotToday"
 	{
-		"en"			"No hoy"
-		"tr"			"Bugün değil"
-		"es"			"Hoy No"
-		"chi"			"不要"
+		"en"			"No hoy (ID 25)"
+		"tr"			"Bugün değil (ID 25)"
+		"es"			"Hoy No (ID 25)"
+		"chi"			"不要 (ID 25)"
 	}
 
 	"Emote_RockPaperScissor_Paper"
 	{
-		"en"			"Paper"
-		"tr"			"Kağıt"
-		"es"			"Papel"
-		"chi"			"布"
+		"en"			"Paper (ID 26)"
+		"tr"			"Kağıt (ID 26)"
+		"es"			"Papel (ID 26)"
+		"chi"			"布 (ID 26)"
 	}
 
 	"Emote_RockPaperScissor_Rock"
 	{
-		"en"			"Rock"
-		"tr"			"Taş"
-		"es"			"Piedra"
-		"chi"			"石头"
+		"en"			"Rock (ID 27)"
+		"tr"			"Taş (ID 27)"
+		"es"			"Piedra (ID 27)"
+		"chi"			"石头 (ID 27)"
 	}
-	
+
 	"Emote_RockPaperScissor_Scissor"
 	{
-		"en"			"Scissors"
-		"tr"			"Taş"
-		"es"			"Tijeras"
-		"chi"			"剪刀"
+		"en"			"Scissors (ID 28)"
+		"tr"			"Taş (ID 28)"
+		"es"			"Tijeras (ID 28)"
+		"chi"			"剪刀 (ID 28)"
 	}
 
 	"Emote_Salt"
 	{
-		"en"			"Salt"
-		"tr"			"Tuz"
-		"es"			"Sal"
-		"chi"			"撒盐"
+		"en"			"Salt (ID 29)"
+		"tr"			"Tuz (ID 29)"
+		"es"			"Sal (ID 29)"
+		"chi"			"撒盐 (ID 29)"
 	}
 
 	"Emote_Salute"
 	{
-		"en"			"Salute"
-		"tr"			"Sağlık"
-		"es"			"Saludo"
-		"chi"			"敬礼"
+		"en"			"Salute (ID 30)"
+		"tr"			"Sağlık (ID 30)"
+		"es"			"Saludo (ID 30)"
+		"chi"			"敬礼 (ID 30)"
 	}
 
 	"Emote_SmoothDrive"
 	{
-		"en"			"Drive Car"
-		"tr"			"Araba sürmek"
-		"es"			"Conducir Coche"
-		"chi"			"开车"
+		"en"			"Drive Car (ID 31)"
+		"tr"			"Araba sürmek (ID 31)"
+		"es"			"Conducir Coche (ID 31)"
+		"chi"			"开车 (ID 31)"
 	}
 	"Emote_Snap"
 	{
-		"en"			"Snap"
-		"tr"			"Ani"
-		"es"			"Chasquido"
-		"chi"			"响指"
+		"en"			"Snap (ID 32)"
+		"tr"			"Ani (ID 32)"
+		"es"			"Chasquido (ID 32)"
+		"chi"			"响指 (ID 32)"
 	}
 
 	"Emote_StageBow"
 	{
-		"en"			"Stage Bow"
-		"tr"			"Sahne yay"
-		"es"			"Reverencia"
-		"chi"			"礼仪"
+		"en"			"Stage Bow (ID 33)"
+		"tr"			"Sahne yay (ID 33)"
+		"es"			"Reverencia (ID 33)"
+		"chi"			"礼仪 (ID 33)"
 	}
 
 	"Emote_ThumbsUp"
 	{
-		"en"			"Thumbs Up"
-		"tr"			"Başparmak havaya" 
-		"es"			"Pulgares Arriba"
-		"chi"			"赞许"
+		"en"			"Thumbs Up (ID 34)"
+		"tr"			"Başparmak havaya (ID 34)"
+		"es"			"Pulgares Arriba (ID 34)"
+		"chi"			"赞许 (ID 34)"
 	}
 	"Emote_Wave2"
 	{
-		"en"			"Salute 2"
-		"tr"			"Sağlık 2"
-		"es"			"Saludo 2"
-		"chi"			"敬礼2"
+		"en"			"Salute 2 (ID 35)"
+		"tr"			"Sağlık 2 (ID 35)"
+		"es"			"Saludo 2 (ID 35)"
+		"chi"			"敬礼2 (ID 35)"
 	}
 
 	"Emote_Yeet"
 	{
-		"en"			"Yeet"
-		"tr"			"Yeet"
-		"es"			"Estúpido"
-		"chi"			"兴奋"
+		"en"			"Yeet (ID 36)"
+		"tr"			"Yeet (ID 36)"
+		"es"			"Estúpido (ID 36)"
+		"chi"			"兴奋 (ID 36)"
 	}
 
 	"DanceMoves"
 	{
-		"en"			"Dance Moves"
-		"tr"			"Dans hareketleri"
-		"es"			"Movimientos de Baile"
-		"chi"			"舞蹈步伐"
+		"en"			"Dance Moves (ID 37)"
+		"tr"			"Dans hareketleri (ID 37)"
+		"es"			"Movimientos de Baile (ID 37)"
+		"chi"			"舞蹈步伐 (ID 37)"
 	}
 
 	"Emote_Mask_Off_Intro"
 	{
-		"en"			"Orange Justice"
-		"tr"			"Turuncu Adalet"
-		"es"			"Justicia Naranja"
-		"chi"			"橘子汁"
+		"en"			"Orange Justice (ID 38)"
+		"tr"			"Turuncu Adalet (ID 38)"
+		"es"			"Justicia Naranja (ID 38)"
+		"chi"			"橘子汁 (ID 38)"
 	}
-	
+
 	"Emote_Zippy_Dance"
 	{
-		"en"			"Rambunctious"
-		"tr"			"Neşeli"
-		"es"			"Bullicioso"
-		"chi"			"粗暴"
+		"en"			"Rambunctious (ID 39)"
+		"tr"			"Neşeli (ID 39)"
+		"es"			"Bullicioso (ID 39)"
+		"chi"			"粗暴 (ID 39)"
 	}
 
 	"ElectroShuffle"
 	{
-		"en"			"Electro Shuffle"
-		"tr"			"Elektro Karıştırma"
-		"es"			"Shuffle Electrónico"
-		"chi"			"电子曳步舞"
+		"en"			"Electro Shuffle (ID 40)"
+		"tr"			"Elektro Karıştırma (ID 40)"
+		"es"			"Shuffle Electrónico (ID 40)"
+		"chi"			"电子曳步舞 (ID 40)"
 	}
 
 	"Emote_AerobicChamp"
 	{
-		"en"			"Aerobic"
-		"tr"			"Aerobik"
-		"es"			"Aeróbico"
-		"chi"			"有氧运动"
+		"en"			"Aerobic (ID 41)"
+		"tr"			"Aerobik (ID 41)"
+		"es"			"Aeróbico (ID 41)"
+		"chi"			"有氧运动 (ID 41)"
 	}
 
 	"Emote_Bendy"
 	{
-		"en"			"Bendy"
-		"tr"			"Bendy"
-		"es"			"Flexible"
-		"chi"			"柔韧"
+		"en"			"Bendy (ID 42)"
+		"tr"			"Bendy (ID 42)"
+		"es"			"Flexible (ID 42)"
+		"chi"			"柔韧 (ID 42)"
 	}
-	
+
 	"Emote_BandOfTheFort"
 	{
-		"en"			"Best Mates"
-		"tr"			"En iyi arkadaşlar" 
-		"es"			"Mejores Amigos"
-		"chi"			"最好的朋友"
+		"en"			"Best Mates (ID 43)"
+		"tr"			"En iyi arkadaşlar (ID 43)"
+		"es"			"Mejores Amigos (ID 43)"
+		"chi"			"最好的朋友 (ID 43)"
 	}
 
 	"Emote_Boogie_Down_Intro"
 	{
-		"en"			"Boogie"
-		"tr"			"Boogie"
-		"es"			"Boogie"
-		"chi"			"布吉舞"
+		"en"			"Boogie (ID 44)"
+		"tr"			"Boogie (ID 44)"
+		"es"			"Boogie (ID 44)"
+		"chi"			"布吉舞 (ID 44)"
 	}
 
 	"Emote_Capoeira"
 	{
-		"en"			"Capoeira"
-		"tr"			"Capoeira"
-		"es"			"Capoeira"
-		"chi"			"巴西战舞"
+		"en"			"Capoeira (ID 45)"
+		"tr"			"Capoeira (ID 45)"
+		"es"			"Capoeira (ID 45)"
+		"chi"			"巴西战舞 (ID 45)"
 	}
 
 	"Emote_Charleston"
 	{
-		"en"			"Flapper"
-		"tr"			"Sineklik"
-		"es"			"A la Moda"
-		"chi"			"摩登女"
+		"en"			"Flapper (ID 46)"
+		"tr"			"Sineklik (ID 46)"
+		"es"			"A la Moda (ID 46)"
+		"chi"			"摩登女 (ID 46)"
 	}
-	
+
 	"Emote_Chicken"
 	{
-		"en"			"Chicken"
-		"tr"			"Tavuk"
-		"es"			"Pollo"
-		"chi"			"小鸡"
+		"en"			"Chicken (ID 47)"
+		"tr"			"Tavuk (ID 47)"
+		"es"			"Pollo (ID 47)"
+		"chi"			"小鸡 (ID 47)"
 	}
 
 	"Emote_Dance_NoBones"
 	{
-		"en"			"Boneless"
-		"tr"			"Kemiksiz"
-		"es"			"Sin Huesos"
-		"chi"			"无骨"
+		"en"			"Boneless (ID 48)"
+		"tr"			"Kemiksiz (ID 48)"
+		"es"			"Sin Huesos (ID 48)"
+		"chi"			"无骨 (ID 48)"
 	}
 
 	"Emote_Dance_Shoot"
 	{
-		"en"			"Hype"
-		"tr"			"Yutturmaca"
-		"es"			"Bombo"
-		"chi"			"天花乱坠"
+		"en"			"Hype (ID 49)"
+		"tr"			"Yutturmaca (ID 49)"
+		"es"			"Bombo (ID 49)"
+		"chi"			"天花乱坠 (ID 49)"
 	}
 
 	"Emote_Dance_SwipeIt"
 	{
-		"en"			"Shake It Up"
-		"tr"			"Salla"
-		"es"			"Muévelo"
-		"chi"			"舞动青春"
+		"en"			"Shake It Up (ID 50)"
+		"tr"			"Salla (ID 50)"
+		"es"			"Muévelo (ID 50)"
+		"chi"			"舞动青春 (ID 50)"
 	}
-	
+
 	"Emote_Dance_Disco_T3"
 	{
-		"en"			"Disco Fever"
-		"tr"			"Disko ateşi"
-		"es"			"Disco para Siempre"
-		"chi"			"狂热迪斯科"
+		"en"			"Disco Fever (ID 51)"
+		"tr"			"Disko ateşi (ID 51)"
+		"es"			"Disco para Siempre (ID 51)"
+		"chi"			"狂热迪斯科 (ID 51)"
 	}
 
 	"Emote_DG_Disco"
 	{
-		"en"			"Disco Fever 2"
-		"tr"			"Disko ateşi 2"
-		"es"			"Disco para Siempre 2"
-		"chi"			"狂热迪斯科2"
+		"en"			"Disco Fever 2 (ID 52)"
+		"tr"			"Disko ateşi 2 (ID 52)"
+		"es"			"Disco para Siempre 2 (ID 52)"
+		"chi"			"狂热迪斯科2 (ID 52)"
 	}
 
 	"Emote_Dance_Worm"
 	{
-		"en"			"The Worm"
-		"tr"			"Solucan"
-		"es"			"El Gusano"
-		"chi"			"蠕虫"
+		"en"			"The Worm (ID 53)"
+		"tr"			"Solucan (ID 53)"
+		"es"			"El Gusano (ID 53)"
+		"chi"			"蠕虫 (ID 53)"
 	}
 
 	"Emote_Dance_Loser"
 	{
-		"en"			"Take The L"
-		"tr"			"L al"
-		"es"			"Toma La L"
-		"chi"			"失败者"
+		"en"			"Take The L (ID 54)"
+		"tr"			"L al (ID 54)"
+		"es"			"Toma La L (ID 54)"
+		"chi"			"失败者 (ID 54)"
 	}
-	
+
 	"Emote_Dance_Breakdance"
 	{
-		"en"			"BreakDance"
-		"tr"			"BreakDance"
-		"es"			"BreakDance"
-		"chi"			"霹雳舞"
+		"en"			"BreakDance (ID 55)"
+		"tr"			"BreakDance (ID 55)"
+		"es"			"BreakDance (ID 55)"
+		"chi"			"霹雳舞 (ID 55)"
 	}
 
 	"Emote_Dance_Pump"
 	{
-		"en"			"Pump"
-		"tr"			"Pompa"
-		"es"			"Bomba"
-		"chi"			"Pump舞"
+		"en"			"Pump (ID 56)"
+		"tr"			"Pompa (ID 56)"
+		"es"			"Bomba (ID 56)"
+		"chi"			"Pump舞 (ID 56)"
 	}
 
 	"Emote_Dance_RideThePony"
 	{
-		"en"			"Ride The Pony"
-		"tr"			"Midilli Yolculuğu"
-		"es"			"Monta Al Pony"
-		"chi"			"骑小马"
+		"en"			"Ride The Pony (ID 57)"
+		"tr"			"Midilli Yolculuğu (ID 57)"
+		"es"			"Monta Al Pony (ID 57)"
+		"chi"			"骑小马 (ID 57)"
 	}
 
 	"Emote_Dab"
 	{
-		"en"			"Dab"
-		"tr"			"Dab"
-		"es"			"Dab"
-		"chi"			"Dab手势"
+		"en"			"Dab (ID 58)"
+		"tr"			"Dab (ID 58)"
+		"es"			"Dab (ID 58)"
+		"chi"			"Dab手势 (ID 58)"
 	}
 
 	"Emote_EasternBloc_Start"
 	{
-		"en"			"Eastern Bloc"
-		"tr"			"Doğu Bloğu"
-		"es"			"Bloque Oriental"
-		"chi"			"东方集团"
+		"en"			"Eastern Bloc (ID 59)"
+		"tr"			"Doğu Bloğu (ID 59)"
+		"es"			"Bloque Oriental (ID 59)"
+		"chi"			"东方集团 (ID 59)"
 	}
 
 	"Emote_FancyFeet"
 	{
-		"en"			"Dream Feet"
-		"tr"			"Rüya Ayakları"
-		"es"			"Pies de Suelo"
-		"chi"			"完美舞步"
+		"en"			"Dream Feet (ID 60)"
+		"tr"			"Rüya Ayakları (ID 60)"
+		"es"			"Pies de Suelo (ID 60)"
+		"chi"			"完美舞步 (ID 60)"
 	}
 
 	"Emote_FlossDance"
 	{
-		"en"			"Floss"
-		"tr"			"Diş ipi"
-		"es"			"Hilo Dental"
-		"chi"			"甩手舞"
+		"en"			"Floss (ID 61)"
+		"tr"			"Diş ipi (ID 61)"
+		"es"			"Hilo Dental (ID 61)"
+		"chi"			"甩手舞 (ID 61)"
 	}
 
 	"Emote_FlippnSexy"
 	{
-		"en"			"Flippn"
-		"tr"			"Flippn"
-		"es"			"Flippin Sexy"
-		"chi"			"Flippn舞"
+		"en"			"Flippn (ID 62)"
+		"tr"			"Flippn (ID 62)"
+		"es"			"Flippin Sexy (ID 62)"
+		"chi"			"Flippn舞 (ID 62)"
 	}
 
 	"Emote_Fresh"
 	{
-		"en"			"Fresh"
-		"tr"			"Taze"
-		"es"			"Fresco"
-		"chi"			"新鲜"
+		"en"			"Fresh (ID 63)"
+		"tr"			"Taze (ID 63)"
+		"es"			"Fresco (ID 63)"
+		"chi"			"新鲜 (ID 63)"
 	}
 
 	"Emote_GrooveJam"
 	{
-		"en"			"Grefg"
-		"tr"			"Grefg"
-		"es"			"Grefg"
-		"chi"			"Grefg"
+		"en"			"Grefg (ID 64)"
+		"tr"			"Grefg (ID 64)"
+		"es"			"Grefg (ID 64)"
+		"chi"			"Grefg (ID 64)"
 	}
 
 	"Emote_guitar"
 	{
-		"en"			"Guitar"
-		"tr"			"Gitar"
-		"es"			"Guitarra"
-		"chi"			"弹吉他"
+		"en"			"Guitar (ID 65)"
+		"tr"			"Gitar (ID 65)"
+		"es"			"Guitarra (ID 65)"
+		"chi"			"弹吉他 (ID 65)"
 	}
 
 	"Emote_Hillbilly_Shuffle_Intro"
 	{
-		"en"			"Shuffle"
-		"tr"			"Karıştır"
-		"es"			"Shuffle"
-		"chi"			"曳步舞"
+		"en"			"Shuffle (ID 66)"
+		"tr"			"Karıştır (ID 66)"
+		"es"			"Shuffle (ID 66)"
+		"chi"			"曳步舞 (ID 66)"
 	}
 
 	"Emote_Hiphop_01"
 	{
-		"en"			"Hip Hop"
-		"tr"			"Hip Hop"
-		"es"			"Hip Hop"
-		"chi"			"嘻哈"
+		"en"			"Hip Hop (ID 67)"
+		"tr"			"Hip Hop (ID 67)"
+		"es"			"Hip Hop (ID 67)"
+		"chi"			"嘻哈 (ID 67)"
 	}
 
 	"Emote_Hula_Start"
 	{
-		"en"			"Hula Hop"
-		"tr"			"Hula Hop"
-		"es"			"Hula Hop"
-		"chi"			"夏威夷草裙舞"
+		"en"			"Hula Hop (ID 68)"
+		"tr"			"Hula Hop (ID 68)"
+		"es"			"Hula Hop (ID 68)"
+		"chi"			"夏威夷草裙舞 (ID 68)"
 	}
 
 	"Emote_InfiniDab_Intro"
 	{
-		"en"			"Infinite Dab"
-		"tr"			"Sonsuz Dab"
-		"es"			"Dab Infinito"
-		"chi"			"无限Dab手势"
+		"en"			"Infinite Dab (ID 69)"
+		"tr"			"Sonsuz Dab (ID 69)"
+		"es"			"Dab Infinito (ID 69)"
+		"chi"			"无限Dab手势 (ID 69)"
 	}
 
 	"Emote_Intensity_Start"
 	{
-		"en"			"Intensity"
-		"tr"			"Yoğunluk"
-		"es"			"Intensidad"
-		"chi"			"惊吓"
+		"en"			"Intensity (ID 70)"
+		"tr"			"Yoğunluk (ID 70)"
+		"es"			"Intensidad (ID 70)"
+		"chi"			"惊吓 (ID 70)"
 	}
 
 	"Emote_IrishJig_Start"
 	{
-		"en"			"Turkish Dabke"
-		"tr"			"Türk Dabke"
-		"es"			"Dabke Turco"
-		"chi"			"土耳其舞"
+		"en"			"Turkish Dabke (ID 71)"
+		"tr"			"Türk Dabke (ID 71)"
+		"es"			"Dabke Turco (ID 71)"
+		"chi"			"土耳其舞 (ID 71)"
 	}
 
 	"Emote_KoreanEagle"
 	{
-		"en"			"Eagle"
-		"tr"			"Kartal"
-		"es"			"Águila"
-		"chi"			"老鹰"
+		"en"			"Eagle (ID 72)"
+		"tr"			"Kartal (ID 72)"
+		"es"			"Águila (ID 72)"
+		"chi"			"老鹰 (ID 72)"
 	}
 
 	"Emote_Kpop_02"
 	{
-		"en"			"True Heart"
-		"tr"			"Gerçek kalp"
-		"es"			"Corazón Verdadero"
-		"chi"			"真心"
+		"en"			"True Heart (ID 73)"
+		"tr"			"Gerçek kalp (ID 73)"
+		"es"			"Corazón Verdadero (ID 73)"
+		"chi"			"真心 (ID 73)"
 	}
 
 	"Emote_LivingLarge"
 	{
-		"en"			"Living Large"
-		"tr"			"Büyük Yaşa"
-		"es"			"Viviendo a lo Grande"
-		"chi"			"富裕生活"
+		"en"			"Living Large (ID 74)"
+		"tr"			"Büyük Yaşa (ID 74)"
+		"es"			"Viviendo a lo Grande (ID 74)"
+		"chi"			"富裕生活 (ID 74)"
 	}
 
 	"Emote_Maracas"
 	{
-		"en"			"Maracas"
-		"tr"			"Maracas"
-		"es"			"Maracas"
-		"chi"			"沙槌"
+		"en"			"Maracas (ID 75)"
+		"tr"			"Maracas (ID 75)"
+		"es"			"Maracas (ID 75)"
+		"chi"			"沙槌 (ID 75)"
 	}
 
 	"Emote_PopLock"
 	{
-		"en"			"Pop Lock"
-		"tr"			"Pop Kilidi"		
-		"es"			"Pop Lock"
-		"chi"			"流行锁"
+		"en"			"Pop Lock (ID 76)"
+		"tr"			"Pop Kilidi (ID 76)"
+		"es"			"Pop Lock (ID 76)"
+		"chi"			"流行锁 (ID 76)"
 	}
 
 	"Emote_PopRock"
 	{
-		"en"			"Star Power"
-		"tr"			"Yıldız gücü"		
-		"es"			"Poder Estelar"
-		"chi"			"明星魅力"
+		"en"			"Star Power (ID 77)"
+		"tr"			"Yıldız gücü (ID 77)"
+		"es"			"Poder Estelar (ID 77)"
+		"chi"			"明星魅力 (ID 77)"
 	}
 
 	"Emote_RobotDance"
 	{
-		"en"			"Robot"
-		"tr"			"Robot"		
-		"es"			"Robot"
-		"chi"			"机械舞"
+		"en"			"Robot (ID 78)"
+		"tr"			"Robot (ID 78)"
+		"es"			"Robot (ID 78)"
+		"chi"			"机械舞 (ID 78)"
 	}
 
 	"Emote_T-Rex"
 	{
-		"en"			"T-Rex"
-		"tr"			"T-Rex"		
-		"es"			"T-Rex"
-		"chi"			"霸王龙"
+		"en"			"T-Rex (ID 79)"
+		"tr"			"T-Rex (ID 79)"
+		"es"			"T-Rex (ID 79)"
+		"chi"			"霸王龙 (ID 79)"
 	}
 
 	"Emote_TechnoZombie"
 	{
-		"en"			"Reanimated"
-		"tr"			"Yeniden canlandırıldı"		
-		"es"			"Reanimado"
-		"chi"			"被鼓舞"
+		"en"			"Reanimated (ID 80)"
+		"tr"			"Yeniden canlandırıldı (ID 80)"
+		"es"			"Reanimado (ID 80)"
+		"chi"			"被鼓舞 (ID 80)"
 	}
 
 	"Emote_Twist"
 	{
-		"en"			"Twist"
-		"tr"			"Dönemeç"		
-		"es"			"Twist"
-		"chi"			"旋转"
+		"en"			"Twist (ID 81)"
+		"tr"			"Dönemeç (ID 81)"
+		"es"			"Twist (ID 81)"
+		"chi"			"旋转 (ID 81)"
 	}
 
 	"Emote_WarehouseDance_Start"
 	{
-		"en"			"Ware House"
-		"tr"			"Depo"		
-		"es"			"Almacén"
-		"chi"			"生意兴隆"
+		"en"			"Ware House (ID 82)"
+		"tr"			"Depo (ID 82)"
+		"es"			"Almacén (ID 82)"
+		"chi"			"生意兴隆 (ID 82)"
 	}
 
 	"Emote_Wiggle"
 	{
-		"en"			"Wiggle"
-		"tr"			"Kıpırdatmak"		
-		"es"			"Meneo"
-		"chi"			"蠕动"
+		"en"			"Wiggle (ID 83)"
+		"tr"			"Kıpırdatmak (ID 83)"
+		"es"			"Meneo (ID 83)"
+		"chi"			"蠕动 (ID 83)"
 	}
 
 	"Emote_Youre_Awesome"
 	{
-		"en"			"You're Awesome"
-		"tr"			"Harikasın"		
-		"es"			"Eres Increíble"
-		"chi"			"你真厉害"
+		"en"			"You're Awesome (ID 84)"
+		"tr"			"Harikasın (ID 84)"
+		"es"			"Eres Increíble (ID 84)"
+		"chi"			"你真厉害 (ID 84)"
 	}
-
 }
