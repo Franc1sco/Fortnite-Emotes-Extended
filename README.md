@@ -11,3 +11,8 @@ This plugin allows players to use Emotes & Dances Fortnite do with all the priva
 - **`sm_dances`** - User command for main menu;
 - **`sm_setemotes <#userid|name> [Emote ID]`** - Emote ID from 1 to 84 ***(ADMIN COMMAND)***;
 - **`sm_setdances <#userid|name> [Emote ID]`** - Emote ID from 1 to 84 ***(ADMIN COMMAND)***;
+
+## Binds
+- **`sm_perform_emote 1/84`
+- **`sm_random_emote`
+- **`sm_random_dance`
