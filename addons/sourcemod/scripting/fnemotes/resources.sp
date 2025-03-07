@@ -216,8 +216,8 @@ bool ReadResources(int iFile)
 		return false;
 	}
 	
-	g_iModelSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, 0);
-	if (g_iModelSize[iFile] == 0)
+	g_iModelSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, -1);
+	if (g_iModelSize[iFile] == -1)
 	{
 		LogError("Couldn't find key [%s => %s] in file [%s]", KEY_MODELS, KEY_SIZE, g_FilesConfig[iFile].name);
 		return false;
@@ -236,8 +236,8 @@ bool ReadResources(int iFile)
 		LogError("Couldn't find key [%s] in file [%s]", KEY_SOUNDS, g_FilesConfig[iFile].name);
 		return false;
 	}
-	g_iSoundsSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, 0);
-	if (g_iSoundsSize[iFile] == 0)
+	g_iSoundsSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, -1);
+	if (g_iSoundsSize[iFile] == -1)
 	{
 		LogError("Couldn't find key [%s => %s] in file [%s]", KEY_SOUNDS, KEY_SIZE, g_FilesConfig[iFile].name);
 		return false;
@@ -255,8 +255,8 @@ bool ReadResources(int iFile)
 		LogError("Couldn't find key [%s] in file [%s]", KEY_EMOTES, g_FilesConfig[iFile].name);
 		return false;
 	}
-	g_iEmotesSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, 0);
-	if (g_iEmotesSize[iFile] == 0)
+	g_iEmotesSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, -1);
+	if (g_iEmotesSize[iFile] == -1)
 	{
 		LogError("Couldn't find key [%s => %s] in file [%s]", KEY_EMOTES, KEY_SIZE, g_FilesConfig[iFile].name);
 		return false;
@@ -274,8 +274,8 @@ bool ReadResources(int iFile)
 		LogError("Couldn't find key [%s] in file [%s]", KEY_DANCES, g_FilesConfig[iFile].name);
 		return false;
 	}
-	g_iDancesSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, 0);
-	if (g_iDancesSize[iFile] == 0)
+	g_iDancesSize[iFile] = g_kvResources[iFile].GetNum(KEY_SIZE, -1);
+	if (g_iDancesSize[iFile] == -1)
 	{
 		LogError("Couldn't find key [%s => %s] in file [%s]", KEY_DANCES, KEY_SIZE, g_FilesConfig[iFile].name);
 		return false;
