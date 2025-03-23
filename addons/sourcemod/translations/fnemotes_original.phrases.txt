@@ -123,22 +123,22 @@
 
 	"Emote_NotToday"
 	{
-		"en"			"No hoy"
+		"es"			"Hoy No"
 	}
 
 	"Emote_RockPaperScissor_Paper"
 	{
-		"en"			"Paper"
+		"es"			"Papel"
 	}
 
 	"Emote_RockPaperScissor_Rock"
 	{
-		"en"			"Rock"
+		"es"			"Piedra"
 	}
 	
 	"Emote_RockPaperScissor_Scissor"
 	{
-		"en"			"Scissors"
+		"es"			"Tijeras"
 	}
 
 	"Emote_Salt"
