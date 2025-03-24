@@ -15,8 +15,13 @@ static const char g_sFeature[] = "ForniteEmotes";
 
 void OnPluginStart_vipcore()
 {
-	if (!g_bLateload || !g_bVipCore)
+	if (!g_bVipCore)
 		return;
+
+#if !DEBUG
+	if (g_bLateload)
+		return;
+#endif
 
 	VIP_OnVIPLoaded();
 }

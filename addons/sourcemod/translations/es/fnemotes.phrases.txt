@@ -57,12 +57,17 @@
 
 	"INVALID_CONFIG_ID"
 	{
-		"es"			"Config ID inválida, Debe estar entre (1-%d) o 0 para aleatorio"
+		"es"			"El ID de Config {red}inválido{default}, Debe estar entre ({green}1{default}-{green}%d{default}) o {green}0{default} para aleatorio"
 	}
 
 	"INVALID_EMOTE_ID"
 	{
-		"es"			"Emote ID inválida, Debe estar entre (1-&d) o 0 para aleatorio"
+		"es"			"El ID del Emote es {red}inválido{default}, Debe estar en el rango ({green}1{default}-{green}%d{default}) o {green}0{default} para aleatorio"
+	}
+
+	"INVALID_DANCE_ID"
+	{
+		"es"			"El ID del Baile es {red}inválido{default}, Debe estar en el rango ({green}1{default}-{green}%d{default}) o {green}0{default} para aleatorio"
 	}
 
 	"RANDOM_EMOTE"
@@ -118,5 +123,15 @@
 	"LATLOAD"
 	{
 		"es"			"El complemento cargo de forma tardia, se deshabilita hasta el siguiente capitulo."
+	}
+
+	"EMOTES_LIST_CONSOLE"
+	{
+		"es"			"Lista de emotes en tu {green}consola{default}"
+	}
+
+	"DANCE_LIST_CONSOLE"
+	{
+		"es"			"Lista de bailes en tu {green}consola{default}"
 	}
 }

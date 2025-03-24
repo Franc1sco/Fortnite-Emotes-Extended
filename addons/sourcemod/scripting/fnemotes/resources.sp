@@ -113,16 +113,18 @@ public Action Command_ReloadResources(int client, int args)
 
 void OnPluginEnd_resources()
 {
-	for(int i = 1; i <= g_iFilesFnemotesCounter; i++)
-	{
-		delete g_kvResources[i];
-	}
-
+	ClearGlobalVariables();
 }
+
 void OnConfigsExecuted_resources()
 {
-	if (!g_cvarDownloadResources.BoolValue || g_bLateload)
+	if (!g_cvarDownloadResources.BoolValue)
 		return;
+
+#if !DEBUG
+	if (g_bLateload)
+		return;
+#endif
 
 	for(int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
@@ -140,9 +142,10 @@ void OnConfigsExecuted_resources()
 
 void OnMapStart_Resources()
 {
-	if(g_bLateload)
+#if !DEBUG
+	if (g_bLateload)
 		return;
-
+#endif
 	for(int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
 		for (int j = 1; j <= g_iModelSize[i]; j++)
@@ -352,4 +355,27 @@ bool GetEmoteInfo(const int iFile, const char[] sName, char[] sAnim1, int iAnim1
 	strcopy(sSound, iSoundLeng, sBuffer);
 	bIsLooping = view_as<bool>(g_kvResources[iFile].GetNum("isloop", 0));
 	return true;
+}
+
+void ClearGlobalVariables()
+{
+    for (int i = 0; i < FNEMOTES_LIMIT_FILES; i++)
+    {
+        g_iModelSize[i] = 0;
+        g_iSoundsSize[i] = 0;
+        g_iEmotesSize[i] = 0;
+        g_iDancesSize[i] = 0;
+
+        for (int j = 0; j < MAX_RESOURCES; j++)
+        {
+            g_Models[i][j].path[0] = '\0';
+            g_Sounds[i][j].path[0] = '\0';
+            g_Emotes[i][j].name[0] = '\0';
+            g_Dances[i][j].name[0] = '\0';
+        }
+
+        g_FilesConfig[i].name[0] = '\0';
+    }
+
+    g_iFilesFnemotesCounter = 0;
 }

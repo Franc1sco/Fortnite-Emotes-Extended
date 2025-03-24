@@ -119,7 +119,7 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 					return 0;
 				}
 
-				CreateEmote(client, sAnim1, sAnim1, sAnim2, bIsLoop);
+				CreateEmote(client, sAnim1, sAnim1, sAnim2, bIsLoop, iFile);
 			}
 			menu.DisplayAt(client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 		}
@@ -190,7 +190,7 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 					CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFile][iItem].name);
 					return 0;
 				}
-				CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop);
+				CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFile);
 
 			}
 			menu.DisplayAt(client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
@@ -243,5 +243,5 @@ void CreateRandomEmote(int client, bool IsDance = false)
 			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFile][iIndex].name);
 	}
 
-	CreateEmote(client, sAnim1, sAnim1, sAnim2, bIsLoop);
+	CreateEmote(client, sAnim1, sAnim1, sAnim2, bIsLoop, iFile);
 }

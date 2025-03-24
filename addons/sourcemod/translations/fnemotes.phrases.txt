@@ -57,12 +57,17 @@
 
 	"INVALID_CONFIG_ID"
 	{
-		"en"			"Invalid Config ID, Should be between (1-%d) or 0 for random"
+		"en"			"The Config ID is {red}invalid{default}, It must be between ({green}1{default}-{green}%d{default}) or {green}0{default} for random"
 	}
 
 	"INVALID_EMOTE_ID"
 	{
-		"en"			"Invalid Emote ID, Should be between (1-&d) or 0 for random"
+		"en"			"The Emote ID is {red}invalid{default}, It must be in the range ({green}1{default}-{green}%d{default}) or {green}0{default} for random"
+	}
+
+	"INVALID_DANCE_ID"
+	{
+		"en"			"The Dance ID is {red}invalid{default}, It must be in the range ({green}1{default}-{green}%d{default}) or {green}0{default} for random"
 	}
 
 	"RANDOM_EMOTE"
@@ -118,5 +123,15 @@
 	"LATLOAD"
 	{
 		"en"			"The plugin loaded late, it is disabled until the next chapter."
+	}
+
+	"EMOTES_LIST_CONSOLE"
+	{
+		"en"			"List of emotes in your {green}console{default}"
+	}
+
+	"DANCE_LIST_CONSOLE"
+	{
+		"en"			"List of dances in your {green}console{default}"
 	}
 }

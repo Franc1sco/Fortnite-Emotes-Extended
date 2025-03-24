@@ -7,203 +7,205 @@
 			P L U G I N   F U N C T I O N S
 *****************************************************************/
 
-Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped)
+Action CreateEmote(int client, const char[] anim1, const char[] anim2, const char[] soundName, bool isLooped, int iFile)
 {
-	if (!IsValidClient(client))
-		return Plugin_Handled;
+    if (!IsValidClient(client))
+        return Plugin_Handled;
 
-	if (g_EmoteForward_Pre != null)
-	{
-		Action res = Plugin_Continue;
-		Call_StartForward(g_EmoteForward_Pre);
-		Call_PushCell(client);
-		Call_Finish(res);
+    if (g_EmoteForward_Pre != null)
+    {
+        Action res = Plugin_Continue;
+        Call_StartForward(g_EmoteForward_Pre);
+        Call_PushCell(client);
+        Call_Finish(res);
 
-		if (res != Plugin_Continue)
-			return Plugin_Handled;
-	}
+        if (res != Plugin_Continue)
+            return Plugin_Handled;
+    }
 
-	L4DTeam team = L4D_GetClientTeam(client);
-	if (team != L4DTeam_Survivor)
-	{
-		CPrintToChat(client, "%t %t", "TAG", "NOTSURVIVOR");
-		return Plugin_Handled;
-	}
+    L4DTeam team = L4D_GetClientTeam(client);
+    if (team != L4DTeam_Survivor)
+    {
+        CPrintToChat(client, "%t %t", "TAG", "NOTSURVIVOR");
+        return Plugin_Handled;
+    }
 
-	if (g_bPause && IsInPause())
-	{
-		CPrintToChat(client, "%t %t", "TAG", "PAUSE_MODE");
-		return Plugin_Handled;
-	}
+    if (g_bPause && IsInPause())
+    {
+        CPrintToChat(client, "%t %t", "TAG", "PAUSE_MODE");
+        return Plugin_Handled;
+    }
 
-	if (!IsPlayerAlive(client))
-	{
-		CPrintToChat(client, "%t %t", "TAG", "MUST_BE_ALIVE");
-		return Plugin_Handled;
-	}
+    if (!IsPlayerAlive(client))
+    {
+        CPrintToChat(client, "%t %t", "TAG", "MUST_BE_ALIVE");
+        return Plugin_Handled;
+    }
 
-	if (!(GetEntityFlags(client) & FL_ONGROUND))
-	{
-		CPrintToChat(client, "%t %t", "TAG", "STAY_ON_GROUND");
-		return Plugin_Handled;
-	}
+    if (!(GetEntityFlags(client) & FL_ONGROUND))
+    {
+        CPrintToChat(client, "%t %t", "TAG", "STAY_ON_GROUND");
+        return Plugin_Handled;
+    }
 
-	if (CooldownTimers[client])
-	{
-		CPrintToChat(client, "%t %t", "TAG", "COOLDOWN_EMOTES");
-		return Plugin_Handled;
-	}
+    if (CooldownTimers[client])
+    {
+        CPrintToChat(client, "%t %t", "TAG", "COOLDOWN_EMOTES");
+        return Plugin_Handled;
+    }
 
-	if (StrEqual(anim1, "none"))
-	{
-		CPrintToChat(client, "%t %t", "TAG", "AMIN_1_INVALID");
-		return Plugin_Handled;
-	}
+    if (StrEqual(anim1, "none"))
+    {
+        CPrintToChat(client, "%t %t", "TAG", "AMIN_1_INVALID");
+        return Plugin_Handled;
+    }
 
-	if (g_iEmoteEnt[client])
-		StopEmote(client);
+    if (g_iEmoteEnt[client])
+        StopEmote(client);
 
-	if (GetEntityMoveType(client) == MOVETYPE_NONE)
-	{
-		CPrintToChat(client, "%t %t", "TAG", "CANNOT_USE_NOW");
-		return Plugin_Handled;
-	}
+    if (GetEntityMoveType(client) == MOVETYPE_NONE)
+    {
+        CPrintToChat(client, "%t %t", "TAG", "CANNOT_USE_NOW");
+        return Plugin_Handled;
+    }
 
-	int EmoteEnt = CreateEntityByName("prop_dynamic");
-	if (IsValidEntity(EmoteEnt))
-	{
-		SetEntityMoveType(client, MOVETYPE_NONE);
-		if (g_iEngine == Engine_Left4Dead)
-			SetEntityRenderMode(client, RENDER_TRANSALPHA);
+    int EmoteEnt = CreateEntityByName("prop_dynamic");
+    if (IsValidEntity(EmoteEnt))
+    {
+        SetEntityMoveType(client, MOVETYPE_NONE);
+        if (g_iEngine == Engine_Left4Dead)
+            SetEntityRenderMode(client, RENDER_TRANSALPHA);
 
-		WeaponBlock(client);
+        WeaponBlock(client);
 
-		float
-			vec[3],
-			ang[3];
+        float
+            vec[3],
+            ang[3];
 
-		GetClientAbsOrigin(client, vec);
-		GetClientAbsAngles(client, ang);
+        GetClientAbsOrigin(client, vec);
+        GetClientAbsAngles(client, ang);
 
-		g_fLastPosition[client] = vec;
-		g_fLastAngles[client]	= ang;
-		int	 skin				= -1;
-		char emoteEntName[16];
-		FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
-		char model[PLATFORM_MAX_PATH];
-		GetClientModel(client, model, sizeof(model));
-		skin = CreatePlayerModelProp(client, model);
-		DispatchKeyValue(EmoteEnt, "targetname", emoteEntName);
+        g_fLastPosition[client] = vec;
+        g_fLastAngles[client]   = ang;
+        int  skin               = -1;
+        char emoteEntName[16];
+        FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
+        char model[PLATFORM_MAX_PATH];
+        GetClientModel(client, model, sizeof(model));
+        skin = CreatePlayerModelProp(client, model);
+        DispatchKeyValue(EmoteEnt, "targetname", emoteEntName);
 
-		if (g_iEngine == Engine_Left4Dead)
-			DispatchKeyValue(EmoteEnt, "model", "models/fortnite_emotes/fnemotes_l4d.mdl");
-		else if (g_iEngine == Engine_Left4Dead2)
-			DispatchKeyValue(EmoteEnt, "model", "models/fortnite_emotes/fnemotes_l4d2.mdl");
+		DispatchKeyValue(EmoteEnt, "model", g_Models[iFile][1].path);
+		LogMessage("CreateEmote: model = %s", g_Models[iFile][1].path);
 
-		DispatchKeyValue(EmoteEnt, "solid", "0");
-		DispatchKeyValue(EmoteEnt, "rendermode", "0");
 
-		ActivateEntity(EmoteEnt);
-		DispatchSpawn(EmoteEnt);
+        DispatchKeyValue(EmoteEnt, "solid", "0");
+        DispatchKeyValue(EmoteEnt, "rendermode", "0");
 
-		TeleportEntity(EmoteEnt, vec, ang, NULL_VECTOR);
+        ActivateEntity(EmoteEnt);
+        DispatchSpawn(EmoteEnt);
 
-		SetVariantString(emoteEntName);
-		AcceptEntityInput(client, "SetParent", client, client, skin);
+        TeleportEntity(EmoteEnt, vec, ang, NULL_VECTOR);
 
-		g_iEmoteEnt[client] = EntIndexToEntRef(EmoteEnt);
+        SetVariantString(emoteEntName);
+        AcceptEntityInput(client, "SetParent", client, client, skin);
 
-		SetEntProp(client, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_NOSHADOW | EF_NORECEIVESHADOW | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES);
+        g_iEmoteEnt[client] = EntIndexToEntRef(EmoteEnt);
 
-		// Sound
+        SetEntProp(client, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_NOSHADOW | EF_NORECEIVESHADOW | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES);
 
-		if (g_cvarEmotesSounds.BoolValue && !StrEqual(soundName, "none"))
-		{
-			int EmoteSoundEnt = CreateEntityByName("info_target");
-			if (IsValidEntity(EmoteSoundEnt))
-			{
-				char soundEntName[16];
-				FormatEx(soundEntName, sizeof(soundEntName), "soundEnt%i", GetRandomInt(1000000, 9999999));
+        // Sound
 
-				DispatchKeyValue(EmoteSoundEnt, "targetname", soundEntName);
+        if (g_cvarEmotesSounds.BoolValue && !StrEqual(soundName, "none"))
+        {
+            int EmoteSoundEnt = CreateEntityByName("info_target");
+            if (IsValidEntity(EmoteSoundEnt))
+            {
+                char soundEntName[16];
+                FormatEx(soundEntName, sizeof(soundEntName), "soundEnt%i", GetRandomInt(1000000, 9999999));
 
-				DispatchSpawn(EmoteSoundEnt);
+                DispatchKeyValue(EmoteSoundEnt, "targetname", soundEntName);
 
-				vec[2] += 72.0;
-				TeleportEntity(EmoteSoundEnt, vec, NULL_VECTOR, NULL_VECTOR);
+                DispatchSpawn(EmoteSoundEnt);
 
-				SetVariantString(emoteEntName);
-				AcceptEntityInput(EmoteSoundEnt, "SetParent");
+                vec[2] += 72.0;
+                TeleportEntity(EmoteSoundEnt, vec, NULL_VECTOR, NULL_VECTOR);
 
-				g_iEmoteSoundEnt[client] = EntIndexToEntRef(EmoteSoundEnt);
+                SetVariantString(emoteEntName);
+                AcceptEntityInput(EmoteSoundEnt, "SetParent");
 
-				// Formatting sound path
+                g_iEmoteSoundEnt[client] = EntIndexToEntRef(EmoteSoundEnt);
 
-				char soundNameBuffer[64];
+                // Formatting sound path
 
-				if (StrEqual(soundName, "ninja_dance_01") || StrEqual(soundName, "dance_soldier_03"))
-				{
-					int randomSound = GetRandomInt(0, 1);
+                char soundNameBuffer[64];
 
-					soundNameBuffer = randomSound ? "ninja_dance_01" : "dance_soldier_03";
-				}
-				else
-					FormatEx(soundNameBuffer, sizeof(soundNameBuffer), "%s", soundName);
+                if (StrEqual(soundName, "ninja_dance_01") || StrEqual(soundName, "dance_soldier_03"))
+                {
+                    int randomSound = GetRandomInt(0, 1);
 
-				FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "fortnite_emotes/%s.mp3", soundNameBuffer);
+                    soundNameBuffer = randomSound ? "ninja_dance_01" : "dance_soldier_03";
+                }
+                else
+                    FormatEx(soundNameBuffer, sizeof(soundNameBuffer), "%s", soundName);
 
-				EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_CONVO, _, g_cvarSoundVolume.FloatValue, _, _, vec, _, _, _);
-			}
-		}
-		else
-			g_sEmoteSound[client] = "none";
+                FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "fortnite_emotes/%s.mp3", soundNameBuffer);
 
-		if (StrEqual(anim2, "none", false))
-		{
-			HookSingleEntityOutput(EmoteEnt, "OnAnimationDone", EndAnimation, true);
-		}
-		else
-		{
-			SetVariantString(anim2);
-			AcceptEntityInput(EmoteEnt, "SetDefaultAnimation", -1, -1, 0);
-		}
+                EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_NORMAL, _, g_cvarSoundVolume.FloatValue, _, _, vec, _, _, _);
+            }
+        }
+        else
+            g_sEmoteSound[client] = "none";
 
-		SetVariantString(anim1);
-		AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
+        if (StrEqual(anim2, "none", false))
+        {
+            HookSingleEntityOutput(EmoteEnt, "OnAnimationDone", EndAnimation, true);
+        }
+        else
+        {
+            SetVariantString(anim2);
+            AcceptEntityInput(EmoteEnt, "SetDefaultAnimation", -1, -1, 0);
+        }
 
-		if (g_cvarSpeed.FloatValue != 1.0)
-			SetEntPropFloat(EmoteEnt, Prop_Send, "m_flPlaybackRate", g_cvarSpeed.FloatValue);
+        // Registrar los valores de anim1 y anim2
+        LogMessage("CreateEmote: anim1 = %s, anim2 = %s", anim1, anim2);
 
-		SetCam(client);
+        SetVariantString(anim1);
+        AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
 
-		g_bClientDancing[client] = true;
+        if (g_cvarSpeed.FloatValue != 1.0)
+            SetEntPropFloat(EmoteEnt, Prop_Send, "m_flPlaybackRate", g_cvarSpeed.FloatValue);
 
-		if (g_cvarHidePlayers.BoolValue)
-		{
-			for (int i = 1; i <= MaxClients; i++)
-			{
-				if (IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client) && !g_bHooked[i])
-				{
-					SDKHook(i, SDKHook_SetTransmit, SetTransmit);
-					g_bHooked[i] = true;
-				}
-			}
-		}
+        SetCam(client);
 
-		if (g_cvarCooldown.FloatValue > 0.0)
-			CooldownTimers[client] = CreateTimer(g_cvarCooldown.FloatValue, ResetCooldown, client);
+        g_bClientDancing[client] = true;
 
-		if (g_EmoteForward != null)
-		{
-			Call_StartForward(g_EmoteForward);
-			Call_PushCell(client);
-			Call_Finish();
-		}
+        if (g_cvarHidePlayers.BoolValue)
+        {
+            for (int i = 1; i <= MaxClients; i++)
+            {
+                if (IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client) && !g_bHooked[i])
+                {
+                    SDKHook(i, SDKHook_SetTransmit, SetTransmit);
+                    g_bHooked[i] = true;
+                }
+            }
+        }
 
-		if (isLooped) {}	// ????
-	}
+        if (g_cvarCooldown.FloatValue > 0.0)
+            CooldownTimers[client] = CreateTimer(g_cvarCooldown.FloatValue, ResetCooldown, client);
 
-	return Plugin_Handled;
+        if (g_EmoteForward != null)
+        {
+            Call_StartForward(g_EmoteForward);
+            Call_PushCell(client);
+            Call_Finish();
+        }
+
+        if (isLooped) {}    // ????
+    }
+
+    return Plugin_Handled;
 }
 
 void EndAnimation(const char[] output, int caller, int activator, float delay)

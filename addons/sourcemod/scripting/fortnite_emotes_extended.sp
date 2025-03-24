@@ -33,6 +33,8 @@
 			G L O B A L   V A R S
 *****************************************************************/
 
+#define DEBUG		0
+
 #define EF_BONEMERGE		  0x001
 #define EF_NOSHADOW			  0x010
 #define EF_BONEMERGE_FASTCULL 0x080
@@ -40,7 +42,6 @@
 #define EF_PARENT_ANIMATES	  0x200
 #define HIDEHUD_ALL			  (1 << 2)
 #define HIDEHUD_CROSSHAIR	  (1 << 8)
-#define CVAR_FLAGS			  FCVAR_NOTIFY
 
 ConVar
 	g_cvarHidePlayers,
@@ -164,19 +165,21 @@ public void OnPluginStart()
 	HookEvent("round_start", Event_Start);
 	HookEvent("player_team", Event_PlayerTeam);
 
-	g_cvarEmotesSounds		= CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", CVAR_FLAGS, true, 0.0, true, 1.0);
-	g_cvarCooldown			= CreateConVar("sm_emotes_cooldown", "2.0", "Cooldown for emotes in seconds. 0 = no cooldown.", CVAR_FLAGS, true, 0.0);
-	g_cvarSoundVolume		= CreateConVar("sm_emotes_soundvolume", "1.0", "Sound volume for the emotes.", CVAR_FLAGS, true, 0.0, true, 1.0);
-	g_cvarFlagEmotesMenu	= CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)", CVAR_FLAGS);
-	g_cvarFlagDancesMenu	= CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)", CVAR_FLAGS);
-	g_cvarHideWeapons		= CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", CVAR_FLAGS, true, 0.0, true, 1.0);
-	g_cvarHidePlayers		= CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", CVAR_FLAGS, true, 0.0, true, 1.0);
-	g_cvarTeleportBack		= CreateConVar("sm_emotes_teleportonend", "1", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", CVAR_FLAGS, true, 0.0, true, 1.0);
-	g_cvarSpeed				= CreateConVar("sm_emotes_speed", "0.8", "Sets the playback speed of the animation. default (1.0)", CVAR_FLAGS, true, 0.0);
-	g_cvarDownloadResources = CreateConVar("sm_emotes_download_resources", "1", "Download method for the resources", CVAR_FLAGS, true, 0.0, true, 1.0);
+	g_cvarEmotesSounds		= CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvarCooldown			= CreateConVar("sm_emotes_cooldown", "2.0", "Cooldown for emotes in seconds. 0 = no cooldown.", FCVAR_NOTIFY, true, 0.0);
+	g_cvarSoundVolume		= CreateConVar("sm_emotes_soundvolume", "1.0", "Sound volume for the emotes.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvarFlagEmotesMenu	= CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)", FCVAR_NOTIFY);
+	g_cvarFlagDancesMenu	= CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)", FCVAR_NOTIFY);
+	g_cvarHideWeapons		= CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvarHidePlayers		= CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvarTeleportBack		= CreateConVar("sm_emotes_teleportonend", "1", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvarSpeed				= CreateConVar("sm_emotes_speed", "0.8", "Sets the playback speed of the animation. default (1.0)", FCVAR_NOTIFY, true, 0.0);
+	g_cvarDownloadResources = CreateConVar("sm_emotes_download_resources", "1", "Download method for the resources", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
-	RegConsoleCmd("sm_emote", Command_Menu);
+	RegConsoleCmd("sm_emote", Command_Emote);
+	RegConsoleCmd("sm_emotecode", Command_EmoteCode);
 	RegConsoleCmd("sm_dance", Command_Dance);
+	RegConsoleCmd("sm_dancecode", Command_DanceCode);
 	RegAdminCmd("sm_setemote", Command_SetEmote, ADMFLAG_GENERIC);
 	RegAdminCmd("sm_setdance", Command_SetDance, ADMFLAG_GENERIC);
 
@@ -192,21 +195,182 @@ public void OnPluginStart()
 	OnPluginStart_vipcore();
 }
 
-public Action Command_Menu(int client, int args)
+public Action Command_Emote(int client, int args)
 {
 	if (!IsValidClient(client))
 		return Plugin_Handled;
-	
+
+#if !DEBUG
 	if(g_bLateload)
 	{
 		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
+#endif
 
-	if (IsValidAccess(client))
-		Menu_Main(client);
-	else
+	if (!IsValidAccess(client))
 		CReplyToCommand(client, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+
+	if(args == 0 && SM_REPLY_TO_CHAT == GetCmdReplySource())
+	{
+		Menu_Main(client);
+		return Plugin_Handled;
+	}
+
+	if (args != 1)
+	{
+		CReplyToCommand(client, "%t: sm_emote <#emote>", "USAGE");
+		return Plugin_Handled;
+	}
+
+	if (g_bEmoteCooldown[client])
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "COOLDOWN_EMOTES");
+		return Plugin_Handled;
+	}
+
+	if (!IsSurvivor(client))
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "NOTSURVIVOR");
+		return Plugin_Handled;
+	}
+
+	if (g_bPause)
+	{
+		if (IsInPause())
+		{
+			CReplyToCommand(client, "%t %t", "TAG", "PAUSE_MODE");
+			return Plugin_Handled;
+		}
+	}
+
+	if (g_bClientDancing[client])
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "CANNOT_USE_NOW");
+		return Plugin_Handled;
+	}
+
+	int iEmoteCode = GetCmdArgInt(1);
+
+	iEmoteCode = (iEmoteCode < 0) ? -iEmoteCode : iEmoteCode;
+
+	int
+		iFile,
+		iItem;
+
+	char
+		sAnim1[32],
+		sAnim2[32],
+		sSound[64];
+
+	bool
+		bIsLoop;
+
+	int iEmoteCounter = 0;
+
+	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
+	{
+		iEmoteCounter += g_iEmotesSize[iFilesIndex];
+		if (iEmoteCode <= iEmoteCounter)
+		{
+			iFile = iFilesIndex;
+			iItem = iEmoteCode - (iEmoteCounter - g_iEmotesSize[iFilesIndex]);
+			break;
+		}
+	}
+
+	if (iFile == 0 || iItem == 0)
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "INVALID_EMOTE_ID", iEmoteCounter);
+		return Plugin_Handled;
+	}
+
+	if (!GetEmoteInfo(iFile, g_Emotes[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
+	{
+		CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFile][iItem].name);
+		return Plugin_Handled;
+	}
+
+	CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFile);
+	return Plugin_Handled;
+}
+
+public Action Command_EmoteCode(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+#if !DEBUG
+	if(g_bLateload)
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
+		return Plugin_Handled;
+	}
+#endif
+
+	if (!IsValidAccess(client))
+		CReplyToCommand(client, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+
+	CPrintToChat(client, "%t %t", "TAG", "EMOTES_LIST_CONSOLE");
+	int iCode = 1;
+
+	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
+	{	
+		if(g_iEmotesSize[iFilesIndex] == 0)
+			continue;
+
+		if(iFilesIndex != 1)
+			PrintToConsole(client, " ");
+
+		PrintToConsole(client, "\nFile [%s]", g_FilesConfig[iFilesIndex].name);
+		PrintToConsole(client, "--------------------");
+		for (int iEmoteIndex = 1; iEmoteIndex <= g_iEmotesSize[iFilesIndex]; iEmoteIndex++)
+		{
+			PrintToConsole(client, "> Code: #%d | %s", iCode, g_Emotes[iFilesIndex][iEmoteIndex].name);
+			iCode++;
+		}
+		PrintToConsole(client, "--------------------");
+	}
+
+	return Plugin_Handled;
+}
+
+public Action Command_DanceCode(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+#if !DEBUG
+	if(g_bLateload)
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
+		return Plugin_Handled;
+	}
+#endif
+
+	if (!IsValidAccess(client))
+		CReplyToCommand(client, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+
+	CPrintToChat(client, "%t %t", "TAG", "DANCE_LIST_CONSOLE");
+	int iCode = 1;
+
+	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
+	{	
+		if(g_iDancesSize[iFilesIndex] == 0)
+			continue;
+
+		if(iFilesIndex != 1)
+			PrintToConsole(client, " ");
+
+		PrintToConsole(client, "\nFile [%s]", g_FilesConfig[iFilesIndex].name);
+		PrintToConsole(client, "--------------------");
+		for (int iDanceIndex = 1; iDanceIndex <= g_iDancesSize[iFilesIndex]; iDanceIndex++)
+		{
+			PrintToConsole(client, "> Code: #%d | %s", iCode, g_Dances[iFilesIndex][iDanceIndex].name);
+			iCode++;
+		}
+		PrintToConsole(client, "--------------------");
+	}
 
 	return Plugin_Handled;
 }
@@ -216,17 +380,97 @@ public Action Command_Dance(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 
+#if !DEBUG
 	if(g_bLateload)
 	{
 		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
+#endif
 
-	if (IsValidAccess(client))
-		Menu_Main(client);
-	else
+	if (!IsValidAccess(client))
 		CReplyToCommand(client, "%t %t", "TAG", "NO_DANCES_ACCESS_FLAG");
 
+	if(args == 0 && SM_REPLY_TO_CHAT == GetCmdReplySource())
+	{
+		Menu_Main(client);
+		return Plugin_Handled;
+	}
+
+	if (args != 1)
+	{
+		CReplyToCommand(client, "%t: sm_emote <#emote>", "USAGE");
+		return Plugin_Handled;
+	}
+
+	if (g_bEmoteCooldown[client])
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "COOLDOWN_EMOTES");
+		return Plugin_Handled;
+	}
+
+	if (!IsSurvivor(client))
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "NOTSURVIVOR");
+		return Plugin_Handled;
+	}
+
+	if (g_bPause)
+	{
+		if (IsInPause())
+		{
+			CReplyToCommand(client, "%t %t", "TAG", "PAUSE_MODE");
+			return Plugin_Handled;
+		}
+	}
+
+	if (g_bClientDancing[client])
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "CANNOT_USE_NOW");
+		return Plugin_Handled;
+	}
+
+	int iDanceCode = GetCmdArgInt(1);
+	iDanceCode = (iDanceCode < 0) ? -iDanceCode : iDanceCode;
+
+	int
+		iFile,
+		iItem;
+
+	char
+		sAnim1[32],
+		sAnim2[32],
+		sSound[64];
+
+	bool
+		bIsLoop;
+
+	int iDanceCounter = 0;
+
+	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
+	{
+		iDanceCounter += g_iDancesSize[iFilesIndex];
+		if (iDanceCode <= iDanceCounter)
+		{
+			iFile = iFilesIndex;
+			iItem = iDanceCode - (iDanceCounter - g_iDancesSize[iFilesIndex]);
+			break;
+		}
+	}
+
+	if (iFile == 0 || iItem == 0)
+	{
+		CReplyToCommand(client, "%t %t", "TAG", "INVALID_DANCE_ID", iDanceCounter);
+		return Plugin_Handled;
+	}
+
+	if (!GetEmoteInfo(iFile, g_Dances[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
+	{
+		CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFile][iItem].name);
+		return Plugin_Handled;
+	}
+
+	CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFile);
 	return Plugin_Handled;
 }
 
@@ -238,11 +482,13 @@ Action Command_SetEmote(int client, int args)
 		return Plugin_Handled;
 	}
 
+#if !DEBUG
 	if(g_bLateload)
 	{
 		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
+#endif
 
 	char target[65];
 	GetCmdArg(1, target, sizeof(target));
@@ -301,7 +547,7 @@ Action Command_SetEmote(int client, int args)
 			return Plugin_Handled;
 		}
 
-		CreateEmote(target_list[i], sAnim1, sAnim2, sSound, bIsLoop);
+		CreateEmote(target_list[i], sAnim1, sAnim2, sSound, bIsLoop, iFile);
 	}
 
 	return Plugin_Handled;
@@ -372,7 +618,7 @@ Action Command_SetDance(int client, int args)
 			return Plugin_Handled;
 		}
 
-		CreateEmote(target_list[i], sAnim1, sAnim2, sSound, bIsLoop);
+		CreateEmote(target_list[i], sAnim1, sAnim2, sSound, bIsLoop, iFile);
 	}
 
 	return Plugin_Handled;
@@ -385,13 +631,9 @@ public void OnConfigsExecuted()
 
 public void OnMapStart()
 {
-	OnMapStart_Resources();
-}
-
-public void OnMapEnd()
-{
 	if(g_bLateload)
 		g_bLateload = false;
+	OnMapStart_Resources();
 }
 
 public void OnPluginEnd()
