@@ -40,11 +40,13 @@ int MenuHandler_Dance(Menu menu, MenuAction action, int param1, int param2)
 			{
 				case 0:
 				{
+					StopEmote(client);
 					CreateRandomEmote(client);
 					Menu_Main(client);
 				}
 				case 1:
 				{
+					StopEmote(client);
 					CreateRandomEmote(client, true);
 					Menu_Main(client);
 				}
@@ -102,9 +104,9 @@ int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
 
 				char
 					sBuffer[2][4],
-					sAnim1[32],
-					sAnim2[32],
-					sSound[64];
+					sAnim1[64],
+					sAnim2[64],
+					sSound[PLATFORM_MAX_PATH];
 
 				bool
 					bIsLoop;
@@ -174,9 +176,9 @@ int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
 
 				char
 					sBuffer[2][4],
-					sAnim1[32],
-					sAnim2[32],
-					sSound[64];
+					sAnim1[64],
+					sAnim2[64],
+					sSound[PLATFORM_MAX_PATH];
 
 				bool
 					bIsLoop;
@@ -214,34 +216,36 @@ void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int
 void CreateRandomEmote(int client, bool IsDance = false)
 {
 	int
-		iFile,
-		iIndex;
+		iFileRandom,
+		iIndexRandom;
 
 	char
-		sAnim1[16],
-		sAnim2[16],
-		sSound[64];
+		sAnim1[64],
+		sAnim2[64],
+		sSound[PLATFORM_MAX_PATH];
 
 	bool
 		bIsLoop;
+	int iSize;
 
-	if (g_iFilesFnemotesCounter > 1)
-		iFile = GetRandomInt(1, g_iFilesFnemotesCounter);
-	else
-		iFile = g_iFilesFnemotesCounter;
+	do {
+		iFileRandom = GetRandomInt(1, g_iFilesFnemotesCounter);
+		iSize = IsDance ? g_iDancesSize[iFileRandom] : g_iEmotesSize[iFileRandom];
+	} while (iSize == 0);
 
-	iIndex = GetRandomInt(1, g_iEmotesSize[iFile]);
+	iIndexRandom = GetRandomInt(1, iSize);
 
 	if (IsDance)
 	{
-		if (!GetEmoteInfo(iFile, g_Dances[iFile][iIndex].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
-			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFile][iIndex].name);
+		if (!GetEmoteInfo(iFileRandom, g_Dances[iFileRandom][iIndexRandom].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
+			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFileRandom][iIndexRandom].name);
 	}
 	else
 	{
-		if (!GetEmoteInfo(iFile, g_Emotes[iFile][iIndex].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
-			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFile][iIndex].name);
+		if (!GetEmoteInfo(iFileRandom, g_Emotes[iFileRandom][iIndexRandom].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
+			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFileRandom][iIndexRandom].name);
 	}
 
-	CreateEmote(client, sAnim1, sAnim1, sAnim2, bIsLoop, iFile);
+	LogDebug("%s: iFileRandom: %d | iIndexRandom: %d | sAnim1: %s | sAnim2: %s | sSound: %s | bIsLoop: %s | client: %N", IsDance ? "CreateRandomDance" : "CreateRandomEmote", iFileRandom, iIndexRandom, sAnim1, sAnim2, sSound, bIsLoop ? "true" : "false", client);
+	CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFileRandom);
 }

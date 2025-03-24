@@ -33,7 +33,8 @@
 			G L O B A L   V A R S
 *****************************************************************/
 
-#define DEBUG		0
+#define DEBUG		1
+#define DEBUG_SOUND 1
 
 #define EF_BONEMERGE		  0x001
 #define EF_NOSHADOW			  0x010
@@ -42,6 +43,7 @@
 #define EF_PARENT_ANIMATES	  0x200
 #define HIDEHUD_ALL			  (1 << 2)
 #define HIDEHUD_CROSSHAIR	  (1 << 8)
+#define DIR_EMOTES		  	"logs/Fornite_Emotes.log"
 
 ConVar
 	g_cvarHidePlayers,
@@ -66,7 +68,8 @@ int
 	playerModelsIndex[MAXPLAYERS + 1];
 
 char
-	g_sEmoteSound[MAXPLAYERS + 1][PLATFORM_MAX_PATH];
+	g_sEmoteSound[MAXPLAYERS + 1][PLATFORM_MAX_PATH],
+	g_sLogPath[PLATFORM_MAX_PATH];
 
 bool
 	g_bClientDancing[MAXPLAYERS + 1],
@@ -84,11 +87,18 @@ float
 	g_fLastAngles[MAXPLAYERS + 1][3],
 	g_fLastPosition[MAXPLAYERS + 1][3];
 
+enum L4DTeam
+{
+	L4DTeam_Unassigned				= 0,
+	L4DTeam_Spectator				= 1,
+	L4DTeam_Survivor				= 2,
+	L4DTeam_Infected				= 3
+}
+
 /*****************************************************************
 			L I B R A R Y   I N C L U D E S
 *****************************************************************/
 
-#include "fnemotes/left4dhooks.sp"
 #include "fnemotes/native.sp"
 #include "fnemotes/resources.sp"
 #include "fnemotes/menu.sp"
@@ -112,9 +122,9 @@ public Plugin myinfo =
 *****************************************************************/
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
-	if (!L4D_IsEngineLeft4Dead())
+	if (Engine_Left4Dead2 != GetEngineVersion())
 	{
-		strcopy(error, err_max, "Plugin only supports in Left 4 Dead engine branch");
+		strcopy(error, err_max, "Plugin only supports in Left 4 Dead 2");
 		return APLRes_SilentFailure;
 	}
 
@@ -149,17 +159,12 @@ public void OnLibraryAdded(const char[] sName)
 
 public void OnPluginStart()
 {
+#if DEBUG
+	BuildPath(Path_SM, g_sLogPath, sizeof(g_sLogPath), DIR_EMOTES);
+#endif
 	LoadTranslation("common.phrases");
 	LoadTranslation("fnemotes.phrases");
 
-	if (g_iEngine == Engine_Left4Dead)
-	{
-		HookEvent("player_afk", Event_PAfkQ);
-		HookEvent("player_team", Event_PAfkQ);
-
-		HookEvent("player_bot_replace", Event_PAfk);
-		HookEvent("bot_player_replace", Event_PAfk);
-	}
 	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
 	HookEvent("player_hurt", Event_PlayerHurt, EventHookMode_Pre);
 	HookEvent("round_start", Event_Start);
@@ -259,9 +264,9 @@ public Action Command_Emote(int client, int args)
 		iItem;
 
 	char
-		sAnim1[32],
-		sAnim2[32],
-		sSound[64];
+		sAnim1[64],
+		sAnim2[64],
+		sSound[PLATFORM_MAX_PATH];
 
 	bool
 		bIsLoop;
@@ -438,9 +443,9 @@ public Action Command_Dance(int client, int args)
 		iItem;
 
 	char
-		sAnim1[32],
-		sAnim2[32],
-		sSound[64];
+		sAnim1[64],
+		sAnim2[64],
+		sSound[PLATFORM_MAX_PATH];
 
 	bool
 		bIsLoop;
@@ -534,9 +539,9 @@ Action Command_SetEmote(int client, int args)
 	for (int i = 0; i < target_count; i++)
 	{
 		char
-			sAnim1[32],
-			sAnim2[32],
-			sSound[64];
+			sAnim1[64],
+			sAnim2[64],
+			sSound[PLATFORM_MAX_PATH];
 
 		bool
 			bIsLoop;
@@ -605,9 +610,9 @@ Action Command_SetDance(int client, int args)
 	for (int i = 0; i < target_count; i++)
 	{
 		char
-			sAnim1[32],
-			sAnim2[32],
-			sSound[64];
+			sAnim1[64],
+			sAnim2[64],
+			sSound[PLATFORM_MAX_PATH];
 
 		bool
 			bIsLoop;
@@ -845,22 +850,6 @@ bool IsSurvivor(int client)
 
 public int CreatePlayerModelProp(int client, char[] sModel)
 {
-	if (g_iEngine == Engine_Left4Dead)
-	{
-		RemoveSkin(client);
-		int skin = CreateEntityByName("commentary_dummy");
-		DispatchKeyValue(skin, "model", sModel);
-		DispatchSpawn(skin);
-		SetEntProp(skin, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES);
-		SetVariantString("!activator");
-		AcceptEntityInput(skin, "SetParent", client, skin);
-		SetVariantString("primary");
-		AcceptEntityInput(skin, "SetParentAttachment", skin, skin, 0);
-		playerModels[client]	  = EntIndexToEntRef(skin);
-		playerModelsIndex[client] = skin;
-		return skin;
-	}
-
 	return 0;
 }
 
@@ -955,3 +944,49 @@ bool CheckEmote(int iConfig, int iEmote, bool bIsDance = false)
 
 	return true;
 }
+
+/**
+ * Returns the clients team using L4DTeam.
+ *
+ * @param client		Player's index.
+ * @return				Current L4DTeam of player.
+ * @error				Invalid client index.
+ */
+stock L4DTeam L4D_GetClientTeam(int client)
+{
+	int team = GetClientTeam(client);
+	return view_as<L4DTeam>(team);
+}
+
+#if DEBUG
+void LogDebug(const char[] sMessage, any...)
+{
+	static char
+		sFormat[1024];
+	
+	VFormat(sFormat, sizeof(sFormat), sMessage, 2);
+	File file = OpenFile(g_sLogPath, "a+");
+
+	LogToFileEx(g_sLogPath, "[Debug] %s", sFormat);
+	delete file;
+}
+
+#if DEBUG_SOUND
+void LogSound(const char[] sMessage, any...)
+{
+	static char
+		sFormat[1024];
+	
+	VFormat(sFormat, sizeof(sFormat), sMessage, 2);
+	File file = OpenFile(g_sLogPath, "a+");
+
+	LogToFileEx(g_sLogPath, "[Sound] %s", sFormat);
+	delete file;
+}
+#else
+void LogSound(const char[] sMessage, any...) {}
+#endif
+
+#else
+void LogDebug(const char[] sMessage, any...) {}
+#endif

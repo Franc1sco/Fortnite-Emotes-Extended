@@ -69,141 +69,137 @@ Action CreateEmote(int client, const char[] anim1, const char[] anim2, const cha
         return Plugin_Handled;
     }
 
+    LogDebug("CreateEmote: anim1 = %s, anim2 = %s, soundName = %s, isLooped = %d, iFile = %d", anim1, anim2, soundName, isLooped, iFile);
     int EmoteEnt = CreateEntityByName("prop_dynamic");
-    if (IsValidEntity(EmoteEnt))
+    if (!IsValidEntity(EmoteEnt))
+        return Plugin_Handled;
+
+    SetEntityMoveType(client, MOVETYPE_NONE);
+    WeaponBlock(client);
+
+    float vec[3], ang[3];
+    GetClientAbsOrigin(client, vec);
+    GetClientAbsAngles(client, ang);
+
+    g_fLastPosition[client] = vec;
+    g_fLastAngles[client] = ang;
+    int skin = -1;
+    char emoteEntName[16];
+    FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
+    char model[PLATFORM_MAX_PATH];
+    GetClientModel(client, model, sizeof(model));
+    skin = CreatePlayerModelProp(client, model);
+    DispatchKeyValue(EmoteEnt, "targetname", emoteEntName);
+
+    DispatchKeyValue(EmoteEnt, "model", g_Models[iFile][1].path);
+    LogDebug("CreateEmote: model = %s", g_Models[iFile][1].path);
+
+    DispatchKeyValue(EmoteEnt, "solid", "0");
+    DispatchKeyValue(EmoteEnt, "rendermode", "0");
+
+    ActivateEntity(EmoteEnt);
+    DispatchSpawn(EmoteEnt);
+
+    TeleportEntity(EmoteEnt, vec, ang, NULL_VECTOR);
+
+    SetVariantString(emoteEntName);
+    AcceptEntityInput(client, "SetParent", client, client, skin);
+
+    g_iEmoteEnt[client] = EntIndexToEntRef(EmoteEnt);
+
+    SetEntProp(client, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_NOSHADOW | EF_NORECEIVESHADOW | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES);
+
+    // Sound
+    if (g_cvarEmotesSounds.BoolValue && !StrEqual(soundName, "none"))
     {
-        SetEntityMoveType(client, MOVETYPE_NONE);
-        if (g_iEngine == Engine_Left4Dead)
-            SetEntityRenderMode(client, RENDER_TRANSALPHA);
-
-        WeaponBlock(client);
-
-        float
-            vec[3],
-            ang[3];
-
-        GetClientAbsOrigin(client, vec);
-        GetClientAbsAngles(client, ang);
-
-        g_fLastPosition[client] = vec;
-        g_fLastAngles[client]   = ang;
-        int  skin               = -1;
-        char emoteEntName[16];
-        FormatEx(emoteEntName, sizeof(emoteEntName), "emoteEnt%i", GetRandomInt(1000000, 9999999));
-        char model[PLATFORM_MAX_PATH];
-        GetClientModel(client, model, sizeof(model));
-        skin = CreatePlayerModelProp(client, model);
-        DispatchKeyValue(EmoteEnt, "targetname", emoteEntName);
-
-		DispatchKeyValue(EmoteEnt, "model", g_Models[iFile][1].path);
-		LogMessage("CreateEmote: model = %s", g_Models[iFile][1].path);
-
-
-        DispatchKeyValue(EmoteEnt, "solid", "0");
-        DispatchKeyValue(EmoteEnt, "rendermode", "0");
-
-        ActivateEntity(EmoteEnt);
-        DispatchSpawn(EmoteEnt);
-
-        TeleportEntity(EmoteEnt, vec, ang, NULL_VECTOR);
-
-        SetVariantString(emoteEntName);
-        AcceptEntityInput(client, "SetParent", client, client, skin);
-
-        g_iEmoteEnt[client] = EntIndexToEntRef(EmoteEnt);
-
-        SetEntProp(client, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_NOSHADOW | EF_NORECEIVESHADOW | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES);
-
-        // Sound
-
-        if (g_cvarEmotesSounds.BoolValue && !StrEqual(soundName, "none"))
+        int EmoteSoundEnt = CreateEntityByName("info_target");
+        if (IsValidEntity(EmoteSoundEnt))
         {
-            int EmoteSoundEnt = CreateEntityByName("info_target");
-            if (IsValidEntity(EmoteSoundEnt))
+            char soundEntName[16];
+            FormatEx(soundEntName, sizeof(soundEntName), "soundEnt%d", GetRandomInt(0, 10000));
+
+            DispatchKeyValue(EmoteSoundEnt, "targetname", soundEntName);
+
+            DispatchSpawn(EmoteSoundEnt);
+
+            vec[2] += 72.0;
+            TeleportEntity(EmoteSoundEnt, vec, NULL_VECTOR, NULL_VECTOR);
+
+            SetVariantString(emoteEntName);
+            AcceptEntityInput(EmoteSoundEnt, "SetParent");
+
+            g_iEmoteSoundEnt[client] = EntIndexToEntRef(EmoteSoundEnt);
+
+            char szSound[PLATFORM_MAX_PATH];
+            for(int iSoundIndex = 1; iSoundIndex <= g_iSoundsSize[iFile]; iSoundIndex++)
             {
-                char soundEntName[16];
-                FormatEx(soundEntName, sizeof(soundEntName), "soundEnt%i", GetRandomInt(1000000, 9999999));
-
-                DispatchKeyValue(EmoteSoundEnt, "targetname", soundEntName);
-
-                DispatchSpawn(EmoteSoundEnt);
-
-                vec[2] += 72.0;
-                TeleportEntity(EmoteSoundEnt, vec, NULL_VECTOR, NULL_VECTOR);
-
-                SetVariantString(emoteEntName);
-                AcceptEntityInput(EmoteSoundEnt, "SetParent");
-
-                g_iEmoteSoundEnt[client] = EntIndexToEntRef(EmoteSoundEnt);
-
-                // Formatting sound path
-
-                char soundNameBuffer[64];
-
-                if (StrEqual(soundName, "ninja_dance_01") || StrEqual(soundName, "dance_soldier_03"))
+                if(StrContains(g_Sounds[iFile][iSoundIndex].path, soundName, false) != -1)
                 {
-                    int randomSound = GetRandomInt(0, 1);
+                	Format(szSound, sizeof(szSound), g_Sounds[iFile][iSoundIndex].path);
 
-                    soundNameBuffer = randomSound ? "ninja_dance_01" : "dance_soldier_03";
+			        ReplaceStringEx(szSound, sizeof(szSound), "sound/", "");
+                    FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, szSound);
                 }
-                else
-                    FormatEx(soundNameBuffer, sizeof(soundNameBuffer), "%s", soundName);
-
-                FormatEx(g_sEmoteSound[client], PLATFORM_MAX_PATH, "fortnite_emotes/%s.mp3", soundNameBuffer);
-
-                EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_NORMAL, _, g_cvarSoundVolume.FloatValue, _, _, vec, _, _, _);
             }
+            LogSound("CreateEmote: soundName: %s | g_sEmoteSound = %s | client: %N", soundName, g_sEmoteSound[client], client);
+            EmitSoundToAll(g_sEmoteSound[client], EmoteSoundEnt, SNDCHAN_AUTO, SNDLEVEL_NORMAL, _, g_cvarSoundVolume.FloatValue, _, _, vec, _, _, _);
         }
         else
+        {
+            LogError("CreateEmote: Entity info_target creation failed for sound %d", EmoteSoundEnt);
             g_sEmoteSound[client] = "none";
-
-        if (StrEqual(anim2, "none", false))
-        {
-            HookSingleEntityOutput(EmoteEnt, "OnAnimationDone", EndAnimation, true);
+            LogSound("CreateEmote: soundName: %s | g_sEmoteSound = %s | client: %N", soundName, g_sEmoteSound[client], client);
         }
-        else
-        {
-            SetVariantString(anim2);
-            AcceptEntityInput(EmoteEnt, "SetDefaultAnimation", -1, -1, 0);
-        }
-
-        // Registrar los valores de anim1 y anim2
-        LogMessage("CreateEmote: anim1 = %s, anim2 = %s", anim1, anim2);
-
-        SetVariantString(anim1);
-        AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
-
-        if (g_cvarSpeed.FloatValue != 1.0)
-            SetEntPropFloat(EmoteEnt, Prop_Send, "m_flPlaybackRate", g_cvarSpeed.FloatValue);
-
-        SetCam(client);
-
-        g_bClientDancing[client] = true;
-
-        if (g_cvarHidePlayers.BoolValue)
-        {
-            for (int i = 1; i <= MaxClients; i++)
-            {
-                if (IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client) && !g_bHooked[i])
-                {
-                    SDKHook(i, SDKHook_SetTransmit, SetTransmit);
-                    g_bHooked[i] = true;
-                }
-            }
-        }
-
-        if (g_cvarCooldown.FloatValue > 0.0)
-            CooldownTimers[client] = CreateTimer(g_cvarCooldown.FloatValue, ResetCooldown, client);
-
-        if (g_EmoteForward != null)
-        {
-            Call_StartForward(g_EmoteForward);
-            Call_PushCell(client);
-            Call_Finish();
-        }
-
-        if (isLooped) {}    // ????
     }
+    else
+    {
+        LogSound("CreateEmote: g_cvarEmotesSounds: %s | StrEqual(soundName, none): %s", g_cvarEmotesSounds.BoolValue ? "true" : "false", StrEqual(soundName, "none") ? "true" : "false");
+        LogSound("CreateEmote: soundName: %s | g_sEmoteSound = %s | client: %N", soundName, g_sEmoteSound[client], client);
+        g_sEmoteSound[client] = "none";
+    }
+
+    if (StrEqual(anim2, "none", false))
+    {
+        HookSingleEntityOutput(EmoteEnt, "OnAnimationDone", EndAnimation, true);
+    }
+    else
+    {
+        SetVariantString(anim2);
+        AcceptEntityInput(EmoteEnt, "SetDefaultAnimation", -1, -1, 0);
+    }
+
+    LogDebug("CreateEmote: anim1 = %s, anim2 = %s", anim1, anim2);
+
+    SetVariantString(anim1);
+    AcceptEntityInput(EmoteEnt, "SetAnimation", -1, -1, 0);
+
+    if (g_cvarSpeed.FloatValue != 1.0)
+        SetEntPropFloat(EmoteEnt, Prop_Send, "m_flPlaybackRate", g_cvarSpeed.FloatValue);
+
+    SetCam(client);
+
+    g_bClientDancing[client] = true;
+
+    if (g_cvarHidePlayers.BoolValue)
+    {
+        for (int i = 1; i <= MaxClients; i++)
+        {
+            if (!IsClientInGame(i) || !IsPlayerAlive(i) || GetClientTeam(i) == GetClientTeam(client) || g_bHooked[i])
+                continue;
+
+            SDKHook(i, SDKHook_SetTransmit, SetTransmit);
+            g_bHooked[i] = true;
+        }
+    }
+
+    if (g_cvarCooldown.FloatValue > 0.0)
+        CooldownTimers[client] = CreateTimer(g_cvarCooldown.FloatValue, ResetCooldown, client);
+
+    Call_StartForward(g_EmoteForward);
+    Call_PushCell(client);
+    Call_Finish();
+
+    if (isLooped) {}
 
     return Plugin_Handled;
 }
@@ -232,91 +228,90 @@ int GetEmoteActivator(int iEntRefDancer)
 
 void StopEmote(int client)
 {
-	if (!g_iEmoteEnt[client])
-		return;
+    if (!g_iEmoteEnt[client])
+        return;
 
-	int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
-	if (iEmoteEnt && iEmoteEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteEnt))
-	{
-		char emoteEntName[50];
-		GetEntPropString(iEmoteEnt, Prop_Data, "m_iName", emoteEntName, sizeof(emoteEntName));
-		SetVariantString(emoteEntName);
-		AcceptEntityInput(client, "ClearParent", iEmoteEnt, iEmoteEnt, 0);
-		DispatchKeyValue(iEmoteEnt, "OnUser1", "!self,Kill,,1.0,-1");
-		AcceptEntityInput(iEmoteEnt, "FireUser1");
+    int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
+    if (!iEmoteEnt || iEmoteEnt == INVALID_ENT_REFERENCE || !IsValidEntity(iEmoteEnt))
+    {
+        g_iEmoteEnt[client]		 = 0;
+        g_bClientDancing[client] = false;
+        return;
+    }
 
-		if (g_cvarTeleportBack.BoolValue)
-			TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
+    char emoteEntName[50];
+    GetEntPropString(iEmoteEnt, Prop_Data, "m_iName", emoteEntName, sizeof(emoteEntName));
+    SetVariantString(emoteEntName);
+    AcceptEntityInput(client, "ClearParent", iEmoteEnt, iEmoteEnt, 0);
+    DispatchKeyValue(iEmoteEnt, "OnUser1", "!self,Kill,,1.0,-1");
+    AcceptEntityInput(iEmoteEnt, "FireUser1");
 
-		RemoveSkin(client);
-		ResetCam(client);
-		WeaponUnblock(client);
-		SetEntityMoveType(client, MOVETYPE_WALK);
+    if (g_cvarTeleportBack.BoolValue)
+        TeleportEntity(client, g_fLastPosition[client], g_fLastAngles[client], NULL_VECTOR);
 
-		if (g_iEngine == Engine_Left4Dead)
-			SetEntityRenderMode(client, RENDER_NORMAL);
+    RemoveSkin(client);
+    ResetCam(client);
+    WeaponUnblock(client);
+    SetEntityMoveType(client, MOVETYPE_WALK);
 
-		g_iEmoteEnt[client]		 = 0;
-		g_bClientDancing[client] = false;
-	}
-	else
-	{
-		g_iEmoteEnt[client]		 = 0;
-		g_bClientDancing[client] = false;
-	}
+    g_iEmoteEnt[client]		 = 0;
+    g_bClientDancing[client] = false;
 
-	if (g_iEmoteSoundEnt[client])
-	{
-		int iEmoteSoundEnt = EntRefToEntIndex(g_iEmoteSoundEnt[client]);
+    if (!g_iEmoteSoundEnt[client])
+        return;
 
-		if (!StrEqual(g_sEmoteSound[client], "none") && iEmoteSoundEnt && iEmoteSoundEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteSoundEnt))
-		{
-			StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
-			AcceptEntityInput(iEmoteSoundEnt, "Kill");
-			g_iEmoteSoundEnt[client] = 0;
-		}
-		else
-			g_iEmoteSoundEnt[client] = 0;
-	}
+    int iEmoteSoundEnt = EntRefToEntIndex(g_iEmoteSoundEnt[client]);
+
+    if (StrEqual(g_sEmoteSound[client], "none") || !iEmoteSoundEnt || iEmoteSoundEnt == INVALID_ENT_REFERENCE || !IsValidEntity(iEmoteSoundEnt))
+    {
+        g_iEmoteSoundEnt[client] = 0;
+        return;
+    }
+
+    LogSound("StopEmote: g_sEmoteSound = %s | client: %N", g_sEmoteSound[client], client);
+    StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
+    AcceptEntityInput(iEmoteSoundEnt, "Kill");
+    g_iEmoteSoundEnt[client] = 0;
 }
 
 void TerminateEmote(int client)
 {
-	if (!g_iEmoteEnt[client])
-		return;
+    if (!g_iEmoteEnt[client])
+        return;
 
-	int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
-	if (iEmoteEnt && iEmoteEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteEnt))
-	{
-		char emoteEntName[50];
-		GetEntPropString(iEmoteEnt, Prop_Data, "m_iName", emoteEntName, sizeof(emoteEntName));
-		SetVariantString(emoteEntName);
-		AcceptEntityInput(client, "ClearParent", iEmoteEnt, iEmoteEnt, 0);
-		DispatchKeyValue(iEmoteEnt, "OnUser1", "!self,Kill,,1.0,-1");
-		AcceptEntityInput(iEmoteEnt, "FireUser1");
+    int iEmoteEnt = EntRefToEntIndex(g_iEmoteEnt[client]);
+    if (!iEmoteEnt || iEmoteEnt == INVALID_ENT_REFERENCE || !IsValidEntity(iEmoteEnt))
+    {
+        g_iEmoteEnt[client]		 = 0;
+        g_bClientDancing[client] = false;
+        return;
+    }
 
-		g_iEmoteEnt[client]		 = 0;
-		g_bClientDancing[client] = false;
-	}
-	else
-	{
-		g_iEmoteEnt[client]		 = 0;
-		g_bClientDancing[client] = false;
-	}
+    char emoteEntName[50];
+    GetEntPropString(iEmoteEnt, Prop_Data, "m_iName", emoteEntName, sizeof(emoteEntName));
+    SetVariantString(emoteEntName);
+    AcceptEntityInput(client, "ClearParent", iEmoteEnt, iEmoteEnt, 0);
+    DispatchKeyValue(iEmoteEnt, "OnUser1", "!self,Kill,,1.0,-1");
+    AcceptEntityInput(iEmoteEnt, "FireUser1");
 
-	if (g_iEmoteSoundEnt[client])
-	{
-		int iEmoteSoundEnt = EntRefToEntIndex(g_iEmoteSoundEnt[client]);
+    g_iEmoteEnt[client]		 = 0;
+    g_bClientDancing[client] = false;
 
-		if (!StrEqual(g_sEmoteSound[client], "none") && iEmoteSoundEnt && iEmoteSoundEnt != INVALID_ENT_REFERENCE && IsValidEntity(iEmoteSoundEnt))
-		{
-			StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
-			AcceptEntityInput(iEmoteSoundEnt, "Kill");
-			g_iEmoteSoundEnt[client] = 0;
-		}
-		else
-			g_iEmoteSoundEnt[client] = 0;
-	}
+    if (!g_iEmoteSoundEnt[client])
+        return;
+
+    int iEmoteSoundEnt = EntRefToEntIndex(g_iEmoteSoundEnt[client]);
+
+    if (StrEqual(g_sEmoteSound[client], "none") || !iEmoteSoundEnt || iEmoteSoundEnt == INVALID_ENT_REFERENCE || !IsValidEntity(iEmoteSoundEnt))
+    {
+        g_iEmoteSoundEnt[client] = 0;
+        return;
+    }
+
+    LogSound("TerminateEmote: g_sEmoteSound = %s | client: %N", g_sEmoteSound[client], client);
+    StopSound(iEmoteSoundEnt, SNDCHAN_AUTO, g_sEmoteSound[client]);
+    AcceptEntityInput(iEmoteSoundEnt, "Kill");
+    g_iEmoteSoundEnt[client] = 0;
 }
 
 void WeaponBlock(int client)
@@ -386,29 +381,13 @@ public Action SetTransmit(int entity, int client)
 
 void SetCam(int client)
 {
-	if (g_iEngine == Engine_Left4Dead)
-	{
-		SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", 0);
-		SetEntProp(client, Prop_Send, "m_iObserverMode", 1);
-		SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 0);
-	}
-	else if (g_iEngine == Engine_Left4Dead2)
-		SetEntPropFloat(client, Prop_Send, "m_TimeForceExternalView", 99999.3);
-
+	SetEntPropFloat(client, Prop_Send, "m_TimeForceExternalView", 99999.3);
 	SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | HIDEHUD_CROSSHAIR);
 }
 
 void ResetCam(int client)
 {
-	if (g_iEngine == Engine_Left4Dead)
-	{
-		SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", -1);
-		SetEntProp(client, Prop_Send, "m_iObserverMode", 0);
-		SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 1);
-	}
-	else if (g_iEngine == Engine_Left4Dead2)
-		SetEntPropFloat(client, Prop_Send, "m_TimeForceExternalView", 0.0);
-
+	SetEntPropFloat(client, Prop_Send, "m_TimeForceExternalView", 0.0);
 	SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDEHUD_CROSSHAIR);
 }
 

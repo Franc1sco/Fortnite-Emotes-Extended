@@ -31,14 +31,14 @@ Resources
 
 int
 	g_iModelSize[FNEMOTES_LIMIT_FILES], // [] = file index
-	g_iSoundsSize[FNEMOTES_LIMIT_FILES], // [] = file index	
+	g_iSoundsSize[FNEMOTES_LIMIT_FILES], // [] = file index
 	g_iEmotesSize[FNEMOTES_LIMIT_FILES], // [] = file index
 	g_iDancesSize[FNEMOTES_LIMIT_FILES], // [] = file index
 	g_iFilesFnemotesCounter; // Counter for the number of files in the fnemotes directory
 
 enum struct FilesFnEmotes
 {
-	char name[32];
+	char name[64];
 }
 
 FilesFnEmotes
@@ -118,13 +118,21 @@ void OnPluginEnd_resources()
 
 void OnConfigsExecuted_resources()
 {
-	if (!g_cvarDownloadResources.BoolValue)
-		return;
-
 #if !DEBUG
 	if (g_bLateload)
 		return;
 #endif
+}
+
+void OnMapStart_Resources()
+{
+#if !DEBUG
+	if (g_bLateload)
+		return;
+#endif
+
+	if (!g_cvarDownloadResources.BoolValue)
+		return;
 
 	for(int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
@@ -138,14 +146,7 @@ void OnConfigsExecuted_resources()
 			AddFileToDownloadsTable(g_Sounds[i][j].path);
 		}
 	}
-}
 
-void OnMapStart_Resources()
-{
-#if !DEBUG
-	if (g_bLateload)
-		return;
-#endif
 	for(int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
 		for (int j = 1; j <= g_iModelSize[i]; j++)
@@ -156,13 +157,12 @@ void OnMapStart_Resources()
 			PrecacheModel(g_Models[i][j].path, true);
 		}
 
-		char
-			g_sSounds[MAX_RESOURCES];
+		char szSound[MAX_RESOURCES];
 		for (int j = 1; j <= g_iSoundsSize[i]; j++)
 		{
-			Format(g_sSounds, sizeof(g_sSounds), g_Sounds[i][j].path);
-			ReplaceStringEx(g_sSounds, sizeof(g_sSounds), "sound/", "");	// Remove sound/ prefix
-			PrecacheSound(g_sSounds);
+			Format(szSound, sizeof(szSound), g_Sounds[i][j].path);
+			ReplaceStringEx(szSound, sizeof(szSound), "sound/", "");
+			PrecacheSound(szSound);
 		}
 	}
 }
@@ -327,25 +327,25 @@ bool ReadDirectory()
 
 bool GetEmoteInfo(const int iFile, const char[] sName, char[] sAnim1, int iAnim1Leng, char[] sAnim2, int iAnim2Leng, char[] sSound, int iSoundLeng, bool &bIsLooping, bool bIsDance = false)
 {
-	
 	g_kvResources[iFile].Rewind();
 
 	char 
-		sBuffer[64];
+		sBuffer[64],
+		sKey[16];
 
-	if(bIsDance)
+	strcopy(sKey, sizeof(sKey), bIsDance ? KEY_DANCES : KEY_EMOTES);
+
+	if (!g_kvResources[iFile].JumpToKey(sKey))
 	{
-		if (!g_kvResources[iFile].JumpToKey(KEY_DANCES))
-			return false;
-	}
-	else
-	{
-		if (!g_kvResources[iFile].JumpToKey(KEY_EMOTES))
-			return false;
+		LogError("Couldn't find key [%s] in file [%s]", sKey, g_FilesConfig[iFile].name);
+		return false;
 	}
 
 	if (!g_kvResources[iFile].JumpToKey(sName))
+	{
+		LogError("Couldn't find key [%s] in file [%s]", sName, g_FilesConfig[iFile].name);
 		return false;
+	}
 		
 	g_kvResources[iFile].GetString("anim1", sBuffer, sizeof(sBuffer));
 	strcopy(sAnim1, iAnim1Leng, sBuffer);
@@ -354,6 +354,11 @@ bool GetEmoteInfo(const int iFile, const char[] sName, char[] sAnim1, int iAnim1
 	g_kvResources[iFile].GetString("sound", sBuffer, sizeof(sBuffer));
 	strcopy(sSound, iSoundLeng, sBuffer);
 	bIsLooping = view_as<bool>(g_kvResources[iFile].GetNum("isloop", 0));
+
+#if DEBUG
+	LogDebug("GetEmoteInfo: Name: %s | Anim1: %s | Anim2: %s | Sound: %s | Loop: %s", sName, sAnim1, sAnim2, sSound, bIsLooping ? "true" : "false");
+#endif
+
 	return true;
 }
 
