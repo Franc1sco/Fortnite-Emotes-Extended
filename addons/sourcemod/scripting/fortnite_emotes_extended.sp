@@ -33,8 +33,8 @@
 			G L O B A L   V A R S
 *****************************************************************/
 
-#define DEBUG		1
-#define DEBUG_SOUND 1
+#define DEBUG		0
+#define DEBUG_SOUND 0
 
 #define EF_BONEMERGE		  0x001
 #define EF_NOSHADOW			  0x010
@@ -68,8 +68,12 @@ int
 	playerModelsIndex[MAXPLAYERS + 1];
 
 char
-	g_sEmoteSound[MAXPLAYERS + 1][PLATFORM_MAX_PATH],
+	g_sEmoteSound[MAXPLAYERS + 1][PLATFORM_MAX_PATH];
+
+#if DEBUG
+char
 	g_sLogPath[PLATFORM_MAX_PATH];
+#endif
 
 bool
 	g_bClientDancing[MAXPLAYERS + 1],
@@ -113,7 +117,7 @@ public Plugin myinfo =
 	name		= "SM Fortnite Emotes Extended - L4D Version",
 	author		= "Kodua, Franc1sco franug, TheBO$$, Foxhound, lechuga",
 	description = "This plugin is for demonstration of some animations from Fortnite in L4D",
-	version		= "1.6.1",
+	version		= "1.7.0",
 	url			= "https://github.com/lechuga16/Fortnite-Emotes-Extended"
 };
 
@@ -988,5 +992,6 @@ void LogSound(const char[] sMessage, any...) {}
 #endif
 
 #else
-void LogDebug(const char[] sMessage, any...) {}
+public void LogDebug(const char[] sMessage, any...) {}
+public void LogSound(const char[] sMessage, any...) {}
 #endif
