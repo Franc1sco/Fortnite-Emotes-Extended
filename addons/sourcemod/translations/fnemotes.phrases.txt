@@ -134,4 +134,19 @@
 	{
 		"en"			"List of dances in your {green}console{default}"
 	}
+
+	"FILE"
+	{
+		"en"			"File"
+	}
+
+	"CODE"
+	{
+		"en"			"Code"
+	}
+
+	"NAME"
+	{
+		"en"			"Name"
+	}
 }

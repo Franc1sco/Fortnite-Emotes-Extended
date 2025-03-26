@@ -134,4 +134,19 @@
 	{
 		"es"			"Lista de bailes en tu {green}consola{default}"
 	}
+
+	"FILE"
+	{
+		"es"			"Archivo"
+	}
+
+	"CODE"
+	{
+		"es"			"Código"
+	}
+
+	"NAME"
+	{
+		"es"			"Nombre"
+	}
 }

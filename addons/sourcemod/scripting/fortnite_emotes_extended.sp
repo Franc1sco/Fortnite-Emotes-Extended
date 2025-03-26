@@ -322,7 +322,7 @@ public Action Command_EmoteCode(int client, int args)
 
 	CPrintToChat(client, "%t %t", "TAG", "EMOTES_LIST_CONSOLE");
 	int iCode = 1;
-
+	char szBuffer[128];
 	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
 	{	
 		if(g_iEmotesSize[iFilesIndex] == 0)
@@ -330,12 +330,20 @@ public Action Command_EmoteCode(int client, int args)
 
 		if(iFilesIndex != 1)
 			PrintToConsole(client, " ");
-
-		PrintToConsole(client, "\nFile [%s]", g_FilesConfig[iFilesIndex].name);
+		
+		szBuffer[0] = '\0';
+		strcopy(szBuffer, sizeof(szBuffer), g_FilesConfig[iFilesIndex].name);
+		ReplaceString(szBuffer, sizeof(szBuffer), "fnemotes_", "");
+		ReplaceString(szBuffer, sizeof(szBuffer), ".cfg", "");
+		PrintToConsole(client, "%t %s", "FILE", szBuffer);
 		PrintToConsole(client, "--------------------");
 		for (int iEmoteIndex = 1; iEmoteIndex <= g_iEmotesSize[iFilesIndex]; iEmoteIndex++)
 		{
-			PrintToConsole(client, "> Code: #%d | %s", iCode, g_Emotes[iFilesIndex][iEmoteIndex].name);
+			szBuffer[0] = '\0';
+			strcopy(szBuffer, sizeof(szBuffer), g_Emotes[iFilesIndex][iEmoteIndex].name);
+			ReplaceString(szBuffer, sizeof(szBuffer), "Emote_", "");
+			ReplaceString(szBuffer, sizeof(szBuffer), "_", " ");
+			PrintToConsole(client, "> %t: %d | %t: %s", "CODE", iCode, "NAME", szBuffer);
 			iCode++;
 		}
 		PrintToConsole(client, "--------------------");
@@ -362,6 +370,7 @@ public Action Command_DanceCode(int client, int args)
 
 	CPrintToChat(client, "%t %t", "TAG", "DANCE_LIST_CONSOLE");
 	int iCode = 1;
+	char szBuffer[128];
 
 	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
 	{	
@@ -371,11 +380,19 @@ public Action Command_DanceCode(int client, int args)
 		if(iFilesIndex != 1)
 			PrintToConsole(client, " ");
 
-		PrintToConsole(client, "\nFile [%s]", g_FilesConfig[iFilesIndex].name);
+		szBuffer[0] = '\0';
+		strcopy(szBuffer, sizeof(szBuffer), g_FilesConfig[iFilesIndex].name);
+		ReplaceString(szBuffer, sizeof(szBuffer), "fnemotes_", "");
+		ReplaceString(szBuffer, sizeof(szBuffer), ".cfg", "");
+		PrintToConsole(client, "%t %s", "FILE", szBuffer);
 		PrintToConsole(client, "--------------------");
 		for (int iDanceIndex = 1; iDanceIndex <= g_iDancesSize[iFilesIndex]; iDanceIndex++)
 		{
-			PrintToConsole(client, "> Code: #%d | %s", iCode, g_Dances[iFilesIndex][iDanceIndex].name);
+			szBuffer[0] = '\0';
+			strcopy(szBuffer, sizeof(szBuffer), g_Dances[iFilesIndex][iDanceIndex].name);
+			ReplaceString(szBuffer, sizeof(szBuffer), "Emote_", "");
+			ReplaceString(szBuffer, sizeof(szBuffer), "_", " ");
+			PrintToConsole(client, "> %t: %d | %t: %s", "CODE", iCode, "NAME", szBuffer);
 			iCode++;
 		}
 		PrintToConsole(client, "--------------------");
