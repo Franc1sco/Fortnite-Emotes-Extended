@@ -8,17 +8,17 @@
 /**
  * Checks client's emote status
  *
- * @param client    Client's id
+ * @param iClient    Client's id
  * @return          True / False
  */
-native bool	 fnemotes_IsClientEmoting(int client);
+native bool fnemotes_IsClientEmoting(int iClient);
 
 /**
  * When a client do a emote
  *
- * @param client    Client's id
+ * @param iClient    Client's id
  */
-forward void fnemotes_OnEmote(int client);
+forward void fnemotes_OnEmote(int iClient);
 
 public SharedPlugin __pl_fnemotes =
 {

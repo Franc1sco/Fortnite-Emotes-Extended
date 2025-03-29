@@ -46,46 +46,42 @@
 #define DIR_EMOTES		  	"logs/Fornite_Emotes.log"
 
 ConVar
-	g_cvarHidePlayers,
-
-	g_cvarFlagEmotesMenu,
-	g_cvarFlagDancesMenu,
-	g_cvarCooldown,
-	g_cvarSoundVolume,
-	g_cvarEmotesSounds,
-	g_cvarHideWeapons,
-	g_cvarTeleportBack,
-	g_cvarSpeed,
-	g_cvarDownloadResources;
+	g_cvHidePlayers,
+	g_cvFlagEmotesMenu,
+	g_cvFlagDancesMenu,
+	g_cvCooldown,
+	g_cvSoundVolume,
+	g_cvEmotesSounds,
+	g_cvHideWeapons,
+	g_cvTeleportBack,
+	g_cvSpeed,
+	g_cvDownloadResources;
 
 int
 	g_iEmoteEnt[MAXPLAYERS + 1],
 	g_iEmoteSoundEnt[MAXPLAYERS + 1],
-
 	g_iWeaponHandEnt[MAXPLAYERS + 1],
-
-	playerModels[MAXPLAYERS + 1],
-	playerModelsIndex[MAXPLAYERS + 1];
+	g_iPlayerModels[MAXPLAYERS + 1],
+	g_iPlayerModelsIndex[MAXPLAYERS + 1];
 
 char
-	g_sEmoteSound[MAXPLAYERS + 1][PLATFORM_MAX_PATH];
+	g_szEmoteSound[MAXPLAYERS + 1][PLATFORM_MAX_PATH];
 
 #if DEBUG
 char
-	g_sLogPath[PLATFORM_MAX_PATH];
+	g_szLogPath[PLATFORM_MAX_PATH];
 #endif
 
 bool
 	g_bClientDancing[MAXPLAYERS + 1],
 	g_bEmoteCooldown[MAXPLAYERS + 1],
 	g_bHooked[MAXPLAYERS + 1],
-
 	g_bLateload,
-	g_bVipCore	 = false,
-	g_bPause	 = false;
+	g_bVipCore = false,
+	g_bPause = false;
 
 Handle
-	CooldownTimers[MAXPLAYERS + 1];
+	g_hCooldownTimers[MAXPLAYERS + 1];
 
 float
 	g_fLastAngles[MAXPLAYERS + 1][3],
@@ -164,26 +160,26 @@ public void OnLibraryAdded(const char[] sName)
 public void OnPluginStart()
 {
 #if DEBUG
-	BuildPath(Path_SM, g_sLogPath, sizeof(g_sLogPath), DIR_EMOTES);
+	BuildPath(Path_SM, g_szLogPath, sizeof(g_szLogPath), DIR_EMOTES);
 #endif
-	LoadTranslation("common.phrases");
-	LoadTranslation("fnemotes.phrases");
+	vLoadTranslation("common.phrases");
+	vLoadTranslation("fnemotes.phrases");
 
 	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
 	HookEvent("player_hurt", Event_PlayerHurt, EventHookMode_Pre);
 	HookEvent("round_start", Event_Start);
 	HookEvent("player_team", Event_PlayerTeam);
 
-	g_cvarEmotesSounds		= CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_cvarCooldown			= CreateConVar("sm_emotes_cooldown", "2.0", "Cooldown for emotes in seconds. 0 = no cooldown.", FCVAR_NOTIFY, true, 0.0);
-	g_cvarSoundVolume		= CreateConVar("sm_emotes_soundvolume", "1.0", "Sound volume for the emotes.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_cvarFlagEmotesMenu	= CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)", FCVAR_NOTIFY);
-	g_cvarFlagDancesMenu	= CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)", FCVAR_NOTIFY);
-	g_cvarHideWeapons		= CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_cvarHidePlayers		= CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_cvarTeleportBack		= CreateConVar("sm_emotes_teleportonend", "1", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_cvarSpeed				= CreateConVar("sm_emotes_speed", "0.8", "Sets the playback speed of the animation. default (1.0)", FCVAR_NOTIFY, true, 0.0);
-	g_cvarDownloadResources = CreateConVar("sm_emotes_download_resources", "1", "Download method for the resources", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvEmotesSounds		= CreateConVar("sm_emotes_sounds", "1", "Enable/Disable sounds for emotes.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvCooldown			= CreateConVar("sm_emotes_cooldown", "2.0", "Cooldown for emotes in seconds. 0 = no cooldown.", FCVAR_NOTIFY, true, 0.0);
+	g_cvSoundVolume		= CreateConVar("sm_emotes_soundvolume", "1.0", "Sound volume for the emotes.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvFlagEmotesMenu	= CreateConVar("sm_emotes_admin_flag_menu", "", "admin flag for emotes (empty for all players)", FCVAR_NOTIFY);
+	g_cvFlagDancesMenu	= CreateConVar("sm_dances_admin_flag_menu", "", "admin flag for dances (empty for all players)", FCVAR_NOTIFY);
+	g_cvHideWeapons		= CreateConVar("sm_emotes_hide_weapons", "1", "Hide weapons when dancing", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvHidePlayers		= CreateConVar("sm_emotes_hide_enemies", "0", "Hide enemy players when dancing", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvTeleportBack		= CreateConVar("sm_emotes_teleportonend", "1", "Teleport back to the exact position when he started to dance. (Some maps need this for teleport triggers)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cvSpeed				= CreateConVar("sm_emotes_speed", "0.8", "Sets the playback speed of the animation. default (1.0)", FCVAR_NOTIFY, true, 0.0);
+	g_cvDownloadResources = CreateConVar("sm_emotes_download_resources", "1", "Download method for the resources", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
 	RegConsoleCmd("sm_emote", Command_Emote);
 	RegConsoleCmd("sm_emotecode", Command_EmoteCode);
@@ -201,46 +197,47 @@ public void OnPluginStart()
 	}
 
 	OnPluginStart_resources();
-	OnPluginStart_vipcore();
+	vOnPluginStart_vipcore();
 }
 
-public Action Command_Emote(int client, int args)
+public Action Command_Emote(int iClient, int iArgs)
 {
-	if (!IsValidClient(client))
+	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
 
-#if !DEBUG
-	if(g_bLateload)
+	if (g_bLateload)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
-#endif
-
-	if (!IsValidAccess(client))
-		CReplyToCommand(client, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
-
-	if(args == 0 && SM_REPLY_TO_CHAT == GetCmdReplySource())
-	{
-		Menu_Main(client);
+		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
 
-	if (args != 1)
+	if (!bIsValidAccess(iClient))
 	{
-		CReplyToCommand(client, "%t: sm_emote <#emote>", "USAGE");
+		CReplyToCommand(iClient, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
 		return Plugin_Handled;
 	}
 
-	if (g_bEmoteCooldown[client])
+	if (iArgs == 0 && SM_REPLY_TO_CHAT == GetCmdReplySource())
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "COOLDOWN_EMOTES");
+		aMainMenu(iClient);
 		return Plugin_Handled;
 	}
 
-	if (!IsSurvivor(client))
+	if (iArgs != 1)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "NOTSURVIVOR");
+		CReplyToCommand(iClient, "%t: sm_emote <#emote>", "USAGE");
+		return Plugin_Handled;
+	}
+
+	if (g_bEmoteCooldown[iClient])
+	{
+		CReplyToCommand(iClient, "%t %t", "TAG", "COOLDOWN_EMOTES");
+		return Plugin_Handled;
+	}
+
+	if (!bIsSurvivor(iClient))
+	{
+		CReplyToCommand(iClient, "%t %t", "TAG", "NOTSURVIVOR");
 		return Plugin_Handled;
 	}
 
@@ -248,32 +245,23 @@ public Action Command_Emote(int client, int args)
 	{
 		if (IsInPause())
 		{
-			CReplyToCommand(client, "%t %t", "TAG", "PAUSE_MODE");
+			CReplyToCommand(iClient, "%t %t", "TAG", "PAUSE_MODE");
 			return Plugin_Handled;
 		}
 	}
 
-	if (g_bClientDancing[client])
+	if (g_bClientDancing[iClient])
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "CANNOT_USE_NOW");
+		CReplyToCommand(iClient, "%t %t", "TAG", "CANNOT_USE_NOW");
 		return Plugin_Handled;
 	}
 
 	int iEmoteCode = GetCmdArgInt(1);
-
 	iEmoteCode = (iEmoteCode < 0) ? -iEmoteCode : iEmoteCode;
 
-	int
-		iFile,
-		iItem;
-
-	char
-		sAnim1[64],
-		sAnim2[64],
-		sSound[PLATFORM_MAX_PATH];
-
-	bool
-		bIsLoop;
+	int iFile, iItem;
+	char szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+	bool bIsLoop;
 
 	int iEmoteCounter = 0;
 
@@ -290,37 +278,38 @@ public Action Command_Emote(int client, int args)
 
 	if (iFile == 0 || iItem == 0)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "INVALID_EMOTE_ID", iEmoteCounter);
+		CReplyToCommand(iClient, "%t %t", "TAG", "INVALID_EMOTE_ID", iEmoteCounter);
 		return Plugin_Handled;
 	}
 
-	if (!GetEmoteInfo(iFile, g_Emotes[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
+	if (!bGetEmoteInfo(iFile, g_szEmotes[iFile][iItem].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop))
 	{
-		CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFile][iItem].name);
+		CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szEmotes[iFile][iItem].szName);
 		return Plugin_Handled;
 	}
 
-	CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFile);
+	aCreateEmote(iClient, szAnim1, szAnim2, szSound, bIsLoop, iFile);
 	return Plugin_Handled;
 }
 
-public Action Command_EmoteCode(int client, int args)
+public Action Command_EmoteCode(int iClient, int iArgs)
 {
-	if (!IsValidClient(client))
+	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
 
-#if !DEBUG
-	if(g_bLateload)
+	if (g_bLateload)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
+		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
-#endif
 
-	if (!IsValidAccess(client))
-		CReplyToCommand(client, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+	if (!bIsValidAccess(iClient))
+	{
+		CReplyToCommand(iClient, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+		return Plugin_Handled;
+	}
 
-	CPrintToChat(client, "%t %t", "TAG", "EMOTES_LIST_CONSOLE");
+	CPrintToChat(iClient, "%t %t", "TAG", "EMOTES_LIST_CONSOLE");
 	int iCode = 1;
 	char szBuffer[128];
 	for (int iFilesIndex = 1; iFilesIndex <= g_iFilesFnemotesCounter; iFilesIndex++)
@@ -329,46 +318,47 @@ public Action Command_EmoteCode(int client, int args)
 			continue;
 
 		if(iFilesIndex != 1)
-			PrintToConsole(client, " ");
+			PrintToConsole(iClient, " ");
 		
 		szBuffer[0] = '\0';
-		strcopy(szBuffer, sizeof(szBuffer), g_FilesConfig[iFilesIndex].name);
+		strcopy(szBuffer, sizeof(szBuffer), g_szFilesConfig[iFilesIndex].szName);
 		ReplaceString(szBuffer, sizeof(szBuffer), "fnemotes_", "");
 		ReplaceString(szBuffer, sizeof(szBuffer), ".cfg", "");
-		PrintToConsole(client, "%t %s", "FILE", szBuffer);
-		PrintToConsole(client, "--------------------");
+		PrintToConsole(iClient, "%t %s", "FILE", szBuffer);
+		PrintToConsole(iClient, "--------------------");
 		for (int iEmoteIndex = 1; iEmoteIndex <= g_iEmotesSize[iFilesIndex]; iEmoteIndex++)
 		{
 			szBuffer[0] = '\0';
-			strcopy(szBuffer, sizeof(szBuffer), g_Emotes[iFilesIndex][iEmoteIndex].name);
+			strcopy(szBuffer, sizeof(szBuffer), g_szEmotes[iFilesIndex][iEmoteIndex].szName);
 			ReplaceString(szBuffer, sizeof(szBuffer), "Emote_", "");
 			ReplaceString(szBuffer, sizeof(szBuffer), "_", " ");
-			PrintToConsole(client, "> %t: %d | %t: %s", "CODE", iCode, "NAME", szBuffer);
+			PrintToConsole(iClient, "> %t: %d | %t: %s", "CODE", iCode, "NAME", szBuffer);
 			iCode++;
 		}
-		PrintToConsole(client, "--------------------");
+		PrintToConsole(iClient, "--------------------");
 	}
 
 	return Plugin_Handled;
 }
 
-public Action Command_DanceCode(int client, int args)
+public Action Command_DanceCode(int iClient, int iArgs)
 {
-	if (!IsValidClient(client))
+	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
 
-#if !DEBUG
-	if(g_bLateload)
+	if (g_bLateload)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
+		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
-#endif
 
-	if (!IsValidAccess(client))
-		CReplyToCommand(client, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+	if (!bIsValidAccess(iClient))
+	{
+		CReplyToCommand(iClient, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
+		return Plugin_Handled;
+	}
 
-	CPrintToChat(client, "%t %t", "TAG", "DANCE_LIST_CONSOLE");
+	CPrintToChat(iClient, "%t %t", "TAG", "DANCE_LIST_CONSOLE");
 	int iCode = 1;
 	char szBuffer[128];
 
@@ -378,66 +368,67 @@ public Action Command_DanceCode(int client, int args)
 			continue;
 
 		if(iFilesIndex != 1)
-			PrintToConsole(client, " ");
+			PrintToConsole(iClient, " ");
 
 		szBuffer[0] = '\0';
-		strcopy(szBuffer, sizeof(szBuffer), g_FilesConfig[iFilesIndex].name);
+		strcopy(szBuffer, sizeof(szBuffer), g_szFilesConfig[iFilesIndex].szName);
 		ReplaceString(szBuffer, sizeof(szBuffer), "fnemotes_", "");
 		ReplaceString(szBuffer, sizeof(szBuffer), ".cfg", "");
-		PrintToConsole(client, "%t %s", "FILE", szBuffer);
-		PrintToConsole(client, "--------------------");
+		PrintToConsole(iClient, "%t %s", "FILE", szBuffer);
+		PrintToConsole(iClient, "--------------------");
 		for (int iDanceIndex = 1; iDanceIndex <= g_iDancesSize[iFilesIndex]; iDanceIndex++)
 		{
 			szBuffer[0] = '\0';
-			strcopy(szBuffer, sizeof(szBuffer), g_Dances[iFilesIndex][iDanceIndex].name);
+			strcopy(szBuffer, sizeof(szBuffer), g_szDances[iFilesIndex][iDanceIndex].szName);
 			ReplaceString(szBuffer, sizeof(szBuffer), "Emote_", "");
 			ReplaceString(szBuffer, sizeof(szBuffer), "_", " ");
-			PrintToConsole(client, "> %t: %d | %t: %s", "CODE", iCode, "NAME", szBuffer);
+			PrintToConsole(iClient, "> %t: %d | %t: %s", "CODE", iCode, "NAME", szBuffer);
 			iCode++;
 		}
-		PrintToConsole(client, "--------------------");
+		PrintToConsole(iClient, "--------------------");
 	}
 
 	return Plugin_Handled;
 }
 
-public Action Command_Dance(int client, int args)
+public Action Command_Dance(int iClient, int iArgs)
 {
-	if (!IsValidClient(client))
+	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
 
-#if !DEBUG
-	if(g_bLateload)
+	if (g_bLateload)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
-#endif
-
-	if (!IsValidAccess(client))
-		CReplyToCommand(client, "%t %t", "TAG", "NO_DANCES_ACCESS_FLAG");
-
-	if(args == 0 && SM_REPLY_TO_CHAT == GetCmdReplySource())
-	{
-		Menu_Main(client);
+		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
 
-	if (args != 1)
+	if (!bIsValidAccess(iClient))
 	{
-		CReplyToCommand(client, "%t: sm_emote <#emote>", "USAGE");
+		CReplyToCommand(iClient, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
 		return Plugin_Handled;
 	}
 
-	if (g_bEmoteCooldown[client])
+	if(iArgs == 0 && SM_REPLY_TO_CHAT == GetCmdReplySource())
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "COOLDOWN_EMOTES");
+		aMainMenu(iClient);
 		return Plugin_Handled;
 	}
 
-	if (!IsSurvivor(client))
+	if (iArgs != 1)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "NOTSURVIVOR");
+		CReplyToCommand(iClient, "%t: sm_emote <#emote>", "USAGE");
+		return Plugin_Handled;
+	}
+
+	if (g_bEmoteCooldown[iClient])
+	{
+		CReplyToCommand(iClient, "%t %t", "TAG", "COOLDOWN_EMOTES");
+		return Plugin_Handled;
+	}
+
+	if (!bIsSurvivor(iClient))
+	{
+		CReplyToCommand(iClient, "%t %t", "TAG", "NOTSURVIVOR");
 		return Plugin_Handled;
 	}
 
@@ -445,31 +436,23 @@ public Action Command_Dance(int client, int args)
 	{
 		if (IsInPause())
 		{
-			CReplyToCommand(client, "%t %t", "TAG", "PAUSE_MODE");
+			CReplyToCommand(iClient, "%t %t", "TAG", "PAUSE_MODE");
 			return Plugin_Handled;
 		}
 	}
 
-	if (g_bClientDancing[client])
+	if (g_bClientDancing[iClient])
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "CANNOT_USE_NOW");
+		CReplyToCommand(iClient, "%t %t", "TAG", "CANNOT_USE_NOW");
 		return Plugin_Handled;
 	}
 
 	int iDanceCode = GetCmdArgInt(1);
 	iDanceCode = (iDanceCode < 0) ? -iDanceCode : iDanceCode;
 
-	int
-		iFile,
-		iItem;
-
-	char
-		sAnim1[64],
-		sAnim2[64],
-		sSound[PLATFORM_MAX_PATH];
-
-	bool
-		bIsLoop;
+	int iFile, iItem;
+	char szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+	bool bIsLoop;
 
 	int iDanceCounter = 0;
 
@@ -486,251 +469,224 @@ public Action Command_Dance(int client, int args)
 
 	if (iFile == 0 || iItem == 0)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "INVALID_DANCE_ID", iDanceCounter);
+		CReplyToCommand(iClient, "%t %t", "TAG", "INVALID_DANCE_ID", iDanceCounter);
 		return Plugin_Handled;
 	}
 
-	if (!GetEmoteInfo(iFile, g_Dances[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
+	if (!bGetEmoteInfo(iFile, g_szDances[iFile][iItem].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop, true))
 	{
-		CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFile][iItem].name);
+		CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szDances[iFile][iItem].szName);
 		return Plugin_Handled;
 	}
 
-	CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFile);
+	aCreateEmote(iClient, szAnim1, szAnim2, szSound, bIsLoop, iFile);
 	return Plugin_Handled;
 }
 
-Action Command_SetEmote(int client, int args)
+Action Command_SetEmote(int iClient, int iArgs)
 {
-	if (args != 1 && args != 3)
+	if (iArgs != 1 && iArgs != 3)
 	{
-		CReplyToCommand(client, "%t: sm_setemote <#userid|name> <configid|blank:random> <emoteid|blank:random>", "USAGE");
+		CReplyToCommand(iClient, "%t: sm_setemote <#userid|name> <configid|blank:random> <emoteid|blank:random>", "USAGE");
 		return Plugin_Handled;
 	}
 
-#if !DEBUG
-	if(g_bLateload)
+	if (g_bLateload)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
-#endif
-
-	char target[65];
-	GetCmdArg(1, target, sizeof(target));
-
-	char
-		target_name[MAX_TARGET_LENGTH];
-
-	int
-		target_list[MAXPLAYERS],
-		target_count;
-
-	bool
-		tn_is_ml;
-
-	if ((target_count = ProcessTargetString(target, client, target_list, MAXPLAYERS, COMMAND_FILTER_ALIVE, target_name, sizeof(target_name), tn_is_ml)) <= 0)
-	{
-		ReplyToTargetError(client, target_count);
+		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
 
-	if (args == 3)
+	char szTarget[65];
+	GetCmdArg(1, szTarget, sizeof(szTarget));
+
+	char szTargetName[MAX_TARGET_LENGTH];
+	int aiTargetList[MAXPLAYERS], iTargetCount;
+	bool bTnIsMl;
+
+	if ((iTargetCount = ProcessTargetString(szTarget, iClient, aiTargetList, MAXPLAYERS, COMMAND_FILTER_ALIVE, szTargetName, sizeof(szTargetName), bTnIsMl)) <= 0)
 	{
-		for (int i = 0; i < target_count; i++)
+		ReplyToTargetError(iClient, iTargetCount);
+		return Plugin_Handled;
+	}
+
+	if (iArgs == 3)
+	{
+		for (int i = 0; i < iTargetCount; i++)
 		{
-			CreateRandomEmote(target_list[i]);
+			vCreateRandomEmote(aiTargetList[i]);
 		}
 	}
 
 	int iFile = GetCmdArgInt(2);
-	if (!CheckConfig(iFile))
+	if (!bCheckConfig(iFile))
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "INVALID_CONFIG_ID", g_iFilesFnemotesCounter);
+		CReplyToCommand(iClient, "%t %t", "TAG", "INVALID_CONFIG_ID", g_iFilesFnemotesCounter);
 		return Plugin_Handled;
 	}
 
 	int iItem = GetCmdArgInt(3);
-	if (!CheckEmote(iFile, iItem))
+	if (!bCheckEmote(iFile, iItem))
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "INVALID_EMOTE_ID", g_iEmotesSize[iFile]);
+		CReplyToCommand(iClient, "%t %t", "TAG", "INVALID_EMOTE_ID", g_iEmotesSize[iFile]);
 		return Plugin_Handled;
 	}
 
-	for (int i = 0; i < target_count; i++)
+	for (int i = 0; i < iTargetCount; i++)
 	{
-		char
-			sAnim1[64],
-			sAnim2[64],
-			sSound[PLATFORM_MAX_PATH];
+		char szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+		bool bIsLoop;
 
-		bool
-			bIsLoop;
-
-		if (!GetEmoteInfo(iFile, g_Emotes[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
+		if (!bGetEmoteInfo(iFile, g_szEmotes[iFile][iItem].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop))
 		{
-			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFile][iItem].name);
+			CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szEmotes[iFile][iItem].szName);
 			return Plugin_Handled;
 		}
 
-		CreateEmote(target_list[i], sAnim1, sAnim2, sSound, bIsLoop, iFile);
+		aCreateEmote(aiTargetList[i], szAnim1, szAnim2, szSound, bIsLoop, iFile);
 	}
 
 	return Plugin_Handled;
 }
 
-Action Command_SetDance(int client, int args)
+Action Command_SetDance(int iClient, int iArgs)
 {
-	if (args != 1 && args != 3)
+	if (iArgs != 1 && iArgs != 3)
 	{
-		CReplyToCommand(client, "%t: sm_setdance <#userid|name> <configid|blank:random> <emoteid|blank:random>", "USAGE");
+		CReplyToCommand(iClient, "%t: sm_setdance <#userid|name> <configid|blank:random> <emoteid|blank:random>", "USAGE");
 		return Plugin_Handled;
 	}
 
-	char target[65];
-	GetCmdArg(1, target, sizeof(target));
+	char szTarget[65];
+	GetCmdArg(1, szTarget, sizeof(szTarget));
 
-	char
-		target_name[MAX_TARGET_LENGTH];
+	char szTargetName[MAX_TARGET_LENGTH];
+	int aiTargetList[MAXPLAYERS], iTargetCount;
+	bool bTnIsMl;
 
-	int
-		target_list[MAXPLAYERS],
-		target_count;
-
-	bool
-		tn_is_ml;
-
-	if ((target_count = ProcessTargetString(target, client, target_list, MAXPLAYERS, COMMAND_FILTER_ALIVE, target_name, sizeof(target_name), tn_is_ml)) <= 0)
+	if ((iTargetCount = ProcessTargetString(szTarget, iClient, aiTargetList, MAXPLAYERS, COMMAND_FILTER_ALIVE, szTargetName, sizeof(szTargetName), bTnIsMl)) <= 0)
 	{
-		ReplyToTargetError(client, target_count);
+		ReplyToTargetError(iClient, iTargetCount);
 		return Plugin_Handled;
 	}
 
-	if (args == 3)
+	if (iArgs == 3)
 	{
-		for (int i = 0; i < target_count; i++)
+		for (int i = 0; i < iTargetCount; i++)
 		{
-			CreateRandomEmote(target_list[i], true);
+			vCreateRandomEmote(aiTargetList[i], true);
 		}
 	}
 
 	int iFile = GetCmdArgInt(2);
-	if (!CheckConfig(iFile))
+	if (!bCheckConfig(iFile))
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "INVALID_CONFIG_ID", g_iFilesFnemotesCounter);
+		CReplyToCommand(iClient, "%t %t", "TAG", "INVALID_CONFIG_ID", g_iFilesFnemotesCounter);
 		return Plugin_Handled;
 	}
 
 	int iItem = GetCmdArgInt(3);
-	if (!CheckEmote(iFile, iItem))
+	if (!bCheckEmote(iFile, iItem))
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "INVALID_EMOTE_ID", g_iEmotesSize[iFile]);
+		CReplyToCommand(iClient, "%t %t", "TAG", "INVALID_EMOTE_ID", g_iEmotesSize[iFile]);
 		return Plugin_Handled;
 	}
 
-	for (int i = 0; i < target_count; i++)
+	for (int i = 0; i < iTargetCount; i++)
 	{
-		char
-			sAnim1[64],
-			sAnim2[64],
-			sSound[PLATFORM_MAX_PATH];
+		char szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+		bool bIsLoop;
 
-		bool
-			bIsLoop;
-
-		if (!GetEmoteInfo(iFile, g_Dances[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
+		if (!bGetEmoteInfo(iFile, g_szDances[iFile][iItem].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop, true))
 		{
-			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFile][iItem].name);
+			CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szDances[iFile][iItem].szName);
 			return Plugin_Handled;
 		}
 
-		CreateEmote(target_list[i], sAnim1, sAnim2, sSound, bIsLoop, iFile);
+		aCreateEmote(aiTargetList[i], szAnim1, szAnim2, szSound, bIsLoop, iFile);
 	}
 
 	return Plugin_Handled;
-}
-
-public void OnConfigsExecuted()
-{
-	OnConfigsExecuted_resources();
 }
 
 public void OnMapStart()
 {
-	if(g_bLateload)
+	vLogDebug("OnMapStart");
+	if (g_bLateload)
 		g_bLateload = false;
-	OnMapStart_Resources();
+	vOnMapStart_Resources();
 }
 
 public void OnPluginEnd()
 {
-	StopDancer();
-	OnPluginEnd_vipcore();
-	OnPluginEnd_resources();
+	vStopDancer();
+	vOnPluginEnd_vipcore();
+	vOnPluginEnd_resources();
 }
 
-public void OnClientPutInServer(int client)
+public void OnClientPutInServer(int iClient)
 {
-	if (IsValidClient(client))
+	if (bIsValidClient(iClient))
 	{
-		ResetCam(client);
-		TerminateEmote(client);
-		g_iWeaponHandEnt[client] = INVALID_ENT_REFERENCE;
+		vRevSetCam(iClient);
+		vTerminateEmote(iClient);
+		g_iWeaponHandEnt[iClient] = INVALID_ENT_REFERENCE;
 
-		if (CooldownTimers[client] != null)
-			KillTimer(CooldownTimers[client]);
+		if (g_hCooldownTimers[iClient] != null)
+			KillTimer(g_hCooldownTimers[iClient]);
 	}
 }
 
-public void OnClientDisconnect(int client)
+public void OnClientDisconnect(int iClient)
 {
-	if (IsValidClient(client))
+	if (bIsValidClient(iClient))
 	{
-		ResetCam(client);
-		TerminateEmote(client);
+		vRevSetCam(iClient);
+		vTerminateEmote(iClient);
 	}
-	if (CooldownTimers[client] != null)
+	if (g_hCooldownTimers[iClient] != null)
 	{
-		KillTimer(CooldownTimers[client]);
-		CooldownTimers[client]	 = null;
-		g_bEmoteCooldown[client] = false;
+		KillTimer(g_hCooldownTimers[iClient]);
+		g_hCooldownTimers[iClient]	 = null;
+		g_bEmoteCooldown[iClient] = false;
 	}
 
-	g_bHooked[client] = false;
+	g_bHooked[iClient] = false;
 }
 
 /*****************************************************************
 			F O R W A R D   P L U G I N S
 *****************************************************************/
-public Action OnPlayerRunCmd(int client, int& iButtons, int& iImpulse, float fVelocity[3], float fAngles[3], int& iWeapon)
+
+public Action OnPlayerRunCmd(int iClient, int& iButtons, int& iImpulse, float fVelocity[3], float fAngles[3], int& iWeapon)
 {
-	if (g_bClientDancing[client] && !(GetEntityFlags(client) & FL_ONGROUND))
-		StopEmote(client);
+	if (g_bClientDancing[iClient] && !(GetEntityFlags(iClient) & FL_ONGROUND))
+		vStopEmote(iClient);
 
 	static int iAllowedButtons = IN_BACK | IN_FORWARD | IN_MOVELEFT | IN_MOVERIGHT | IN_WALK | IN_SPEED | IN_SCORE;
 
 	if (iButtons == 0)
 		return Plugin_Continue;
 
-	if (g_iEmoteEnt[client] == 0)
+	if (g_iEmoteEnt[iClient] == 0)
 		return Plugin_Continue;
 
 	if ((iButtons & iAllowedButtons) && !(iButtons & ~iAllowedButtons))
 		return Plugin_Continue;
 
-	StopEmote(client);
+	vStopEmote(iClient);
 
 	return Plugin_Continue;
 }
 
 public void OnPause()
 {
-	StopDancer();
+	vStopDancer();
 }
 
 public void OnRoundLiveCountdownPre()
 {
-	StopDancer();
+	vStopDancer();
 }
 
 public void VIP_OnVIPLoaded()
@@ -743,55 +699,55 @@ public void VIP_OnVIPLoaded()
 ****************************************************************/
 public void Event_PAfk(Handle event, const char[] name, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(GetEventInt(event, "player"));
-	int target = GetClientOfUserId(GetEventInt(event, "bot"));
-	if (IsClientInGame(client))
+	int iClient = GetClientOfUserId(GetEventInt(event, "player"));
+	int iTarget = GetClientOfUserId(GetEventInt(event, "bot"));
+	if (IsClientInGame(iClient))
 	{
-		ResetCam(client);
-		TerminateEmote(client);
-		RemoveSkin(client);
-		WeaponUnblock(client);
-		g_bClientDancing[client] = false;
+		vRevSetCam(iClient);
+		vTerminateEmote(iClient);
+		vRemoveSkin(iClient);
+		vWeaponUnblock(iClient);
+		g_bClientDancing[iClient] = false;
 	}
 
-	SetEntityMoveType(target, MOVETYPE_WALK);
+	SetEntityMoveType(iTarget, MOVETYPE_WALK);
 }
 
 public void Event_PAfkQ(Handle event, const char[] name, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	if (0 < client <= MaxClients && g_bClientDancing[client])
+	int iClient = GetClientOfUserId(GetEventInt(event, "userid"));
+	if (0 < iClient <= MaxClients && g_bClientDancing[iClient])
 	{
-		ResetCam(client);
-		TerminateEmote(client);
-		RemoveSkin(client);
-		WeaponUnblock(client);
-		g_bClientDancing[client] = false;
+		vRevSetCam(iClient);
+		vTerminateEmote(iClient);
+		vRemoveSkin(iClient);
+		vWeaponUnblock(iClient);
+		g_bClientDancing[iClient] = false;
 	}
 }
 
 public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int iClient = GetClientOfUserId(GetEventInt(event, "userid"));
 
-	if (IsValidClient(client))
+	if (bIsValidClient(iClient))
 	{
-		ResetCam(client);
-		StopEmote(client);
+		vRevSetCam(iClient);
+		vStopEmote(iClient);
 	}
 	return Plugin_Continue;
 }
 
 public Action Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast)
 {
-	int attacker = GetClientOfUserId(event.GetInt("attacker"));
-	int client	 = GetClientOfUserId(event.GetInt("userid"));
+	int iAttacker = GetClientOfUserId(event.GetInt("attacker"));
+	int iClient	 = GetClientOfUserId(event.GetInt("userid"));
 
-	if (!IsSurvivor(client))
+	if (!bIsSurvivor(iClient))
 		return Plugin_Continue;
 
-	if (attacker != client)
-		StopEmote(client);
+	if (iAttacker != iClient)
+		vStopEmote(iClient);
 
 	return Plugin_Continue;
 }
@@ -800,11 +756,11 @@ public Action Event_Start(Event event, const char[] name, bool dontBroadcast)
 {
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsValidClient(i, false) && g_bClientDancing[i])
+		if (bIsValidClient(i, false) && g_bClientDancing[i])
 		{
-			ResetCam(i);
-			// StopEmote(client);
-			WeaponUnblock(i);
+			vRevSetCam(i);
+			// vStopEmote(client);
+			vWeaponUnblock(i);
 
 			g_bClientDancing[i] = false;
 		}
@@ -825,28 +781,46 @@ public void Event_PlayerTeam(Event hEvent, const char[] sEventName, bool bDontBr
 	if (OldTeam != L4DTeam_Survivor)
 		return;
 
-	StopEmote(iClient);
+	vStopEmote(iClient);
+}
+
+public void OnClientPostAdminCheck(int iClient)
+{
+	g_iPlayerModelsIndex[iClient] = -1;
+	g_iPlayerModels[iClient]	  = INVALID_ENT_REFERENCE;
 }
 
 /*****************************************************************
 			P L U G I N   F U N C T I O N S
 *****************************************************************/
 
-stock bool IsValidClient(int client, bool nobots = true)
+/**
+ * Checks if a client is valid and meets the specified conditions.
+ *
+ * @param iClient       The client index to validate.
+ * @param bNoBots       Optional. If true (default), bots are considered invalid.
+ * @return              True if the client is valid, connected, in-game, and (if bNoBots is true) not a bot.
+ */
+bool bIsValidClient(int iClient, bool bNoBots = true)
 {
-	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
+	if (iClient <= 0 || iClient > MaxClients || !IsClientConnected(iClient) || (bNoBots && IsFakeClient(iClient)))
 		return false;
 
-	return IsClientInGame(client);
+	return IsClientInGame(iClient);
 }
 
-bool CheckAdminFlags(int client, int iFlag)
+bool bCheckAdminFlags(int iClient, int iFlag)
 {
-	int iUserFlags = GetUserFlagBits(client);
+	int iUserFlags = GetUserFlagBits(iClient);
 	return (iUserFlags & ADMFLAG_ROOT || (iUserFlags & iFlag) == iFlag);
 }
 
-int GetEmotePeople()
+/**
+ * Retrieves the number of clients currently performing a dance emote.
+ *
+ * @return The count of clients who are in-game and actively dancing.
+ */
+int iGetEmotePeople()
 {
 	int count;
 	for (int i = 1; i <= MaxClients; i++)
@@ -858,29 +832,30 @@ int GetEmotePeople()
 	return count;
 }
 
-public void OnClientPostAdminCheck(int client)
+/**
+ * Checks if a client has the specified admin flag or root access.
+ *
+ * @param iClient       The client index to check.
+ * @param iFlag         The specific admin flag to check for.
+ * @return              True if the client has the specified flag or root access, false otherwise.
+ */
+bool bIsSurvivor(int iClient)
 {
-	playerModelsIndex[client] = -1;
-	playerModels[client]	  = INVALID_ENT_REFERENCE;
+	return (iClient > 0 && iClient <= MaxClients && IsClientInGame(iClient) && GetClientTeam(iClient) == 2);
 }
 
-bool IsSurvivor(int client)
+/**
+ * Removes the skin model associated with a specific client.
+ *
+ * @param iClient The client index whose skin model should be removed.
+ */
+void vRemoveSkin(int iClient)
 {
-	return (client > 0 && client <= MaxClients && IsClientInGame(client) && GetClientTeam(client) == 2);
-}
+	if (IsValidEntity(g_iPlayerModels[iClient]))
+		AcceptEntityInput(g_iPlayerModels[iClient], "Kill");
 
-public int CreatePlayerModelProp(int client, char[] sModel)
-{
-	return 0;
-}
-
-public void RemoveSkin(int client)
-{
-	if (IsValidEntity(playerModels[client]))
-		AcceptEntityInput(playerModels[client], "Kill");
-
-	playerModels[client]	  = INVALID_ENT_REFERENCE;
-	playerModelsIndex[client] = -1;
+	g_iPlayerModels[iClient]	  = INVALID_ENT_REFERENCE;
+	g_iPlayerModelsIndex[iClient] = -1;
 }
 
 /**
@@ -889,61 +864,65 @@ public void RemoveSkin(int client)
  * @param translation	Translation name.
  * @noreturn
  */
-stock void LoadTranslation(const char[] translation)
+void vLoadTranslation(const char[] szTranslation)
 {
-	char
-		sPath[PLATFORM_MAX_PATH],
-		sName[64];
+	char szPath[PLATFORM_MAX_PATH], szName[64];
 
-	Format(sName, sizeof(sName), "translations/%s.txt", translation);
-	BuildPath(Path_SM, sPath, sizeof(sPath), sName);
-	if (!FileExists(sPath))
-		SetFailState("Missing translation file %s.txt", translation);
+	Format(szName, sizeof(szName), "translations/%s.txt", szTranslation);
+	BuildPath(Path_SM, szPath, sizeof(szPath), szName);
+	if (!FileExists(szPath))
+		SetFailState("Missing translation file %s.txt", szTranslation);
 
-	LoadTranslations(translation);
+	LoadTranslations(szTranslation);
 }
 
 /**
  * Stops the dancing emote for all valid clients.
  */
-void StopDancer()
+void vStopDancer()
 {
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsValidClient(i) && g_bClientDancing[i])
-			StopEmote(i);
+		if (bIsValidClient(i) && g_bClientDancing[i])
+			vStopEmote(i);
 	}
 }
 
 /**
  * Checks if a client has valid access.
  *
- * @param client The client index to check.
+ * @param iClient The client index to check.
  * @return True if the client has valid access, false otherwise.
  */
-bool IsValidAccess(int client, bool isDance = false)
+bool bIsValidAccess(int iClient, bool bIsDance = false)
 {
 	if (g_bVipCore)
 	{
-		if (VIP_IsClientVIP(client))
+		if (VIP_IsClientVIP(iClient))
 			return true;
 	}
 	else
 	{
-		char sFlagAdmin[32];
-		if (isDance)
-			g_cvarFlagDancesMenu.GetString(sFlagAdmin, sizeof(sFlagAdmin));
+		char szFlagAdmin[32];
+		if (bIsDance)
+			g_cvFlagDancesMenu.GetString(szFlagAdmin, sizeof(szFlagAdmin));
 		else
-			g_cvarFlagEmotesMenu.GetString(sFlagAdmin, sizeof(sFlagAdmin));
+			g_cvFlagEmotesMenu.GetString(szFlagAdmin, sizeof(szFlagAdmin));
 
-		if (CheckAdminFlags(client, ReadFlagString(sFlagAdmin)))
+		if (bCheckAdminFlags(iClient, ReadFlagString(szFlagAdmin)))
 			return true;
 	}
 
 	return false;
 }
 
-bool CheckConfig(int iConfig)
+/**
+ * Checks if the given configuration index is valid.
+ *
+ * @param iConfig        The configuration index to check.
+ * @return               True if the configuration index is within the valid range (1 to g_iFilesFnemotesCounter), false otherwise.
+ */
+bool bCheckConfig(int iConfig)
 {
 	if (iConfig < 1 || iConfig > g_iFilesFnemotesCounter)
 		return false;
@@ -951,7 +930,17 @@ bool CheckConfig(int iConfig)
 	return true;
 }
 
-bool CheckEmote(int iConfig, int iEmote, bool bIsDance = false)
+/**
+ * Checks if the given emote index is valid within the specified configuration.
+ *
+ * @param iConfig       The configuration index to check against.
+ * @param iEmote        The emote index to validate.
+ * @param bIsDance      (Optional) Whether the emote is a dance. Defaults to false.
+ *                      If true, the function checks against the dance size array.
+ *
+ * @return              True if the emote index is valid, false otherwise.
+ */
+bool bCheckEmote(int iConfig, int iEmote, bool bIsDance = false)
 {
 	int iEmoteSize;
 
@@ -969,46 +958,44 @@ bool CheckEmote(int iConfig, int iEmote, bool bIsDance = false)
 /**
  * Returns the clients team using L4DTeam.
  *
- * @param client		Player's index.
+ * @param iClient		Player's index.
  * @return				Current L4DTeam of player.
  * @error				Invalid client index.
  */
-stock L4DTeam L4D_GetClientTeam(int client)
+stock L4DTeam L4D_GetClientTeam(int iClient)
 {
-	int team = GetClientTeam(client);
-	return view_as<L4DTeam>(team);
+	int iTeam = GetClientTeam(iClient);
+	return view_as<L4DTeam>(iTeam);
 }
 
 #if DEBUG
-void LogDebug(const char[] sMessage, any...)
+void vLogDebug(const char[] szMessage, any...)
 {
-	static char
-		sFormat[1024];
+	static char szFormat[1024];
 	
-	VFormat(sFormat, sizeof(sFormat), sMessage, 2);
-	File file = OpenFile(g_sLogPath, "a+");
+	VFormat(szFormat, sizeof(szFormat), szMessage, 2);
+	File file = OpenFile(g_szLogPath, "a+");
 
-	LogToFileEx(g_sLogPath, "[Debug] %s", sFormat);
+	LogToFileEx(g_szLogPath, "[Debug] %s", szFormat);
 	delete file;
 }
 
 #if DEBUG_SOUND
-void LogSound(const char[] sMessage, any...)
+void vLogSound(const char[] szMessage, any...)
 {
-	static char
-		sFormat[1024];
+	static char szFormat[1024];
 	
-	VFormat(sFormat, sizeof(sFormat), sMessage, 2);
-	File file = OpenFile(g_sLogPath, "a+");
+	VFormat(szFormat, sizeof(szFormat), szMessage, 2);
+	File file = OpenFile(g_szLogPath, "a+");
 
-	LogToFileEx(g_sLogPath, "[Sound] %s", sFormat);
+	LogToFileEx(g_szLogPath, "[Sound] %s", szFormat);
 	delete file;
 }
 #else
-void LogSound(const char[] sMessage, any...) {}
+void vLogSound(const char[] szMessage, any...) {}
 #endif
 
 #else
-public void LogDebug(const char[] sMessage, any...) {}
-public void LogSound(const char[] sMessage, any...) {}
+public void vLogDebug(const char[] szMessage, any...) {}
+public void vLogSound(const char[] szMessage, any...) {}
 #endif

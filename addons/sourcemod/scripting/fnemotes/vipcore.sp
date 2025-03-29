@@ -1,19 +1,14 @@
-#if defined _vipcore_included
-	#endinput
-#endif
-#define _vipcore_included
-
 /*****************************************************************
 			G L O B A L   V A R S
 *****************************************************************/
 
-static const char g_sFeature[] = "ForniteEmotes";
+static const char g_szFeature[] = "ForniteEmotes";
 
 /*****************************************************************
 			F O R W A R D   P U B L I C S
 *****************************************************************/
 
-void OnPluginStart_vipcore()
+void vOnPluginStart_vipcore()
 {
 	if (!g_bVipCore)
 		return;
@@ -26,14 +21,14 @@ void OnPluginStart_vipcore()
 	VIP_OnVIPLoaded();
 }
 
-void OnPluginEnd_vipcore()
+void vOnPluginEnd_vipcore()
 {
 	if (g_bVipCore && CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "VIP_UnregisterFeature") == FeatureStatus_Available)
 	{
-		if (!VIP_IsValidFeature(g_sFeature))
+		if (!VIP_IsValidFeature(g_szFeature))
 			return;
 		
-		VIP_UnregisterFeature(g_sFeature);
+		VIP_UnregisterFeature(g_szFeature);
 	}
 }
 
@@ -43,82 +38,78 @@ void OnPluginEnd_vipcore()
 
 void VIP_OnVIPLoaded_vipcore()
 {
-	if (VIP_IsValidFeature(g_sFeature))
+	if (VIP_IsValidFeature(g_szFeature))
 		return;
 
-	VIP_RegisterFeature(g_sFeature, VIP_NULL, SELECTABLE, OnItemSelect, OnItemDisplay);
+	VIP_RegisterFeature(g_szFeature, VIP_NULL, SELECTABLE, bOnItemSelect, bOnItemDisplay);
 }
 
-public bool OnItemSelect(int client, char[] sFeatureName)
+bool bOnItemSelect(int iClient, char[] szFeatureName)
 {
-	if(g_bLateload)
+	if (g_bLateload)
 	{
-		CReplyToCommand(client, "%t %t", "TAG", "LATLOAD");
+		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return false;
 	}
 
-	Menu menu = new Menu(MenuHandler_Vip);
+	Menu hItemSelectMenu = new Menu(MenuHandler_Vip);
 
-	char title[65];
-	Format(title, sizeof(title), "%T:", "TITLE_MAIM_MENU", client);
-	menu.SetTitle(title);
+	char szTitle[65];
+	Format(szTitle, sizeof(szTitle), "%T:", "TITLE_MAIM_MENU", iClient);
+	hItemSelectMenu.SetTitle(szTitle);
 
-	AddTranslatedMenuItem(menu, "", "RANDOM_EMOTE", client);
-	AddTranslatedMenuItem(menu, "", "RANDOM_DANCE", client);
-	AddTranslatedMenuItem(menu, "", "EMOTES_LIST", client);
-	AddTranslatedMenuItem(menu, "", "DANCES_LIST", client);
+	vAddTranslatedMenuItem(hItemSelectMenu, "", "RANDOM_EMOTE", iClient);
+	vAddTranslatedMenuItem(hItemSelectMenu, "", "RANDOM_DANCE", iClient);
+	vAddTranslatedMenuItem(hItemSelectMenu, "", "EMOTES_LIST", iClient);
+	vAddTranslatedMenuItem(hItemSelectMenu, "", "DANCES_LIST", iClient);
 
-	menu.ExitButton = true;
-	menu.Display(client, MENU_TIME_FOREVER);
+	hItemSelectMenu.ExitButton = true;
+	hItemSelectMenu.Display(iClient, MENU_TIME_FOREVER);
 
 	return false;
 }
 
-int MenuHandler_Vip(Menu menu, MenuAction action, int param1, int param2)
+int MenuHandler_Vip(Menu hMenu, MenuAction eAction, int iParam1, int iParam2)
 {
-	switch (action)
+	switch (eAction)
 	{
 		case MenuAction_Select:
 		{
-			int
-				client = param1,
-				item   = param2;
+			int iClient = iParam1, iItem = iParam2;
 
-			switch (item)
+			switch (iItem)
 			{
 				case 0:
 				{
-					CreateRandomEmote(client);
-					Menu_Main(client);
+					vCreateRandomEmote(iClient);
+					aMainMenu(iClient);
 				}
 				case 1:
 				{
-					CreateRandomEmote(client, true);
-					Menu_Main(client);
+					vCreateRandomEmote(iClient, true);
+					aMainMenu(iClient);
 				}
 				case 2:
-					Menu_Emotes(client);
+					aMenuEmotes(iClient);
 				case 3:
-					Menu_Dances(client);
+					aMenuDances(iClient);
 			}
 		}
 		case MenuAction_End:
-			delete menu;
+			delete hMenu;
 		case MenuAction_Cancel:
 		{
-			int
-				client = param1,
-				reason = param2;
+			int iClient = iParam1, iReason = iParam2;
 
-			if (reason == MenuCancel_ExitBack)
-				VIP_SendClientVIPMenu(client);
+			if (iReason == MenuCancel_ExitBack)
+				VIP_SendClientVIPMenu(iClient);
 		}
 	}
 	return 0;
 }
 
-public bool OnItemDisplay(int client, char[] sFeatureName, char[] sDisplay, int iMaxLen)
+bool bOnItemDisplay(int iClient, char[] szFeatureName, char[] szDisplay, int iMaxLen)
 {
-	FormatEx(sDisplay, iMaxLen, "%t", "TITLE_MAIM_MENU");
+	FormatEx(szDisplay, iMaxLen, "%t", "TITLE_MAIM_MENU");
 	return true;
 }

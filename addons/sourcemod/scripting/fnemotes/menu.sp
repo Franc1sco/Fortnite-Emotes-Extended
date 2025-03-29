@@ -1,251 +1,219 @@
-#if defined _menu_included
-	#endinput
-#endif
-#define _menu_included
-
 /*****************************************************************
 			P L U G I N   F U N C T I O N S
 *****************************************************************/
 
-Action Menu_Main(int client)
+Action aMainMenu(int iClient)
 {
-	Menu menu = new Menu(MenuHandler_Dance);
+	Menu hMenu = new Menu(iMainMenuHandler);
 
-	char title[65];
-	Format(title, sizeof(title), "%T:", "TITLE_MAIM_MENU", client);
-	menu.SetTitle(title);
+	char szTitle[65];
+	Format(szTitle, sizeof(szTitle), "%T:", "TITLE_MAIM_MENU", iClient);
+	hMenu.SetTitle(szTitle);
 
-	AddTranslatedMenuItem(menu, "", "RANDOM_EMOTE", client);
-	AddTranslatedMenuItem(menu, "", "RANDOM_DANCE", client);
-	AddTranslatedMenuItem(menu, "", "EMOTES_LIST", client);
-	AddTranslatedMenuItem(menu, "", "DANCES_LIST", client);
+	vAddTranslatedMenuItem(hMenu, "", "RANDOM_EMOTE", iClient);
+	vAddTranslatedMenuItem(hMenu, "", "RANDOM_DANCE", iClient);
+	vAddTranslatedMenuItem(hMenu, "", "EMOTES_LIST", iClient);
+	vAddTranslatedMenuItem(hMenu, "", "DANCES_LIST", iClient);
 
-	menu.ExitButton = true;
-	menu.Display(client, MENU_TIME_FOREVER);
+	hMenu.ExitButton = true;
+	hMenu.Display(iClient, MENU_TIME_FOREVER);
 
 	return Plugin_Handled;
 }
 
-int MenuHandler_Dance(Menu menu, MenuAction action, int param1, int param2)
+int iMainMenuHandler(Menu hMenu, MenuAction eAction, int iParam1, int iParam2)
 {
-	switch (action)
+	switch (eAction)
 	{
 		case MenuAction_Select:
 		{
-			int
-				client = param1,
-				item   = param2;
+			int iClient = iParam1, iItem = iParam2;
 
-			switch (item)
+			switch (iItem)
 			{
 				case 0:
 				{
-					StopEmote(client);
-					CreateRandomEmote(client);
-					Menu_Main(client);
+					vStopEmote(iClient);
+					vCreateRandomEmote(iClient);
+					aMainMenu(iClient);
 				}
 				case 1:
 				{
-					StopEmote(client);
-					CreateRandomEmote(client, true);
-					Menu_Main(client);
+					vStopEmote(iClient);
+					vCreateRandomEmote(iClient, true);
+					aMainMenu(iClient);
 				}
 				case 2:
-					Menu_Emotes(client);
+					aMenuEmotes(iClient);
 				case 3:
-					Menu_Dances(client);
+					aMenuDances(iClient);
 			}
 		}
 		case MenuAction_End:
-			delete menu;
+			delete hMenu;
 	}
 	return 0;
 }
 
-Action Menu_Emotes(int client)
+Action aMenuEmotes(int iClient)
 {
-	Menu menu = new Menu(MenuHandlerEmotes);
+	Menu hMenu = new Menu(iMenuEmotesHandler);
 
-	char title[65];
-	Format(title, sizeof(title), "%T:", "TITLE_EMOTES_MENU", client);
-	menu.SetTitle(title);
+	char szTitle[65];
+	Format(szTitle, sizeof(szTitle), "%T:", "TITLE_EMOTES_MENU", iClient);
+	hMenu.SetTitle(szTitle);
 
 	for (int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
 		for (int j = 1; j <= g_iEmotesSize[i]; j++)
 		{
-			char
-				sIndex[8];
-
-			Format(sIndex, sizeof(sIndex), "%d:%d", i, j);
-			AddTranslatedMenuItem(menu, sIndex, g_Emotes[i][j].name, client);
+			char szIndex[8];
+			Format(szIndex, sizeof(szIndex), "%d:%d", i, j);
+			vAddTranslatedMenuItem(hMenu, szIndex, g_szEmotes[i][j].szName, iClient);
 		}
 	}
 
-	menu.ExitButton		= true;
-	menu.ExitBackButton = true;
-	menu.Display(client, MENU_TIME_FOREVER);
+	hMenu.ExitButton = true;
+	hMenu.ExitBackButton = true;
+	hMenu.Display(iClient, MENU_TIME_FOREVER);
 
 	return Plugin_Handled;
 }
 
-int MenuHandlerEmotes(Menu menu, MenuAction action, int client, int param2)
+int iMenuEmotesHandler(Menu hMenu, MenuAction eAction, int iClient, int iParam2)
 {
-	switch (action)
+	switch (eAction)
 	{
 		case MenuAction_Select:
 		{
-			char sItem[16];
-			if (menu.GetItem(param2, sItem, sizeof(sItem)))
+			char szItem[16];
+			if (hMenu.GetItem(iParam2, szItem, sizeof(szItem)))
 			{
-				int
-					iFile,
-					iItem;
+				int iFile, iItem;
+				char szBuffer[2][4], szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+				bool bIsLoop;
 
-				char
-					sBuffer[2][4],
-					sAnim1[64],
-					sAnim2[64],
-					sSound[PLATFORM_MAX_PATH];
-
-				bool
-					bIsLoop;
-
-				ExplodeString(sItem, ":", sBuffer, sizeof(sBuffer), sizeof(sBuffer[]));
-				iFile = StringToInt(sBuffer[0]);
-				iItem = StringToInt(sBuffer[1]);
+				ExplodeString(szItem, ":", szBuffer, sizeof(szBuffer), sizeof(szBuffer[]));
+				iFile = StringToInt(szBuffer[0]);
+				iItem = StringToInt(szBuffer[1]);
 				
-				if (!GetEmoteInfo(iFile, g_Emotes[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
+				if (!bGetEmoteInfo(iFile, g_szEmotes[iFile][iItem].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop))
 				{
-					CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFile][iItem].name);
+					CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szEmotes[iFile][iItem].szName);
 					return 0;
 				}
 
-				CreateEmote(client, sAnim1, sAnim1, sAnim2, bIsLoop, iFile);
+				aCreateEmote(iClient, szAnim1, szAnim1, szAnim2, bIsLoop, iFile);
 			}
-			menu.DisplayAt(client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
+			hMenu.DisplayAt(iClient, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 		}
 		case MenuAction_Cancel:
 		{
-			if (param2 == MenuCancel_ExitBack)
-				Menu_Main(client);
+			if (iParam2 == MenuCancel_ExitBack)
+				aMainMenu(iClient);
 		}
 	}
 	return 0;
 }
 
-Action Menu_Dances(int client)
+Action aMenuDances(int iClient)
 {
-	Menu menu = new Menu(MenuHandlerDances);
+	Menu hMenu = new Menu(iMenuDancesHandler);
 
-	char title[65];
-	Format(title, sizeof(title), "%T:", "TITLE_DANCES_MENU", client);
-	menu.SetTitle(title);
+	char szTitle[65];
+	Format(szTitle, sizeof(szTitle), "%T:", "TITLE_DANCES_MENU", iClient);
+	hMenu.SetTitle(szTitle);
 
 	for (int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
 		for (int j = 1; j <= g_iDancesSize[i]; j++)
 		{
-			char
-				sIndex[8];
-
-			Format(sIndex, sizeof(sIndex), "%d:%d", i, j);
-			AddTranslatedMenuItem(menu, sIndex, g_Dances[i][j].name, client);
+			char szIndex[8];
+			Format(szIndex, sizeof(szIndex), "%d:%d", i, j);
+			vAddTranslatedMenuItem(hMenu, szIndex, g_szDances[i][j].szName, iClient);
 		}
 	}
 
-	menu.ExitButton		= true;
-	menu.ExitBackButton = true;
-	menu.Display(client, MENU_TIME_FOREVER);
+	hMenu.ExitButton = true;
+	hMenu.ExitBackButton = true;
+	hMenu.Display(iClient, MENU_TIME_FOREVER);
 
 	return Plugin_Handled;
 }
 
-int MenuHandlerDances(Menu menu, MenuAction action, int client, int param2)
+int iMenuDancesHandler(Menu hMenu, MenuAction eAction, int iClient, int iParam2)
 {
-	switch (action)
+	switch (eAction)
 	{
 		case MenuAction_Select:
 		{
-			char sItem[16];
-			if (menu.GetItem(param2, sItem, sizeof(sItem)))
+			char szItem[16];
+			if (hMenu.GetItem(iParam2, szItem, sizeof(szItem)))
 			{
-				int
-					iFile,
-					iItem;
+				int iFile, iItem;
+				char szBuffer[2][4], szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+				bool bIsLoop;
 
-				char
-					sBuffer[2][4],
-					sAnim1[64],
-					sAnim2[64],
-					sSound[PLATFORM_MAX_PATH];
+				ExplodeString(szItem, ":", szBuffer, sizeof(szBuffer), sizeof(szBuffer[]));
+				iFile = StringToInt(szBuffer[0]);
+				iItem = StringToInt(szBuffer[1]);
 
-				bool
-					bIsLoop;
-
-				ExplodeString(sItem, ":", sBuffer, sizeof(sBuffer), sizeof(sBuffer[]));
-				iFile = StringToInt(sBuffer[0]);
-				iItem = StringToInt(sBuffer[1]);
-
-				if (!GetEmoteInfo(iFile, g_Dances[iFile][iItem].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
+				if (!bGetEmoteInfo(iFile, g_szDances[iFile][iItem].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop, true))
 				{
-					CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFile][iItem].name);
+					CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szDances[iFile][iItem].szName);
 					return 0;
 				}
-				CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFile);
-
+				aCreateEmote(iClient, szAnim1, szAnim2, szSound, bIsLoop, iFile);
 			}
-			menu.DisplayAt(client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
+			hMenu.DisplayAt(iClient, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 		}
 		case MenuAction_Cancel:
 		{
-			if (param2 == MenuCancel_ExitBack)
-				Menu_Main(client);
+			if (iParam2 == MenuCancel_ExitBack)
+				aMainMenu(iClient);
 		}
 	}
 	return 0;
 }
 
-void AddTranslatedMenuItem(Menu menu, const char[] opt, const char[] phrase, int client)
+void vAddTranslatedMenuItem(Menu hMenu, const char[] szOpt, const char[] szPhrase, int iClient)
 {
-	char buffer[128];
-	Format(buffer, sizeof(buffer), "%T", phrase, client);
-	menu.AddItem(opt, buffer);
+	char szBuffer[128];
+	Format(szBuffer, sizeof(szBuffer), "%T", szPhrase, iClient);
+	hMenu.AddItem(szOpt, szBuffer);
 }
 
-void CreateRandomEmote(int client, bool IsDance = false)
+/**
+ * Creates a random emote or dance for the specified client.
+ *
+ * @param iClient       The client index for whom the emote or dance is created.
+ * @param bIsDance      (Optional) If true, a random dance is created. If false, a random emote is created. Defaults to false.
+ */
+void vCreateRandomEmote(int iClient, bool bIsDance = false)
 {
-	int
-		iFileRandom,
-		iIndexRandom;
-
-	char
-		sAnim1[64],
-		sAnim2[64],
-		sSound[PLATFORM_MAX_PATH];
-
-	bool
-		bIsLoop;
+	int iFileRandom, iIndexRandom;
+	char szAnim1[64], szAnim2[64], szSound[PLATFORM_MAX_PATH];
+	bool bIsLoop;
 	int iSize;
 
 	do {
 		iFileRandom = GetRandomInt(1, g_iFilesFnemotesCounter);
-		iSize = IsDance ? g_iDancesSize[iFileRandom] : g_iEmotesSize[iFileRandom];
+		iSize = bIsDance ? g_iDancesSize[iFileRandom] : g_iEmotesSize[iFileRandom];
 	} while (iSize == 0);
 
 	iIndexRandom = GetRandomInt(1, iSize);
 
-	if (IsDance)
+	if (bIsDance)
 	{
-		if (!GetEmoteInfo(iFileRandom, g_Dances[iFileRandom][iIndexRandom].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop, true))
-			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Dances[iFileRandom][iIndexRandom].name);
+		if (!bGetEmoteInfo(iFileRandom, g_szDances[iFileRandom][iIndexRandom].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop, true))
+			CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szDances[iFileRandom][iIndexRandom].szName);
 	}
 	else
 	{
-		if (!GetEmoteInfo(iFileRandom, g_Emotes[iFileRandom][iIndexRandom].name, sAnim1, sizeof(sAnim1), sAnim2, sizeof(sAnim2), sSound, sizeof(sSound), bIsLoop))
-			CPrintToChat(client, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_Emotes[iFileRandom][iIndexRandom].name);
+		if (!bGetEmoteInfo(iFileRandom, g_szEmotes[iFileRandom][iIndexRandom].szName, szAnim1, sizeof(szAnim1), szAnim2, sizeof(szAnim2), szSound, sizeof(szSound), bIsLoop))
+			CPrintToChat(iClient, "%t %t", "TAG", "ERROR_EMOTE_INFO", g_szEmotes[iFileRandom][iIndexRandom].szName);
 	}
 
-	LogDebug("%s: iFileRandom: %d | iIndexRandom: %d | sAnim1: %s | sAnim2: %s | sSound: %s | bIsLoop: %s | client: %N", IsDance ? "CreateRandomDance" : "CreateRandomEmote", iFileRandom, iIndexRandom, sAnim1, sAnim2, sSound, bIsLoop ? "true" : "false", client);
-	CreateEmote(client, sAnim1, sAnim2, sSound, bIsLoop, iFileRandom);
+	vLogDebug("%s: iFileRandom: %d | iIndexRandom: %d | szAnim1: %s | szAnim2: %s | szSound: %s | bIsLoop: %s | iClient: %N", bIsDance ? "CreateRandomDance" : "CreateRandomEmote", iFileRandom, iIndexRandom, szAnim1, szAnim2, szSound, bIsLoop ? "true" : "false", iClient);
+	aCreateEmote(iClient, szAnim1, szAnim2, szSound, bIsLoop, iFileRandom);
 }
