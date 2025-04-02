@@ -76,6 +76,8 @@ Action aCreateEmote(int iClient, const char[] szAnim1, const char[] szAnim2, con
         return Plugin_Handled;
     }
 
+
+
     vLogDebug("CreateEmote: szAnim1 = %s, szAnim2 = %s, szSoundName = %s, bIsLooped = %d, iFile = %d", szAnim1, szAnim2, szSoundName, bIsLooped, iFile);
     int iEmoteEnt = CreateEntityByName("prop_dynamic");
     if (!IsValidEntity(iEmoteEnt))
@@ -176,7 +178,19 @@ Action aCreateEmote(int iClient, const char[] szAnim1, const char[] szAnim2, con
         AcceptEntityInput(iEmoteEnt, "SetDefaultAnimation", -1, -1, 0);
     }
 
-    SetVariantString(szAnim1);
+    char szFinalAnim[64];
+    strcopy(szFinalAnim, sizeof(szFinalAnim), szAnim1);
+
+    int charIndex = IdentifySurvivorFast(iClient);
+
+    if (charIndex == SurvivorCharacter_Zoey || charIndex == SurvivorCharacter_Rochelle)
+    {
+    StrCat(szFinalAnim, sizeof(szFinalAnim), "_F");
+    }
+
+    SetVariantString(szFinalAnim);
+
+    //SetVariantString(szAnim1);
     AcceptEntityInput(iEmoteEnt, "SetAnimation", -1, -1, 0);
 
     if (g_cvSpeed.FloatValue != 1.0)

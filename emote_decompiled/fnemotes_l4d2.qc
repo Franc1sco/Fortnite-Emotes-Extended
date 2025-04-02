@@ -1,6 +1,6 @@
 // Created by Crowbar 0.74
 
-$modelname "fortnite_emotes/fnemotes_l4d2.mdl"
+$modelname "fortnite_emotes/original/fnemotesv101.mdl"
 
 $bodygroup "studio"
 {
@@ -898,6 +898,731 @@ $sequence "Emote_Wave2" {
 
 $sequence "Emote_Yeet" {
 	"fnemotes_l4d2_anims\Emote_Yeet.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "DanceMoves_F" {
+	"fnemotes_l4d2_anims\DanceMoves_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Mask_Off_Intro_F" {
+	"fnemotes_l4d2_anims\Emote_Mask_Off_Intro_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Mask_Off_Loop_F" {
+	"fnemotes_l4d2_anims\Emote_Mask_Off_Loop_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Zippy_Dance_F" {
+	"fnemotes_l4d2_anims\Emote_Zippy_Dance_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "ElectroShuffle_F" {
+	"fnemotes_l4d2_anims\ElectroShuffle_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_AerobicChamp_F" {
+	"fnemotes_l4d2_anims\Emote_AerobicChamp_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Bendy_F" {
+	"fnemotes_l4d2_anims\Emote_Bendy_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_BandOfTheFort_F" {
+	"fnemotes_l4d2_anims\Emote_BandOfTheFort_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Boogie_Down_Intro_F" {
+	"fnemotes_l4d2_anims\Emote_Boogie_Down_Intro_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Boogie_Down_F" {
+	"fnemotes_l4d2_anims\Emote_Boogie_Down_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Capoeira_F" {
+	"fnemotes_l4d2_anims\Emote_Capoeira_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Charleston_F" {
+	"fnemotes_l4d2_anims\Emote_Charleston_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Chicken_F" {
+	"fnemotes_l4d2_anims\Emote_Chicken_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_NoBones_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_NoBones_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_Shoot_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Shoot_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_SwipeIt_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_SwipeIt_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_Disco_T3_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Disco_T3_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_DG_Disco_F" {
+	"fnemotes_l4d2_anims\Emote_DG_Disco_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_Worm_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Worm_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_Loser_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Loser_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_Loser_CT_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Loser_CT_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_Breakdance_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Breakdance_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Dance_Pump_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_Pump_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Dance_RideThePony_F" {
+	"fnemotes_l4d2_anims\Emote_Dance_RideThePony_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Dab_F" {
+	"fnemotes_l4d2_anims\Emote_Dab_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_EasternBloc_Start_F" {
+	"fnemotes_l4d2_anims\Emote_EasternBloc_Start_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_EasternBloc_F" {
+	"fnemotes_l4d2_anims\Emote_EasternBloc_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_FancyFeet_F" {
+	"fnemotes_l4d2_anims\Emote_FancyFeet_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_FancyFeet_CT_F" {
+	"fnemotes_l4d2_anims\Emote_FancyFeet_CT_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_FlossDance_F" {
+	"fnemotes_l4d2_anims\Emote_FlossDance_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_FlippnSexy_F" {
+	"fnemotes_l4d2_anims\Emote_FlippnSexy_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Fresh_F" {
+	"fnemotes_l4d2_anims\Emote_Fresh_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_GrooveJam_F" {
+	"fnemotes_l4d2_anims\Emote_GrooveJam_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_guitar_F" {
+	"fnemotes_l4d2_anims\Emote_guitar_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Hillbilly_Shuffle_Intro_F" {
+	"fnemotes_l4d2_anims\Emote_Hillbilly_Shuffle_Intro_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Hillbilly_Shuffle_F" {
+	"fnemotes_l4d2_anims\Emote_Hillbilly_Shuffle_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Hiphop_01_F" {
+	"fnemotes_l4d2_anims\Emote_Hiphop_01_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Hip_Hop_F" {
+	"fnemotes_l4d2_anims\Emote_Hip_Hop_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Hula_Start_F" {
+	"fnemotes_l4d2_anims\Emote_Hula_Start_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Hula_F" {
+	"fnemotes_l4d2_anims\Emote_Hula_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_InfiniDab_Intro_F" {
+	"fnemotes_l4d2_anims\Emote_InfiniDab_Intro_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_InfiniDab_Loop_F" {
+	"fnemotes_l4d2_anims\Emote_InfiniDab_Loop_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Intensity_Start_F" {
+	"fnemotes_l4d2_anims\Emote_Intensity_Start_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Intensity_Loop_F" {
+	"fnemotes_l4d2_anims\Emote_Intensity_Loop_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_IrishJig_Start_F" {
+	"fnemotes_l4d2_anims\Emote_IrishJig_Start_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_IrishJig_F" {
+	"fnemotes_l4d2_anims\Emote_IrishJig_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_KoreanEagle_F" {
+	"fnemotes_l4d2_anims\Emote_KoreanEagle_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Kpop_02_F" {
+	"fnemotes_l4d2_anims\Emote_Kpop_02_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_LivingLarge_F" {
+	"fnemotes_l4d2_anims\Emote_LivingLarge_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Maracas_F" {
+	"fnemotes_l4d2_anims\Emote_Maracas_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_PopLock_F" {
+	"fnemotes_l4d2_anims\Emote_PopLock_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_PopRock_F" {
+	"fnemotes_l4d2_anims\Emote_PopRock_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_RobotDance_F" {
+	"fnemotes_l4d2_anims\Emote_RobotDance_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_T-Rex_F" {
+	"fnemotes_l4d2_anims\Emote_T-Rex_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_TechnoZombie_F" {
+	"fnemotes_l4d2_anims\Emote_TechnoZombie_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Twist_F" {
+	"fnemotes_l4d2_anims\Emote_Twist_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_WarehouseDance_Start_F" {
+	"fnemotes_l4d2_anims\Emote_WarehouseDance_Start_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_WarehouseDance_Loop_F" {
+	"fnemotes_l4d2_anims\Emote_WarehouseDance_Loop_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Wiggle_F" {
+	"fnemotes_l4d2_anims\Emote_Wiggle_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Youre_Awesome_F" {
+	"fnemotes_l4d2_anims\Emote_Youre_Awesome_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Fonzie_Pistol_F" {
+	"fnemotes_l4d2_anims\Emote_Fonzie_Pistol_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Bring_It_On_F" {
+	"fnemotes_l4d2_anims\Emote_Bring_It_On_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_ThumbsDown_F" {
+	"fnemotes_l4d2_anims\Emote_ThumbsDown_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_ThumbsUp_F" {
+	"fnemotes_l4d2_anims\Emote_ThumbsUp_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Celebration_Loop_F" {
+	"fnemotes_l4d2_anims\Emote_Celebration_Loop_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_BlowKiss_F" {
+	"fnemotes_l4d2_anims\Emote_BlowKiss_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Calculated_F" {
+	"fnemotes_l4d2_anims\Emote_Calculated_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Confused_F" {
+	"fnemotes_l4d2_anims\Emote_Confused_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Chug_F" {
+	"fnemotes_l4d2_anims\Emote_Chug_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Cry_F" {
+	"fnemotes_l4d2_anims\Emote_Cry_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_DustingOffHands_F" {
+	"fnemotes_l4d2_anims\Emote_DustingOffHands_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_DustOffShoulders_F" {
+	"fnemotes_l4d2_anims\Emote_DustOffShoulders_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Facepalm_F" {
+	"fnemotes_l4d2_anims\Emote_Facepalm_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Fishing_F" {
+	"fnemotes_l4d2_anims\Emote_Fishing_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Flex_F" {
+	"fnemotes_l4d2_anims\Emote_Flex_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_golfclap_F" {
+	"fnemotes_l4d2_anims\Emote_golfclap_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_HandSignals_F" {
+	"fnemotes_l4d2_anims\Emote_HandSignals_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_HeelClick_F" {
+	"fnemotes_l4d2_anims\Emote_HeelClick_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Hotstuff_F" {
+	"fnemotes_l4d2_anims\Emote_Hotstuff_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_IBreakYou_F" {
+	"fnemotes_l4d2_anims\Emote_IBreakYou_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_IHeartYou_F" {
+	"fnemotes_l4d2_anims\Emote_IHeartYou_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Kung-Fu_Salute_F" {
+	"fnemotes_l4d2_anims\Emote_Kung-Fu_Salute_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Laugh_F" {
+	"fnemotes_l4d2_anims\Emote_Laugh_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Laugh_CT_F" {
+	"fnemotes_l4d2_anims\Emote_Laugh_CT_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Luchador_F" {
+	"fnemotes_l4d2_anims\Emote_Luchador_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Make_It_Rain_F" {
+	"fnemotes_l4d2_anims\Emote_Make_It_Rain_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_NotToday_F" {
+	"fnemotes_l4d2_anims\Emote_NotToday_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_RockPaperScissor_Paper_F" {
+	"fnemotes_l4d2_anims\Emote_RockPaperScissor_Paper_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_RockPaperScissor_Rock_F" {
+	"fnemotes_l4d2_anims\Emote_RockPaperScissor_Rock_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_RockPaperScissor_Scissor_F" {
+	"fnemotes_l4d2_anims\Emote_RockPaperScissor_Scissor_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Salt_F" {
+	"fnemotes_l4d2_anims\Emote_Salt_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Salute_F" {
+	"fnemotes_l4d2_anims\Emote_Salute_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_SmoothDrive_F" {
+	"fnemotes_l4d2_anims\Emote_SmoothDrive_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+$sequence "Emote_Snap_F" {
+	"fnemotes_l4d2_anims\Emote_Snap_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_StageBow_F" {
+	"fnemotes_l4d2_anims\Emote_StageBow_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Wave2_F" {
+	"fnemotes_l4d2_anims\Emote_Wave2_F.smd"
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+}
+
+$sequence "Emote_Yeet_F" {
+	"fnemotes_l4d2_anims\Emote_Yeet_F.smd"
 	fadein 0.2
 	fadeout 0.2
 	fps 30
