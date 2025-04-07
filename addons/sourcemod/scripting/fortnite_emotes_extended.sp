@@ -33,7 +33,7 @@
 			G L O B A L   V A R S
 *****************************************************************/
 
-#define DEBUG		0
+#define DEBUG		1
 #define DEBUG_SOUND 0
 
 #define EF_BONEMERGE		  0x001
@@ -276,12 +276,6 @@ public Action Command_Emote(int iClient, int iArgs)
 	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
 
-	if (g_bLateload)
-	{
-		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
-
 	if (!bIsValidAccess(iClient))
 	{
 		CReplyToCommand(iClient, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
@@ -368,12 +362,6 @@ public Action Command_EmoteCode(int iClient, int iArgs)
 	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
 
-	if (g_bLateload)
-	{
-		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
-
 	if (!bIsValidAccess(iClient))
 	{
 		CReplyToCommand(iClient, "%t %t", "TAG", "NO_EMOTES_ACCESS_FLAG");
@@ -416,12 +404,6 @@ public Action Command_DanceCode(int iClient, int iArgs)
 {
 	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
-
-	if (g_bLateload)
-	{
-		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
 
 	if (!bIsValidAccess(iClient))
 	{
@@ -466,12 +448,6 @@ public Action Command_Dance(int iClient, int iArgs)
 {
 	if (!bIsValidClient(iClient))
 		return Plugin_Handled;
-
-	if (g_bLateload)
-	{
-		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
-		return Plugin_Handled;
-	}
 
 	if (!bIsValidAccess(iClient))
 	{
@@ -559,12 +535,6 @@ Action Command_SetEmote(int iClient, int iArgs)
 	if (iArgs != 1 && iArgs != 3)
 	{
 		CReplyToCommand(iClient, "%t: sm_setemote <#userid|name> <configid|blank:random> <emoteid|blank:random>", "USAGE");
-		return Plugin_Handled;
-	}
-
-	if (g_bLateload)
-	{
-		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
 		return Plugin_Handled;
 	}
 
@@ -682,9 +652,6 @@ Action Command_SetDance(int iClient, int iArgs)
 
 public void OnMapStart()
 {
-	vLogDebug("OnMapStart");
-	if (g_bLateload)
-		g_bLateload = false;
 	vOnMapStart_Resources();
 }
 
@@ -692,7 +659,6 @@ public void OnPluginEnd()
 {
 	vStopDancer();
 	vOnPluginEnd_vipcore();
-	vOnPluginEnd_resources();
 }
 
 public void OnClientPutInServer(int iClient)
@@ -1045,8 +1011,6 @@ stock int IdentifySurvivorFast(int iClient)
 	return g_iGenderToSurvivorIndex[iGender];
 }
 
-
-
 #if DEBUG
 void vLogDebug(const char[] szMessage, any...)
 {
@@ -1071,7 +1035,7 @@ void vLogSound(const char[] szMessage, any...)
 	delete file;
 }
 #else
-void vLogSound(const char[] szMessage, any...) {}
+public void vLogSound(const char[] szMessage, any...) {}
 #endif
 
 #else

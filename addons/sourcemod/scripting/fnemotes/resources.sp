@@ -41,6 +41,9 @@ eFilesFnEmotes
 	g_szEmotes[FNEMOTES_LIMIT_FILES][MAX_RESOURCES], // [] = file index, [] = emote index
 	g_szDances[FNEMOTES_LIMIT_FILES][MAX_RESOURCES]; // [] = file index, [] = dance index
 
+bool
+	g_bIsPrecached = false;
+
 /*****************************************************************
 			F O R W A R D   P U B L I C S
 *****************************************************************/
@@ -105,31 +108,13 @@ public Action aCommand_ReloadResources(int iClient, int iArgs)
 	return Plugin_Handled;
 }
 
-void vOnPluginEnd_resources()
-{
-	vClearGlobalVariables();
-}
-
 void vOnMapStart_Resources()
 {
-	if (g_bLateload)
-		return;
-
 	if (!g_cvDownloadResources.BoolValue)
 		return;
 
-	for (int i = 1; i <= g_iFilesFnemotesCounter; i++)
-	{
-		for (int j = 1; j <= g_iModelSize[i]; j++)
-		{
-			AddFileToDownloadsTable(g_szModels[i][j].szPath);
-		}
-
-		for (int j = 1; j <= g_iSoundsSize[i]; j++)
-		{
-			AddFileToDownloadsTable(g_szSounds[i][j].szPath);
-		}
-	}
+	if (g_bIsPrecached)
+		return;
 
 	for (int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
@@ -138,15 +123,28 @@ void vOnMapStart_Resources()
 			if (StrContains(g_szModels[i][j].szPath, ".mdl") == -1)
 				continue;
 
+			if (IsModelPrecached(g_szModels[i][j].szPath))
+			{
+				g_bIsPrecached = true;
+				break;
+			}
+
+			AddFileToDownloadsTable(g_szModels[i][j].szPath);
 			PrecacheModel(g_szModels[i][j].szPath, true);
+			vLogDebug("Precached model [%s]", g_szModels[i][j].szPath);
 		}
 
+		if (g_bIsPrecached)
+			break;
+		
 		char szSound[MAX_RESOURCES];
 		for (int j = 1; j <= g_iSoundsSize[i]; j++)
 		{
+			AddFileToDownloadsTable(g_szSounds[i][j].szPath);
 			Format(szSound, sizeof(szSound), g_szSounds[i][j].szPath);
 			ReplaceStringEx(szSound, sizeof(szSound), "sound/", "");
 			PrecacheSound(szSound);
+			vLogDebug("Precached sound [%s]", szSound);
 		}
 	}
 }
@@ -371,30 +369,4 @@ bool bGetEmoteInfo(const int iFile, const char[] szName, char[] szAnim1, int iAn
 #endif
 
 	return true;
-}
-
-/**
- * @brief Clears all global variables related to Fortnite Emotes resources.
- */
-void vClearGlobalVariables()
-{
-	for (int i = 0; i < FNEMOTES_LIMIT_FILES; i++)
-	{
-		g_iModelSize[i] = 0;
-		g_iSoundsSize[i] = 0;
-		g_iEmotesSize[i] = 0;
-		g_iDancesSize[i] = 0;
-
-		for (int j = 0; j < MAX_RESOURCES; j++)
-		{
-			g_szModels[i][j].szPath[0] = '\0';
-			g_szSounds[i][j].szPath[0] = '\0';
-			g_szEmotes[i][j].szName[0] = '\0';
-			g_szDances[i][j].szName[0] = '\0';
-		}
-
-		g_szFilesConfig[i].szName[0] = '\0';
-	}
-
-	g_iFilesFnemotesCounter = 0;
 }

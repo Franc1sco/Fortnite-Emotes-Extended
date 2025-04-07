@@ -13,12 +13,10 @@ void vOnPluginStart_vipcore()
 	if (!g_bVipCore)
 		return;
 
-#if !DEBUG
+#if DEBUG
 	if (g_bLateload)
-		return;
+		VIP_OnVIPLoaded();
 #endif
-
-	VIP_OnVIPLoaded();
 }
 
 void vOnPluginEnd_vipcore()
@@ -46,12 +44,6 @@ void VIP_OnVIPLoaded_vipcore()
 
 bool bOnItemSelect(int iClient, char[] szFeatureName)
 {
-	if (g_bLateload)
-	{
-		CReplyToCommand(iClient, "%t %t", "TAG", "LATLOAD");
-		return false;
-	}
-
 	Menu hItemSelectMenu = new Menu(MenuHandler_Vip);
 
 	char szTitle[65];
