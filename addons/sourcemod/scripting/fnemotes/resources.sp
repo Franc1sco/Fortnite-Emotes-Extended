@@ -131,7 +131,7 @@ void vOnMapStart_Resources()
 
 			AddFileToDownloadsTable(g_szModels[i][j].szPath);
 			PrecacheModel(g_szModels[i][j].szPath, true);
-			vLogDebug("Precached model [%s]", g_szModels[i][j].szPath);
+			vLogResources("Precached model [%s]", g_szModels[i][j].szPath);
 		}
 
 		if (g_bIsPrecached)
@@ -144,7 +144,7 @@ void vOnMapStart_Resources()
 			Format(szSound, sizeof(szSound), g_szSounds[i][j].szPath);
 			ReplaceStringEx(szSound, sizeof(szSound), "sound/", "");
 			PrecacheSound(szSound);
-			vLogDebug("Precached sound [%s]", szSound);
+			vLogResources("Precached sound [%s]", szSound);
 		}
 	}
 }

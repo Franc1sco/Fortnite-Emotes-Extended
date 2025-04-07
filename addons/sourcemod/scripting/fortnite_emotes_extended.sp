@@ -33,8 +33,9 @@
 			G L O B A L   V A R S
 *****************************************************************/
 
-#define DEBUG		1
-#define DEBUG_SOUND 0
+#define DEBUG			0
+#define DEBUG_SOUND 	0
+#define DEBUG_RESOURCES 0
 
 #define EF_BONEMERGE		  0x001
 #define EF_NOSHADOW			  0x010
@@ -918,11 +919,14 @@ void vLoadTranslation(const char[] szTranslation)
  */
 void vStopDancer()
 {
-	for (int i = 1; i <= MaxClients; i++)
-	{
-		if (bIsValidClient(i) && g_bClientDancing[i])
-			vStopEmote(i);
-	}
+    for (int i = 1; i <= MaxClients; i++)
+    {
+        if (g_iEmoteEnt[i])
+            vStopEmote(i);
+
+        if (g_hCooldownTimers[i] != null)
+            delete g_hCooldownTimers[i];
+    }
 }
 
 /**
@@ -1036,6 +1040,21 @@ void vLogSound(const char[] szMessage, any...)
 }
 #else
 public void vLogSound(const char[] szMessage, any...) {}
+#endif
+
+#if DEBUG_RESOURCES
+void vLogResources(const char[] szMessage, any...)
+{
+	static char szFormat[1024];
+	
+	VFormat(szFormat, sizeof(szFormat), szMessage, 2);
+	File file = OpenFile(g_szLogPath, "a+");
+
+	LogToFileEx(g_szLogPath, "[Resources] %s", szFormat);
+	delete file;
+}
+#else
+public void vLogResources(const char[] szMessage, any...) {}
 #endif
 
 #else
