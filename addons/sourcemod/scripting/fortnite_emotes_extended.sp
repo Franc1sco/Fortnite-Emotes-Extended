@@ -1060,4 +1060,5 @@ public void vLogResources(const char[] szMessage, any...) {}
 #else
 public void vLogDebug(const char[] szMessage, any...) {}
 public void vLogSound(const char[] szMessage, any...) {}
+public void vLogResources(const char[] szMessage, any...) {}
 #endif

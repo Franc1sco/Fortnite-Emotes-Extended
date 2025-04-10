@@ -41,9 +41,6 @@ eFilesFnEmotes
 	g_szEmotes[FNEMOTES_LIMIT_FILES][MAX_RESOURCES], // [] = file index, [] = emote index
 	g_szDances[FNEMOTES_LIMIT_FILES][MAX_RESOURCES]; // [] = file index, [] = dance index
 
-bool
-	g_bIsPrecached = false;
-
 /*****************************************************************
 			F O R W A R D   P U B L I C S
 *****************************************************************/
@@ -113,9 +110,6 @@ void vOnMapStart_Resources()
 	if (!g_cvDownloadResources.BoolValue)
 		return;
 
-	if (g_bIsPrecached)
-		return;
-
 	for (int i = 1; i <= g_iFilesFnemotesCounter; i++)
 	{
 		for (int j = 1; j <= g_iModelSize[i]; j++)
@@ -124,18 +118,12 @@ void vOnMapStart_Resources()
 				continue;
 
 			if (IsModelPrecached(g_szModels[i][j].szPath))
-			{
-				g_bIsPrecached = true;
-				break;
-			}
+				continue;
 
 			AddFileToDownloadsTable(g_szModels[i][j].szPath);
 			PrecacheModel(g_szModels[i][j].szPath, true);
 			vLogResources("Precached model [%s]", g_szModels[i][j].szPath);
 		}
-
-		if (g_bIsPrecached)
-			break;
 		
 		char szSound[MAX_RESOURCES];
 		for (int j = 1; j <= g_iSoundsSize[i]; j++)
@@ -183,7 +171,7 @@ bool bLoadResources()
 
 		char szBuffer[62];
 		strcopy(szBuffer, sizeof(szBuffer), g_szFilesConfig[i].szName);
-		ReplaceString(szBuffer, sizeof(szBuffer), ".cfg", ""); // Remove .cfg extension
+		ReplaceString(szBuffer, sizeof(szBuffer), ".cfg", "");
 		Format(szBuffer, sizeof(szBuffer), "%s.phrases", szBuffer);
 		vLoadTranslation(szBuffer);
 	}
