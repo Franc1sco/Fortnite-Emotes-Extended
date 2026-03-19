@@ -23,7 +23,7 @@ forward void fnemotes_OnEmote(int iClient);
 public SharedPlugin __pl_fnemotes =
 {
 	name = "fnemotes",
-	file = "fortnite_emotes_extended.smx",
+	file = "vip/fortnite_emotes_extended.smx",
 #if defined REQUIRE_PLUGIN
 	required = 1,
 #else

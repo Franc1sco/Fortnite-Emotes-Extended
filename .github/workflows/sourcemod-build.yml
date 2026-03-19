@@ -1,0 +1,123 @@
+name: SourceMod Build
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - .github/workflows/sourcemod-build.yml
+      - scripts/ci-build-sourcemod.sh
+      - scripts/ci-validate-artifact.sh
+      - scripts/ci-package-release-assets.sh
+      - addons/sourcemod/**
+      - cfg/**
+      - models/**
+      - sound/**
+  pull_request:
+    paths:
+      - .github/workflows/sourcemod-build.yml
+      - scripts/ci-build-sourcemod.sh
+      - scripts/ci-validate-artifact.sh
+      - scripts/ci-package-release-assets.sh
+      - addons/sourcemod/**
+      - cfg/**
+      - models/**
+      - sound/**
+  workflow_dispatch:
+
+concurrency:
+  group: sourcemod-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  SOURCEMOD_ARCHIVE_URL: https://sm.alliedmods.net/smdrop/1.12/sourcemod-1.12.0-git7223-linux.tar.gz
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install SourceMod build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes curl tar python3
+
+      - name: Verify GitHub CLI
+        if: github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'develop')
+        run: gh --version
+
+      - name: Compile SourceMod artifact
+        run: bash ./scripts/ci-build-sourcemod.sh
+
+      - name: Validate SourceMod artifact
+        run: bash ./scripts/ci-validate-artifact.sh
+
+      - name: Resolve artifact channel
+        if: github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'develop')
+        id: artifact
+        shell: bash
+        run: |
+          case "${GITHUB_REF_NAME}" in
+            main)
+              echo "version=latest" >> "$GITHUB_OUTPUT"
+              echo "name=fortnite-emotes-extended-latest" >> "$GITHUB_OUTPUT"
+              echo "tag=channel/latest" >> "$GITHUB_OUTPUT"
+              echo "release_name=Latest" >> "$GITHUB_OUTPUT"
+              echo "prerelease=false" >> "$GITHUB_OUTPUT"
+              ;;
+            develop)
+              echo "version=develop" >> "$GITHUB_OUTPUT"
+              echo "name=fortnite-emotes-extended-develop" >> "$GITHUB_OUTPUT"
+              echo "tag=channel/develop" >> "$GITHUB_OUTPUT"
+              echo "release_name=Develop" >> "$GITHUB_OUTPUT"
+              echo "prerelease=true" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Package SourceMod artifact
+        if: github.event_name != 'pull_request' && steps.artifact.outputs.version != ''
+        env:
+          RELEASE_VERSION: ${{ steps.artifact.outputs.version }}
+        run: bash ./scripts/ci-package-release-assets.sh
+
+      - name: Move channel tag
+        if: github.event_name != 'pull_request' && steps.artifact.outputs.version != ''
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -f "${{ steps.artifact.outputs.tag }}" "$GITHUB_SHA"
+          git push origin "refs/tags/${{ steps.artifact.outputs.tag }}" --force
+
+      - name: Publish channel release
+        if: github.event_name != 'pull_request' && steps.artifact.outputs.version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="${{ steps.artifact.outputs.tag }}"
+          title="${{ steps.artifact.outputs.release_name }}"
+          asset="dist/release/fortnite-emotes-extended-${{ steps.artifact.outputs.version }}.zip"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            if [[ "${{ steps.artifact.outputs.prerelease }}" == "true" ]]; then
+              gh release edit "$tag" --title "$title" --prerelease
+            else
+              gh release edit "$tag" --title "$title" --latest
+            fi
+          else
+            if [[ "${{ steps.artifact.outputs.prerelease }}" == "true" ]]; then
+              gh release create "$tag" --title "$title" --prerelease --target "$GITHUB_SHA"
+            else
+              gh release create "$tag" --title "$title" --latest --target "$GITHUB_SHA"
+            fi
+          fi
+
+          gh release upload "$tag" "$asset" --clobber
